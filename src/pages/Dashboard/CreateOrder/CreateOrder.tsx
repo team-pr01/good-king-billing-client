@@ -1,6 +1,6 @@
-import { useForm, useFieldArray } from 'react-hook-form';
-import { FiPlus, FiTrash2 } from 'react-icons/fi';
-import TextInput from '../../../components/Reusable/TextInput/TextInput';
+import { useForm, useFieldArray } from "react-hook-form";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
+import TextInput from "../../../components/Reusable/TextInput/TextInput";
 
 type FormValues = {
   area: string;
@@ -13,15 +13,27 @@ type FormValues = {
 };
 
 // Sample data
-const areas = ['North Area', 'South Area', 'East Area', 'West Area', 'Central Area'];
-const shops = ['Tech Gadgets Store', 'Fashion Boutique', 'Home Essentials', 'Green Grocers', 'Book Nook'];
+const areas = [
+  "North Area",
+  "South Area",
+  "East Area",
+  "West Area",
+  "Central Area",
+];
+const shops = [
+  "Tech Gadgets Store",
+  "Fashion Boutique",
+  "Home Essentials",
+  "Green Grocers",
+  "Book Nook",
+];
 
 const products = [
-  { id: 1, name: 'Laptop', price: 1200 },
-  { id: 2, name: 'Smartphone', price: 800 },
-  { id: 3, name: 'Headphones', price: 150 },
-  { id: 4, name: 'Keyboard', price: 75 },
-  { id: 5, name: 'Monitor', price: 300 },
+  { id: 1, name: "Laptop", price: 1200 },
+  { id: 2, name: "Smartphone", price: 800 },
+  { id: 3, name: "Headphones", price: 150 },
+  { id: 4, name: "Keyboard", price: 75 },
+  { id: 5, name: "Monitor", price: 300 },
 ];
 
 const CreateOrder = () => {
@@ -31,33 +43,36 @@ const CreateOrder = () => {
     formState: { errors },
     watch,
     control,
-    reset
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
-      products: [{ productId: '', quantity: 1, price: 0 }]
-    }
+      products: [{ productId: "", quantity: 1, price: 0 }],
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "products"
+    name: "products",
   });
 
   const watchedProducts = watch("products");
-  const totalAmount = watchedProducts?.reduce((total, product) => {
-    const productData = products.find(p => p.id.toString() === product.productId);
-    const price = productData ? productData.price : 0;
-    const quantity = product.quantity || 0;
-    return total + (price * quantity);
-  }, 0) || 0;
+  const totalAmount =
+    watchedProducts?.reduce((total, product) => {
+      const productData = products.find(
+        (p) => p.id.toString() === product.productId
+      );
+      const price = productData ? productData.price : 0;
+      const quantity = product.quantity || 0;
+      return total + price * quantity;
+    }, 0) || 0;
 
   const onSubmit = (data: FormValues) => {
-    console.log('Order data:', data);
+    console.log("Order data:", data);
     // Handle order creation here
   };
 
   const handleAddProduct = () => {
-    append({ productId: '', quantity: 1, price: 0 });
+    append({ productId: "", quantity: 1, price: 0 });
   };
 
   const handleRemoveProduct = (index: number) => {
@@ -67,7 +82,7 @@ const CreateOrder = () => {
   };
 
   const getProductPrice = (productId: string) => {
-    const product = products.find(p => p.id.toString() === productId);
+    const product = products.find((p) => p.id.toString() === productId);
     return product ? product.price : 0;
   };
 
@@ -144,15 +159,18 @@ const CreateOrder = () => {
 
             <div className="space-y-4">
               {fields.map((field, index) => (
-                <div key={field.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 border border-gray-200 rounded-lg">
+                <div
+                  key={field.id}
+                  className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 border border-gray-200 rounded-lg"
+                >
                   {/* Product Selection */}
                   <div className="md:col-span-4 flex flex-col gap-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Product <span className="text-red-600"> *</span>
                     </label>
                     <select
-                      {...register(`products.${index}.productId` as const, { 
-                        required: "Product is required" 
+                      {...register(`products.${index}.productId` as const, {
+                        required: "Product is required",
                       })}
                       className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     >
@@ -168,9 +186,15 @@ const CreateOrder = () => {
                   {/* Price */}
                   <div className="md:col-span-2">
                     <TextInput
-                    name='price'
+                      name="price"
                       label="Price"
-                      value={watchedProducts?.[index]?.productId ? `₹${getProductPrice(watchedProducts[index].productId)}` : "₹0.00"}
+                      value={
+                        watchedProducts?.[index]?.productId
+                          ? `₹${getProductPrice(
+                              watchedProducts[index].productId
+                            )}`
+                          : "₹0.00"
+                      }
                       isDisabled={true}
                     />
                   </div>
@@ -180,10 +204,10 @@ const CreateOrder = () => {
                     <TextInput
                       label="Quantity"
                       type="number"
-                      {...register(`products.${index}.quantity` as const, { 
+                      {...register(`products.${index}.quantity` as const, {
                         required: "Quantity is required",
                         min: { value: 1, message: "Minimum quantity is 1" },
-                        valueAsNumber: true
+                        valueAsNumber: true,
                       })}
                       error={errors.products?.[index]?.quantity}
                     />
@@ -192,11 +216,17 @@ const CreateOrder = () => {
                   {/* Total for this product */}
                   <div className="md:col-span-2">
                     <TextInput
-                      name='total'
+                      name="total"
                       label="Total"
-                      value={watchedProducts?.[index]?.productId && watchedProducts[index].quantity 
-                        ? `₹${(getProductPrice(watchedProducts[index].productId) * watchedProducts[index].quantity).toFixed(2)}`
-                        : "$0.00"
+                      value={
+                        watchedProducts?.[index]?.productId &&
+                        watchedProducts[index].quantity
+                          ? `₹${(
+                              getProductPrice(
+                                watchedProducts[index].productId
+                              ) * watchedProducts[index].quantity
+                            ).toFixed(2)}`
+                          : "$0.00"
                       }
                       isDisabled={true}
                     />
@@ -220,8 +250,12 @@ const CreateOrder = () => {
             {/* Grand Total */}
             <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-gray-800">Total Amount:</span>
-                <span className="text-2xl font-bold text-green-600">₹{totalAmount.toFixed(2)}</span>
+                <span className="text-lg font-semibold text-gray-800">
+                  Total Amount:
+                </span>
+                <span className="text-2xl font-bold text-green-600">
+                  ₹{totalAmount.toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
