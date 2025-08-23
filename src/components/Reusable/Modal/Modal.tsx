@@ -37,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, children }) => {
       </style>
 
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto"
         style={{ animation: "slideIn 0.3s ease-out forwards" }}
         onClick={handleModalContentClick}
       >

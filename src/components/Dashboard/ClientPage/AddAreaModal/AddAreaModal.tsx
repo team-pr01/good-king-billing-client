@@ -78,7 +78,7 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
           {/* State Dropdown */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              State *
+              State <span className="text-red-600"> *</span>
             </label>
             <select
               {...register("state", { required: "State is required" })}
@@ -100,7 +100,7 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
           {/* District Dropdown */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              District *
+              District <span className="text-red-600"> *</span>
             </label>
             <select
               {...register("district", { required: "District is required" })}
@@ -121,7 +121,7 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
 
           {/* City Input */}
           <TextInput
-            label="City *"
+            label="City"
             placeholder="Enter city name"
             {...register("city", { required: "City is required" })}
             error={errors.city}
@@ -129,7 +129,7 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
 
           {/* Area Input */}
           <TextInput
-            label="Area *"
+            label="Area"
             placeholder="Enter area name"
             {...register("area", { required: "Area is required" })}
             error={errors.area}

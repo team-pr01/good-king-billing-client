@@ -7,6 +7,7 @@ import ResetPassword from "../pages/Auth/ResetPassword/ResetPassword";
 import DashboardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import AdminDashboardHome from "../pages/Admin/AdminDashboardHome/AdminDashboardHome";
 import Clients from "../pages/Admin/Clients/Clients";
+import ClientDetails from "../pages/Admin/Clients/ClientDetails/ClientDetails";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
       {
         path: "clients",
         element: <Clients />,
+      },
+      {
+        path: "client/:id",
+        element: <ClientDetails />,
       },
     ],
   },
