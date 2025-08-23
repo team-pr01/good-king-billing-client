@@ -6,7 +6,7 @@ const DashboardHeader = () => {
   };
 
   return (
-    <div className="flex justify-between items-center p-5 bg-white shadow-sm border-b border-gray-200">
+    <div className="flex justify-between items-center p-5 bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
       {/* Left side with welcome text and page name */}
       <div>
         <h1 className="text-2xl font-semibold text-gray-800">Welcome back, Admin</h1>

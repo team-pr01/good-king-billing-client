@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   AiFillHome,
@@ -12,11 +11,11 @@ const Sidebar = () => {
   const location = useLocation();
 
   const navLinks = [
-    { name: "Dashboard", path: "/dashboard", icon: <AiFillHome /> },
-    { name: "Clients", path: "/clients", icon: <AiOutlineUsergroupAdd /> },
-    { name: "Orders", path: "/orders", icon: <AiOutlineShoppingCart /> },
-    { name: "Products", path: "/products", icon: <AiOutlineBoxPlot /> },
-    { name: "Settings", path: "/settings", icon: <AiOutlineSetting /> },
+    { name: "Dashboard", path: "/admin/dashboard", icon: <AiFillHome /> },
+    { name: "Clients", path: "/admin/dashboard/clients", icon: <AiOutlineUsergroupAdd /> },
+    { name: "Orders", path: "/admin/dashboard/orders", icon: <AiOutlineShoppingCart /> },
+    { name: "Products", path: "/admin/dashboard/products", icon: <AiOutlineBoxPlot /> },
+    { name: "Settings", path: "/admin/dashboard/settings", icon: <AiOutlineSetting /> },
   ];
 
   return (

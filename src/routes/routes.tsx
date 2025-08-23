@@ -6,6 +6,7 @@ import ForgotPassword from "../pages/Auth/ForgotPassword/ForgotPassword";
 import ResetPassword from "../pages/Auth/ResetPassword/ResetPassword";
 import DashboardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import AdminDashboardHome from "../pages/Admin/AdminDashboardHome/AdminDashboardHome";
+import Clients from "../pages/Admin/Clients/Clients";
 
 export const router = createBrowserRouter([
   {
@@ -28,13 +29,17 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "dashboard",
+    path: "admin/dashboard",
     element: <DashboardLayout />,
     errorElement: <NotFound />,
     children: [
       {
         path: "",
         element: <AdminDashboardHome />,
+      },
+      {
+        path: "clients",
+        element: <Clients />,
       },
     ],
   },
