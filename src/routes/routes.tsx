@@ -11,6 +11,8 @@ import ClientDetails from "../pages/Admin/Clients/ClientDetails/ClientDetails";
 import CreateOrder from "../pages/Dashboard/CreateOrder/CreateOrder";
 import Products from "../pages/Admin/Products/Products";
 import Orders from "../pages/Dashboard/Orders/Orders";
+import OrderDetails from "../pages/Dashboard/OrderDetails/OrderDetails";
+import ChangePassword from "../pages/Auth/ChangePassword/ChangePassword";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +62,14 @@ export const router = createBrowserRouter([
       {
         path: "orders",
         element: <Orders />,
+      },
+      {
+        path: "order/:id",
+        element: <OrderDetails />,
+      },
+      {
+        path: "change-password",
+        element: <ChangePassword />,
       },
     ],
   },
