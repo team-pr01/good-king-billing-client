@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
+import { Link } from "react-router-dom";
 
 type FormValues = {
   email: string;
@@ -35,7 +36,7 @@ const Login = () => {
 
       <div className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden w-full max-w-md border border-green-200 dark:border-green-700">
         <div className="bg-gradient-to-r from-green-400 to-green-600 dark:from-green-700 dark:to-green-800 py-8 px-8 text-center">
-          <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-1 md:mb-2">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-1 md:mb-2">
             Welcome Back
           </h2>
           <p className="text-green-100 dark:text-green-200">
@@ -87,7 +88,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -120,9 +121,10 @@ const Login = () => {
         </form>
 
         <div className="bg-green-50 dark:bg-gray-700 py-4 px-8 border-t border-green-100 dark:border-green-700 text-center">
-          <p className="text-green-700 dark:text-green-200 text-sm font-semibold">
+          <Link
+          to={"/forgot-password"} className="text-green-700 dark:text-green-200 text-sm font-semibold">
             Forgot password?
-          </p>
+          </Link>
         </div>
       </div>
     </div>
