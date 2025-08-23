@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { Link } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 type FormValues = {
   email: string;
@@ -78,10 +79,10 @@ const Login = () => {
             />
             <button
               type="button"
-              className="absolute right-3 top-12 text-green-600 dark:text-green-300 text-sm font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </button>
           </div>
 
@@ -122,7 +123,9 @@ const Login = () => {
 
         <div className="bg-green-50 dark:bg-gray-700 py-4 px-8 border-t border-green-100 dark:border-green-700 text-center">
           <Link
-          to={"/forgot-password"} className="text-green-700 dark:text-green-200 text-sm font-semibold">
+            to={"/forgot-password"}
+            className="text-green-700 dark:text-green-200 text-sm font-semibold"
+          >
             Forgot password?
           </Link>
         </div>
