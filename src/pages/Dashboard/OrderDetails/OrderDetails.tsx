@@ -201,22 +201,7 @@ const OrderDetails = () => {
                   <button onClick={() => setIsPaymentModalOpen(true)} className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium">
                     Proceed to Payment
                   </button>
-                  {/* <div className="flex gap-2">
-                    <button
-                      onClick={handlePrint}
-                      className="flex-1 flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 text-sm"
-                    >
-                      <FiPrinter className="w-4 h-4" />
-                      Print
-                    </button>
-                    <button
-                      onClick={handleDownload}
-                      className="flex-1 flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 text-sm"
-                    >
-                      <FiDownload className="w-4 h-4" />
-                      Download
-                    </button>
-                  </div> */}
+                 
                 </>
               )}
             </div>

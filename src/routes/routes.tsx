@@ -13,6 +13,7 @@ import Products from "../pages/Admin/Products/Products";
 import Orders from "../pages/Dashboard/Orders/Orders";
 import OrderDetails from "../pages/Dashboard/OrderDetails/OrderDetails";
 import ChangePassword from "../pages/Auth/ChangePassword/ChangePassword";
+import OrderConfirmed from "../pages/Dashboard/OrderConfirmed/OrderConfirmed";
 
 export const router = createBrowserRouter([
   {
@@ -68,7 +69,11 @@ export const router = createBrowserRouter([
         element: <OrderDetails />,
       },
       {
-        path: "change-password",
+        path: "order-confirmed/:id",
+        element: <OrderConfirmed />,
+      },
+      {
+        path: "settings",
         element: <ChangePassword />,
       },
     ],
