@@ -1,88 +1,109 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { FaClipboardList, FaHourglassHalf, FaTruck } from "react-icons/fa";
 import { useState } from "react";
-import { FiEdit, FiPlus, FiTrash2 } from "react-icons/fi";
-import AddProductModal from "../../../components/Dashboard/ProductsPage/AddProductModal/AddProductModal";
-import Table from "../../../components/Reusable/Table/Table";
 import DashboardCard from "../../../components/Dashboard/DashboardCard/DashboardCard";
-import {
-  FaBox,
-  FaCheckCircle,
-  FaTimesCircle,
-} from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FiEdit, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
+import Table from "../../../components/Reusable/Table/Table";
 
-const Products = () => {
-    const [searchValue, setSearchValue] = useState("");
-    const [statusFilter, setStatusFilter] = useState("");
-  const [isAddProductModalOpen, setIsAddProductModalOpen] =
-    useState<boolean>(false);
+const Orders = () => {
+  const [searchValue, setSearchValue] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
-  const products = [
-    { id: "1", name: "Cricket Bat", price: "₹1,500", stock: 25, status: "Available" },
-    { id: "2", name: "Tennis Ball", price: "₹150", stock: 100, status: "Available" },
-    { id: "3", name: "Football", price: "₹1,200", stock: 0, status: "Unavailable" },
-  ];
+  const columns = [
+  { key: "orderId", label: "Order ID" },
+  { key: "shopName", label: "Shop Name" },
+  { key: "totalAmount", label: "Total Amount" },
+  { key: "pendingAmount", label: "Pending Amount" },
+  { key: "paidAmount", label: "Paid Amount" },
+];
 
-  const productColumns = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Name" },
-    { key: "price", label: "Price" },
-    { key: "stock", label: "Available Stock" },
-    { key: "status", label: "Status" },
-  ];
+const orderData = [
+  {
+    id: 1,
+    orderId: "ORD-1001",
+    shopName: "Tech Mart",
+    totalAmount: "$1200",
+    pendingAmount: "$200",
+    paidAmount: "$1000",
+  },
+  {
+    id: 2,
+    orderId: "ORD-1002",
+    shopName: "Gadget Hub",
+    totalAmount: "$800",
+    pendingAmount: "$0",
+    paidAmount: "$800",
+  },
+  {
+    id: 3,
+    orderId: "ORD-1003",
+    shopName: "ShopSmart",
+    totalAmount: "$1500",
+    pendingAmount: "$500",
+    paidAmount: "$1000",
+  },
+];
 
-  const productActions = [
+
+  const actions = [
+    {
+      icon: <FiEye />,
+      label: "View",
+      onClick: (row: any) => console.log("View", row),
+    },
     {
       icon: <FiEdit />,
-      label: "Update",
-      onClick: (row: any) => console.log("Update product:", row),
+      label: "Edit",
+      onClick: (row: any) => console.log("Edit", row),
     },
     {
       icon: <FiTrash2 />,
       label: "Delete",
-      onClick: (row: any) => console.log("Delete product:", row),
+      onClick: (row: any) => console.log("Delete", row),
       className: "text-red-600",
     },
   ];
   return (
     <div className="font-Nunito flex flex-col gap-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Products */}
+        {/* Orders */}
         <DashboardCard
-          title="Total Products"
-          value={150}
-          Icon={FaBox}
-          bgColor="bg-purple-500"
+          title="Total Orders"
+          value={250}
+          Icon={FaClipboardList}
+          bgColor="bg-blue-500"
         />
         <DashboardCard
-          title="Available Products"
-          value={120}
-          Icon={FaCheckCircle}
+          title="Pending Orders"
+          value={40}
+          Icon={FaHourglassHalf}
+          bgColor="bg-orange-500"
+        />
+        <DashboardCard
+          title="Supplied Orders"
+          value={210}
+          Icon={FaTruck}
           bgColor="bg-green-500"
-        />
-        <DashboardCard
-          title="Unavailable Products"
-          value={30}
-          Icon={FaTimesCircle}
-          bgColor="bg-yellow-500"
         />
       </div>
 
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Products</h1>
-          <p className="text-gray-600">Manage your products</p>
+          <h1 className="text-2xl font-bold text-gray-800">Orders</h1>
+          <p className="text-gray-600">Manage your orders</p>
         </div>
 
-        <button
-          onClick={() => setIsAddProductModalOpen(true)}
+        <Link
+          to="/admin/dashboard/create-order"
           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
         >
           <FiPlus className="w-5 h-5" />
-          Add Product
-        </button>
+          Create Order
+        </Link>
       </div>
 
-       {/* Search and Filters Container */}
+      {/* Search and Filters Container */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
         <div className="flex justify-between items-center gap-4 flex-wrap">
           {/* Search Bar */}
@@ -122,15 +143,13 @@ const Products = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
               >
                 <option value="">Status</option>
-                <option value="available">Available</option>
-                <option value="unavailable">Unavailable</option>
+                <option value="pending">Pending</option>
+                <option value="supplied">Supplied</option>
               </select>
             </div>
 
             {/* Export Client List Button */}
-            <button
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
-            >
+            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -145,25 +164,15 @@ const Products = () => {
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-              Export Product List
+              Export Order List
             </button>
           </div>
         </div>
       </div>
-      <Table
-        columns={productColumns}
-        data={products}
-        actions={productActions}
-        rowKey="id"
-      />
 
-      {/* Add Area Modal */}
-      <AddProductModal
-        isOpen={isAddProductModalOpen}
-        onClose={() => setIsAddProductModalOpen(false)}
-      />
+      <Table columns={columns} data={orderData} actions={actions} rowKey="id" />
     </div>
   );
 };
 
-export default Products;
+export default Orders;

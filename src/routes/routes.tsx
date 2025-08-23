@@ -10,6 +10,7 @@ import Clients from "../pages/Admin/Clients/Clients";
 import ClientDetails from "../pages/Admin/Clients/ClientDetails/ClientDetails";
 import CreateOrder from "../pages/Dashboard/CreateOrder/CreateOrder";
 import Products from "../pages/Admin/Products/Products";
+import Orders from "../pages/Dashboard/Orders/Orders";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "products",
         element: <Products />,
+      },
+      {
+        path: "orders",
+        element: <Orders />,
       },
     ],
   },
