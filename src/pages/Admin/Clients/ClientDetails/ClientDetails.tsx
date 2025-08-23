@@ -6,11 +6,11 @@ import {
   FaClock,
   FaTruck,
 } from "react-icons/fa";
-import { useState } from "react";
 import { FiDownload, FiEye, FiPlus } from "react-icons/fi";
 import ClientInfo from "../../../../components/Dashboard/ClientDetailsPage/ClientInfo/ClientInfo";
 import DashboardCard from "../../../../components/Dashboard/DashboardCard/DashboardCard";
 import Table from "../../../../components/Reusable/Table/Table";
+import { Link } from "react-router-dom";
 
 const ClientDetails = () => {
   const clientData = {
@@ -23,8 +23,6 @@ const ClientDetails = () => {
     email: "ethan.harper@example.com",
     registrationDate: "2023-01-15",
   };
-  const [isCreateOrderModalOpen, setIsCreateOrderModalOpen] =
-    useState<boolean>(false);
 
   const clientOrders = [
     {
@@ -112,13 +110,13 @@ const ClientDetails = () => {
         </div>
 
         {/* Create order Button */}
-        <button
-          onClick={() => setIsCreateOrderModalOpen(true)}
+        <Link
+            to="/admin/dashboard/create-order"
           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
         >
           <FiPlus className="w-5 h-5" />
           Create Order
-        </button>
+        </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col gap-8">

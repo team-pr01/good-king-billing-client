@@ -249,7 +249,7 @@ const Clients = () => {
         actions={actions}
         rowKey="id"
       />
-      ;{/* Add Client Modal */}
+      {/* Add Client Modal */}
       <AddClientModal
         isOpen={isAddClientModalOpen}
         onClose={() => setIsAddClientModalOpen(false)}

@@ -8,6 +8,7 @@ import DashboardLayout from "../layouts/DashboardLayout/DashboardLayout";
 import AdminDashboardHome from "../pages/Admin/AdminDashboardHome/AdminDashboardHome";
 import Clients from "../pages/Admin/Clients/Clients";
 import ClientDetails from "../pages/Admin/Clients/ClientDetails/ClientDetails";
+import CreateOrder from "../pages/Dashboard/CreateOrder/CreateOrder";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "client/:id",
         element: <ClientDetails />,
+      },
+      {
+        path: "create-order",
+        element: <CreateOrder />,
       },
     ],
   },
