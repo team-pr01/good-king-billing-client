@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { FiEdit2, FiTrash2, FiArrowLeft } from 'react-icons/fi';
+import ProceedToPaymentModal from '../../../components/Dashboard/OrderDetailsPage/ProceedToPaymentModal/ProceedToPaymentModal';
 
 const OrderDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
+   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [orderItems, setOrderItems] = useState([
     { id: 1, name: 'Organic Apples', quantity: 5, price: 2.50, total: 12.50 },
     { id: 2, name: 'Whole Wheat Bread', quantity: 2, price: 3.00, total: 6.00 },
@@ -196,7 +198,7 @@ const OrderDetails = () => {
                 </>
               ) : (
                 <>
-                  <button className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium">
+                  <button onClick={() => setIsPaymentModalOpen(true)} className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium">
                     Proceed to Payment
                   </button>
                   {/* <div className="flex gap-2">
@@ -221,6 +223,14 @@ const OrderDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Method Modal */}
+      <ProceedToPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        totalAmount={totalAmount}
+        onPaymentSuccess={() => { setIsPaymentModalOpen(false) }}
+      />
     </div>
   );
 };

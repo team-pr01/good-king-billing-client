@@ -38,6 +38,7 @@ const ChangePassword = () => {
           className="space-y-4 py-5 lg:py-8 px-4 lg:px-8"
           onSubmit={handleSubmit(handleResetPassword)}
         >
+        <h1 className="text-2xl font-bold text-gray-800 text-center mb-5">Change Password</h1>
           <div className="relative">
             <TextInput
               label="Current Password"

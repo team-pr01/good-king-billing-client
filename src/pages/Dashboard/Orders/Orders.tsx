@@ -2,11 +2,12 @@
 import { FaClipboardList, FaHourglassHalf, FaTruck } from "react-icons/fa";
 import { useState } from "react";
 import DashboardCard from "../../../components/Dashboard/DashboardCard/DashboardCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiEdit, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
 import Table from "../../../components/Reusable/Table/Table";
 
 const Orders = () => {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -50,7 +51,7 @@ const orderData = [
     {
       icon: <FiEye />,
       label: "View",
-      onClick: (row: any) => console.log("View", row),
+      onClick: (row: any) => navigate(`/admin/dashboard/order/${row.id}`),
     },
     {
       icon: <FiEdit />,
