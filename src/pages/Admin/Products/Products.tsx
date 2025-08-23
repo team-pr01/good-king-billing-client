@@ -83,7 +83,7 @@ const Products = () => {
       </div>
 
        {/* Search and Filters Container */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="flex justify-between items-center gap-4 flex-wrap">
           {/* Search Bar */}
           <div className="flex-grow max-w-md">

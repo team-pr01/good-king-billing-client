@@ -112,15 +112,15 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               Address Information
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-4">
               {/* Area */}
-              <div>
+              <div className="flex flex-col gap-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Area <span className="text-red-600"> *</span>
                 </label>
                 <select
                   {...register("area", { required: "Area is required" })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  className="bg-neutral-50 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 >
                   <option value="">Select Area</option>
                   {areas.map((area, index) => (

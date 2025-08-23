@@ -24,25 +24,25 @@ const orderData = [
     id: 1,
     orderId: "ORD-1001",
     shopName: "Tech Mart",
-    totalAmount: "$1200",
-    pendingAmount: "$200",
-    paidAmount: "$1000",
+    totalAmount: "₹1200",
+    pendingAmount: "₹200",
+    paidAmount: "₹1000",
   },
   {
     id: 2,
     orderId: "ORD-1002",
     shopName: "Gadget Hub",
-    totalAmount: "$800",
-    pendingAmount: "$0",
-    paidAmount: "$800",
+    totalAmount: "₹800",
+    pendingAmount: "₹0",
+    paidAmount: "₹800",
   },
   {
     id: 3,
     orderId: "ORD-1003",
     shopName: "ShopSmart",
-    totalAmount: "$1500",
-    pendingAmount: "$500",
-    paidAmount: "$1000",
+    totalAmount: "₹1500",
+    pendingAmount: "₹500",
+    paidAmount: "₹1000",
   },
 ];
 
@@ -105,7 +105,7 @@ const orderData = [
       </div>
 
       {/* Search and Filters Container */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="flex justify-between items-center gap-4 flex-wrap">
           {/* Search Bar */}
           <div className="flex-grow max-w-md">
@@ -129,7 +129,7 @@ const orderData = [
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 transition duration-300"
-                placeholder="Search clients..."
+                placeholder="Search orders..."
               />
             </div>
           </div>

@@ -34,7 +34,7 @@ const Clients = () => {
       name: "John Smith",
       status: "active",
       phoneNumber: "(555) 123-4567",
-      amountDue: "$0.00",
+      amountDue: "₹0.00",
       area: "North Area",
     },
     {
@@ -43,7 +43,7 @@ const Clients = () => {
       name: "Sarah Johnson",
       status: "inactive",
       phoneNumber: "(555) 987-6543",
-      amountDue: "$245.50",
+      amountDue: "₹245.50",
       area: "South Area",
     },
     {
@@ -52,7 +52,7 @@ const Clients = () => {
       name: "Michael Brown",
       status: "active",
       phoneNumber: "(555) 456-7890",
-      amountDue: "$0.00",
+      amountDue: "₹0.00",
       area: "East Area",
     },
     {
@@ -61,7 +61,7 @@ const Clients = () => {
       name: "Emily Davis",
       status: "inactive",
       phoneNumber: "(555) 234-5678",
-      amountDue: "$189.99",
+      amountDue: "₹189.99",
       area: "West Area",
     },
   ];
