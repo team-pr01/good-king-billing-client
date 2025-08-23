@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { FiMoreVertical, FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
 import { FiPlus, FiMapPin } from "react-icons/fi";
 import AddClientModal from "../../../components/Dashboard/ClientPage/AddClientModal/AddClientModal";
 import AddAreaModal from "../../../components/Dashboard/ClientPage/AddAreaModal/AddAreaModal";
+import Table from "../../../components/Reusable/Table/Table";
 
 const Clients = () => {
   // State for search and filter values
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [areaFilter, setAreaFilter] = useState("");
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [isAddClientModalOpen, setIsAddClientModalOpen] =
     useState<boolean>(false);
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
@@ -32,7 +33,7 @@ const Clients = () => {
       id: 1,
       shopName: "Green Grocers",
       name: "John Smith",
-      status: "paid",
+      status: "active",
       phoneNumber: "(555) 123-4567",
       amountDue: "$0.00",
       area: "North Area",
@@ -41,7 +42,7 @@ const Clients = () => {
       id: 2,
       shopName: "Tech Haven",
       name: "Sarah Johnson",
-      status: "pending",
+      status: "inactive",
       phoneNumber: "(555) 987-6543",
       amountDue: "$245.50",
       area: "South Area",
@@ -50,7 +51,7 @@ const Clients = () => {
       id: 3,
       shopName: "Fashion Boutique",
       name: "Michael Brown",
-      status: "paid",
+      status: "active",
       phoneNumber: "(555) 456-7890",
       amountDue: "$0.00",
       area: "East Area",
@@ -59,38 +60,40 @@ const Clients = () => {
       id: 4,
       shopName: "Home Essentials",
       name: "Emily Davis",
-      status: "pending",
+      status: "inactive",
       phoneNumber: "(555) 234-5678",
       amountDue: "$189.99",
       area: "West Area",
     },
   ];
 
-  // Toggle menu visibility
-  const toggleMenu = (id: string) => {
-    setOpenMenuId(openMenuId === id ? null : id);
-  };
+  const columns = [
+    { key: "shopName", label: "Shop Name" },
+    { key: "name", label: "Name" },
+    { key: "status", label: "Status" },
+    { key: "phoneNumber", label: "Phone Number" },
+    { key: "amountDue", label: "Amount Due" },
+    { key: "area", label: "Area" },
+  ];
 
-  // Close menu when clicking outside
-  const closeMenu = () => {
-    setOpenMenuId(null);
-  };
-
-  // Handle menu actions
-  const handleViewDetails = () => {
-    console.log("View details:");
-    closeMenu();
-  };
-
-  const handleEdit = () => {
-    console.log("Edit:");
-    closeMenu();
-  };
-
-  const handleDelete = () => {
-    console.log("Delete:");
-    closeMenu();
-  };
+  const actions = [
+    {
+      icon: <FiEye />,
+      label: "View",
+      onClick: (row: any) => console.log("View", row),
+    },
+    {
+      icon: <FiEdit />,
+      label: "Edit",
+      onClick: (row: any) => console.log("Edit", row),
+    },
+    {
+      icon: <FiTrash2 />,
+      label: "Delete",
+      onClick: (row: any) => console.log("Delete", row),
+      className: "text-red-600",
+    },
+  ];
 
   // Filter clients based on search and filter values
   const filteredClients = clientsData.filter((client) => {
@@ -135,7 +138,6 @@ const Clients = () => {
           </button>
         </div>
       </div>
-
       {/* Search and Filters Container */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
         <div className="flex justify-between items-center gap-4 flex-wrap">
@@ -175,9 +177,9 @@ const Clients = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
               >
-                <option value="">All Statuses</option>
-                <option value="paid">Paid</option>
-                <option value="pending">Pending</option>
+                <option value="">Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </select>
             </div>
 
@@ -240,152 +242,19 @@ const Clients = () => {
           </div>
         </div>
       </div>
-
       {/* Clients Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Shop Name
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Phone Number
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Amount Due
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Area
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredClients.length > 0 ? (
-                filteredClients.map((client) => (
-                  <tr key={client.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {client.shopName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {client.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          client.status === "paid"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {client.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {client.phoneNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {client.amountDue}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {client.area}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
-                      <button
-                        onClick={() => toggleMenu(String(client.id))}
-                        className="text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded hover:bg-gray-100 cursor-pointer"
-                      >
-                        <FiMoreVertical className="h-5 w-5" />
-                      </button>
-
-                      {/* Dropdown Menu */}
-                      {openMenuId === String(client.id) && (
-                        <div className="absolute right-0 z-10 mt-1 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200">
-                          <button
-                            onClick={() => handleViewDetails()}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left cursor-pointer"
-                          >
-                            <FiEye className="mr-3 h-4 w-4 text-gray-500" />
-                            View Details
-                          </button>
-                          <button
-                            onClick={() => handleEdit()}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left cursor-pointer"
-                          >
-                            <FiEdit className="mr-3 h-4 w-4 text-gray-500" />
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete()}
-                            className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left cursor-pointer"
-                          >
-                            <FiTrash2 className="mr-3 h-4 w-4 text-red-500" />
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td className="px-6 py-4 text-center text-sm text-gray-500">
-                    No clients found matching your criteria.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Overlay to close menu when clicking outside */}
-      {openMenuId && (
-        <div
-          className="fixed inset-0 z-0"
-          onClick={closeMenu}
-          style={{ zIndex: 5 }}
-        />
-      )}
-
-      {/* Add Client Modal */}
+      <Table
+        columns={columns}
+        data={clientsData}
+        actions={actions}
+        rowKey="id"
+      />
+      ;{/* Add Client Modal */}
       <AddClientModal
         isOpen={isAddClientModalOpen}
         onClose={() => setIsAddClientModalOpen(false)}
         areas={areas}
       />
-
       {/* Add Area Modal */}
       <AddAreaModal
         isOpen={isAddAreaModalOpen}

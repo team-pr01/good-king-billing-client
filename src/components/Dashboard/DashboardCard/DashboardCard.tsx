@@ -15,11 +15,11 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   bgColor = "bg-primary-10", // default circle bg
 }) => {
   return (
-    <div className="flex justify-between items-center p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="flex justify-between items-center p-6 bg-white rounded-lg shadow-sm border border-gray-200 font-Nunito">
       {/* Left: Text */}
       <div>
         <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-2xl font-bold text-gray-800 mt-2">{value}</p>
       </div>
 
       {/* Right: Icon Circle */}
