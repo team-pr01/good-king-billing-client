@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
+import { Link } from "react-router-dom";
 
 type FormValues = {
   newPassword: string;
@@ -42,7 +43,7 @@ const ResetPassword = () => {
         </div>
 
         <form
-          className="space-y-4 py-8 px-8"
+          className="space-y-4 py-5 lg:py-8 px-4 lg:px-8"
           onSubmit={handleSubmit(handleResetPassword)}
         >
           <div className="relative">
@@ -94,6 +95,12 @@ const ResetPassword = () => {
             {isLoading ? "Resetting..." : "Reset Password"}
           </button>
         </form>
+        <div className="bg-green-50 dark:bg-gray-700 py-4 px-8 border-t border-green-100 dark:border-green-700 text-center">
+          <Link
+          to={"/"} className="text-green-700 dark:text-green-200 text-sm font-semibold">
+            Back to Login
+          </Link>
+        </div>
       </div>
     </div>
   );

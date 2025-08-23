@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
+import { Link } from "react-router-dom";
 
 type FormValues = {
   email: string;
 };
 
 const ForgotPassword = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormValues>();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendEmail = (data: FormValues) => {
@@ -31,7 +37,10 @@ const ForgotPassword = () => {
           </p>
         </div>
 
-        <form className="space-y-4 py-8 px-8" onSubmit={handleSubmit(handleSendEmail)}>
+        <form
+          className="space-y-4 py-5 lg:py-8 px-4 lg:px-8"
+          onSubmit={handleSubmit(handleSendEmail)}
+        >
           <TextInput
             label="Email"
             type="email"
@@ -54,6 +63,14 @@ const ForgotPassword = () => {
             {isLoading ? "Sending..." : "Send Reset Link"}
           </button>
         </form>
+        <div className="bg-green-50 dark:bg-gray-700 py-4 px-8 border-t border-green-100 dark:border-green-700 text-center">
+          <Link
+            to={"/"}
+            className="text-green-700 dark:text-green-200 text-sm font-semibold"
+          >
+            Back to Login
+          </Link>
+        </div>
       </div>
     </div>
   );
