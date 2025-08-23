@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { FiMoreVertical, FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiMapPin } from "react-icons/fi";
+import AddClientModal from "../../../components/Dashboard/ClientPage/AddClientModal/AddClientModal";
 
 const Clients = () => {
   // State for search and filter values
@@ -7,6 +9,7 @@ const Clients = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [areaFilter, setAreaFilter] = useState("");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [isAddClientModalOpen, setIsAddClientModalOpen] = useState<boolean>(false);
 
   // Sample areas data
   const areas = [
@@ -103,9 +106,25 @@ const Clients = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Clients</h1>
-        <p className="text-gray-600">Manage your client list</p>
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Clients</h1>
+          <p className="text-gray-600">Manage your client list</p>
+        </div>
+
+        <div className="flex gap-3">
+          {/* Add New Area Button */}
+          <button className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer">
+            <FiMapPin className="w-5 h-5" />
+            Add New Area
+          </button>
+
+          {/* Add New Client Button */}
+          <button onClick={() => setIsAddClientModalOpen(true)} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
+            <FiPlus className="w-5 h-5" />
+            Add New Client
+          </button>
+        </div>
       </div>
 
       {/* Search and Filters Container */}
@@ -350,6 +369,14 @@ const Clients = () => {
           style={{ zIndex: 5 }}
         />
       )}
+
+
+      {/* Add Client Modal */}
+      <AddClientModal
+        isOpen={isAddClientModalOpen}
+        onClose={() => setIsAddClientModalOpen(false)}
+        areas={areas}
+      />
     </div>
   );
 };
