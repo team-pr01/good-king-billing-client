@@ -8,12 +8,14 @@ import {
 } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 import logo from "../../../assets/logo.png";
+import { HiOutlineUserGroup } from "react-icons/hi";
 
 const Sidebar = () => {
   const location = useLocation();
 
   const navLinks = [
     { name: "Dashboard", path: "/admin/dashboard", icon: <AiFillHome /> },
+    { name: "Users", path: "/admin/dashboard/users", icon: <HiOutlineUserGroup /> },
     {
       name: "Clients",
       path: "/admin/dashboard/clients",
@@ -38,7 +40,7 @@ const Sidebar = () => {
 
   return (
     <aside className="w-72 max-w-[280px] h-screen sticky top-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-shrink-0 py-6 px-4 flex flex-col justify-between gap-10">
-      <img src={logo} alt="" className="w-48" />
+      <img src={logo} alt="" className="w-48 mx-auto" />
       <div className="flex flex-col h-full">
         <nav className="flex-1">
           {navLinks.map((link) => {

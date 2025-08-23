@@ -14,6 +14,7 @@ import Orders from "../pages/Dashboard/Orders/Orders";
 import OrderDetails from "../pages/Dashboard/OrderDetails/OrderDetails";
 import ChangePassword from "../pages/Auth/ChangePassword/ChangePassword";
 import OrderConfirmed from "../pages/Dashboard/OrderConfirmed/OrderConfirmed";
+import Users from "../pages/Admin/Users/Users";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "",
         element: <AdminDashboardHome />,
+      },
+      {
+        path: "users",
+        element: <Users />,
       },
       {
         path: "clients",

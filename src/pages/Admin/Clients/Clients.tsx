@@ -7,7 +7,6 @@ import AddAreaModal from "../../../components/Dashboard/ClientPage/AddAreaModal/
 import Table from "../../../components/Reusable/Table/Table";
 
 const Clients = () => {
-  // State for search and filter values
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [areaFilter, setAreaFilter] = useState("");
