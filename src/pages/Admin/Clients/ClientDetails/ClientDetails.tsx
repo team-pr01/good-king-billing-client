@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   FaMoneyBillWave,
   FaCreditCard,
@@ -6,9 +7,10 @@ import {
   FaTruck,
 } from "react-icons/fa";
 import { useState } from "react";
-import { FiPlus } from "react-icons/fi";
+import { FiDownload, FiEye, FiPlus } from "react-icons/fi";
 import ClientInfo from "../../../../components/Dashboard/ClientDetailsPage/ClientInfo/ClientInfo";
 import DashboardCard from "../../../../components/Dashboard/DashboardCard/DashboardCard";
+import Table from "../../../../components/Reusable/Table/Table";
 
 const ClientDetails = () => {
   const clientData = {
@@ -23,8 +25,49 @@ const ClientDetails = () => {
   };
   const [isCreateOrderModalOpen, setIsCreateOrderModalOpen] =
     useState<boolean>(false);
+
+  const clientOrders = [
+    {
+      id: "1",
+      orderId: "ORD001",
+      totalPayment: "₹5,000",
+      duePayment: "₹1,000",
+      paymentStatus: "paid",
+      deliveryStatus: "delivered",
+    },
+    {
+      id: "2",
+      orderId: "ORD002",
+      totalPayment: "₹3,500",
+      duePayment: "₹500",
+      paymentStatus: "due",
+      deliveryStatus: "pending",
+    },
+  ];
+
+  const orderColumns = [
+    { key: "orderId", label: "Order ID" },
+    { key: "totalPayment", label: "Total Payment" },
+    { key: "duePayment", label: "Due Payment" },
+    { key: "paymentStatus", label: "Payment Status" },
+    { key: "deliveryStatus", label: "Delivery Status" },
+  ];
+
+  const orderActions = [
+    {
+      icon: <FiDownload />,
+      label: "Download Invoice",
+      onClick: (row: any) => console.log("Download invoice for:", row.orderId),
+    },
+    {
+      icon: <FiEye />,
+      label: "View Details",
+      onClick: (row: any) => console.log("View details for:", row.orderId),
+    },
+  ];
   return (
-    <div className="p-6 bg-gray-50 min-h-screen font-Nunito flex flex-col gap-6">
+    <div className=" min-h-screen font-Nunito flex flex-col gap-6">
+      {/* Data Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <DashboardCard
           title="Paid Amount"
@@ -57,7 +100,8 @@ const ClientDetails = () => {
           bgColor="bg-blue-500"
         />
       </div>
-      <div className="flex justify-between items-start">
+      {/* Header */}
+      <div className="flex justify-between items-start mt-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
             Client Information
@@ -77,8 +121,22 @@ const ClientDetails = () => {
         </button>
       </div>
 
-      {/* Clients Table */}
-      <ClientInfo client={clientData} />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col gap-8">
+        {/* Clients Table */}
+        <ClientInfo client={clientData} />
+
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            All Orders
+          </h2>
+          <Table
+            columns={orderColumns}
+            data={clientOrders}
+            actions={orderActions}
+            rowKey="id"
+          />
+        </div>
+      </div>
     </div>
   );
 };

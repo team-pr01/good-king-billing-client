@@ -15,7 +15,7 @@ type ClientInfoProps = {
 
 const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div >
       <h2 className="text-xl font-semibold text-gray-800 mb-6 pb-3 border-b border-gray-200">
         Personal Information
       </h2>
