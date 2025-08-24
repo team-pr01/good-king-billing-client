@@ -5,9 +5,16 @@ import AddProductModal from "../../../components/Dashboard/ProductsPage/AddProdu
 import Table from "../../../components/Reusable/Table/Table";
 import DashboardCard from "../../../components/Dashboard/DashboardCard/DashboardCard";
 import { FaBox, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { useGetAllProductsQuery } from "../../../redux/Features/Product/productApi";
+import {
+  useDeleteProductMutation,
+  useGetAllProductsQuery,
+  useGetSingleProductByIdQuery,
+} from "../../../redux/Features/Product/productApi";
+import { toast } from "sonner";
 
 const Products = () => {
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [modalType, setModalType ] = useState<string | null>("add");
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const {
@@ -15,6 +22,8 @@ const Products = () => {
     isLoading,
     isFetching,
   } = useGetAllProductsQuery({ keyword: searchValue, status: statusFilter });
+  const {data:singleProductData, isLoading:isSingleProductLoading, isFetching:isSingleProductFetching} = useGetSingleProductByIdQuery(selectedProductId);
+  const [deleteProduct] = useDeleteProductMutation();
   const [isAddProductModalOpen, setIsAddProductModalOpen] =
     useState<boolean>(false);
 
@@ -25,6 +34,21 @@ const Products = () => {
   const unavailableProducts = allProducts?.data?.filter(
     (product: any) => product.status === "unavailable"
   );
+
+  const handleDeleteProduct = async (productId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteProduct(productId).unwrap();
+      toast.success("Product deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+      toast.error("Failed to delete the product. Please try again.");
+    }
+  };
 
   const productColumns = [
     { key: "_id", label: "ID" },
@@ -38,12 +62,12 @@ const Products = () => {
     {
       icon: <FiEdit />,
       label: "Update",
-      onClick: (row: any) => console.log("Update product:", row),
+      onClick: (row: any) => {setSelectedProductId(row?._id); setModalType("update"); setIsAddProductModalOpen(true);},
     },
     {
       icon: <FiTrash2 />,
       label: "Delete",
-      onClick: (row: any) => console.log("Delete product:", row),
+      onClick: (row: any) => handleDeleteProduct(row?._id),
       className: "text-red-600",
     },
   ];
@@ -78,7 +102,11 @@ const Products = () => {
         </div>
 
         <button
-          onClick={() => setIsAddProductModalOpen(true)}
+          onClick={() => {
+            setSelectedProductId(null);
+            setModalType("add");
+            setIsAddProductModalOpen(true);
+          }}
           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
         >
           <FiPlus className="w-5 h-5" />
@@ -164,6 +192,10 @@ const Products = () => {
       <AddProductModal
         isOpen={isAddProductModalOpen}
         onClose={() => setIsAddProductModalOpen(false)}
+        defaultValues={singleProductData?.data}
+        isLoading={isSingleProductLoading || isSingleProductFetching}
+        modalType={modalType}
+        
       />
     </div>
   );

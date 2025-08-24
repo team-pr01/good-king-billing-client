@@ -1,9 +1,11 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import Modal from "../../../Reusable/Modal/Modal";
-import { useAddProductMutation } from "../../../../redux/Features/Product/productApi";
+import { useAddProductMutation, useUpdateProductMutation } from "../../../../redux/Features/Product/productApi";
 import Button from "../../../Reusable/Button/Button";
+import Loader from "../../../Reusable/Loader/Loader";
 
 type FormValues = {
   name: string;
@@ -16,30 +18,56 @@ type FormValues = {
 type AddProductModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  defaultValues?: any;
+  modalType: string | null;
+  isLoading ?: boolean
 };
 
 const AddProductModal: React.FC<AddProductModalProps> = ({
   isOpen,
   onClose,
+  defaultValues,
+  modalType,
+  isLoading
 }) => {
   const [addProduct, { isLoading: isAdding }] = useAddProductMutation();
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue
   } = useForm<FormValues>();
 
-  const onSubmit = async (data: FormValues) => {
+  useEffect(() => {
+    if (defaultValues) {
+      setValue("name", defaultValues.name);
+      setValue("availableStock", defaultValues.availableStock);
+      setValue("price", defaultValues.price);
+      setValue("taxValue", defaultValues.taxValue);
+      setValue("hsnCode", defaultValues.hsnCode);
+    }
+  })
+
+  const handleSubmitProduct = async (data: FormValues) => {
     try {
       const payload = {
         ...data,
       };
 
-      const response = await addProduct(payload).unwrap();
+      if(modalType === "add"){
+        const response = await addProduct(payload).unwrap();
       if (response?.success) {
         reset();
         onClose();
+      }
+      } else {
+        const response = await updateProduct({id:defaultValues?._id, data:payload}).unwrap();
+      if (response?.success) {
+        reset();
+        onClose();
+      }
       }
     } catch (error) {
       console.log(error);
@@ -55,7 +83,12 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
 
   return (
     <Modal title="Add New Product" isOpen={isOpen} onClose={handleClose}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="h-full">
+        {
+          isLoading ?
+          <Loader/>
+          :
+          <form onSubmit={handleSubmit(handleSubmitProduct)} className="space-y-4">
         <div className="grid grid-cols-1 gap-4">
           {/* Product Name */}
           <TextInput
@@ -135,9 +168,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
           >
             Cancel
           </button>
-          <Button label="Add Product" isLoading={isAdding} />
+          <Button label="Add Product" isLoading={isAdding || isUpdating} />
         </div>
       </form>
+        }
+      </div>
     </Modal>
   );
 };
