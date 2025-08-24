@@ -10,8 +10,8 @@ import type {
 import type { DefinitionType } from "@reduxjs/toolkit/query";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://good-king-billing-server.vercel.app/api/v1",
-  // baseUrl: "http://localhost:5000/api/v1",
+  // baseUrl: "https://good-king-billing-server.vercel.app/api/v1",
+  baseUrl: "http://localhost:5000/api/v1",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -56,6 +56,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
-  tagTypes: ["users", "clients"],
+  tagTypes: ["users", "clients", "area", "order", "product"],
   endpoints: () => ({}),
 });

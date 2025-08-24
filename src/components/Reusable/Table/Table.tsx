@@ -67,16 +67,16 @@ function Table<T extends Record<string, any>>({
     {isLoading ? (
       <tr>
         <td
-          colSpan={columns.length + (actions.length > 0 ? 1 : 0)}
+          colSpan={columns?.length + (actions?.length > 0 ? 1 : 0)}
           className="px-6 py-10 text-center"
         >
           <Loader />
         </td>
       </tr>
-    ) : data.length > 0 ? (
-      data.map((row) => (
+    ) : data?.length > 0 ? (
+      data?.map((row) => (
         <tr key={String(row[rowKey])} className="hover:bg-gray-50">
-          {columns.map((col) => (
+          {columns?.map((col) => (
             <td
               key={col.key}
               className={`px-6 py-4 whitespace-nowrap text-sm ${
@@ -87,7 +87,7 @@ function Table<T extends Record<string, any>>({
             </td>
           ))}
 
-          {actions.length > 0 && (
+          {actions?.length > 0 && (
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
               <button
                 onClick={() => toggleMenu(String(row[rowKey]))}

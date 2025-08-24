@@ -5,11 +5,14 @@ type ClientInfoProps = {
     area: string;
     phoneNumber: string;
     shopName: string;
-    clientName: string;
+    name: string;
     address: string;
+    state: string;
+    city: string;
+    pinCode: string;
     gstNumber: string;
     email: string;
-    registrationDate: string;
+    createdAt: string;
   };
 };
 
@@ -29,26 +32,26 @@ const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <span className="text-sm font-medium text-gray-500">Name</span>
-              <p className="text-gray-800 font-medium">{client.clientName}</p>
+              <p className="text-gray-800 font-medium">{client?.name}</p>
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">Email</span>
               <p className="text-gray-800 font-medium break-words">
-                {client.email}
+                {client?.email}
               </p>
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">
                 Phone Number
               </span>
-              <p className="text-gray-800 font-medium">{client.phoneNumber}</p>
+              <p className="text-gray-800 font-medium">{client?.phoneNumber}</p>
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">
                 Registered Date
               </span>
               <p className="text-gray-800 font-medium">
-                {client.registrationDate}
+                {client?.createdAt}
               </p>
             </div>
           </div>
@@ -64,25 +67,25 @@ const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
               <span className="text-sm font-medium text-gray-500">
                 Store Name
               </span>
-              <p className="text-gray-800 font-medium">{client.shopName}</p>
+              <p className="text-gray-800 font-medium">{client?.shopName}</p>
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">Area</span>
-              <p className="text-gray-800 font-medium">{client.area}</p>
+              <p className="text-gray-800 font-medium">{client?.area}</p>
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">
                 GST Number
               </span>
               <p className="text-gray-800 font-medium break-words">
-                {client.gstNumber}
+                {client?.gstNumber}
               </p>
             </div>
           </div>
           <div className="sm:col-span-2 mt-4">
             <span className="text-sm font-medium text-gray-500">Address</span>
             <p className="text-gray-800 font-medium break-words">
-              {client.address}
+              {client?.state}, {client?.city}, {client?.pinCode}
             </p>
           </div>
         </div>

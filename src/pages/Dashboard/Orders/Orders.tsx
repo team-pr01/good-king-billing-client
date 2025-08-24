@@ -5,53 +5,39 @@ import DashboardCard from "../../../components/Dashboard/DashboardCard/Dashboard
 import { Link, useNavigate } from "react-router-dom";
 import { FiEdit, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
 import Table from "../../../components/Reusable/Table/Table";
+import { useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
 
 const Orders = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  const { data, isLoading } = useGetAllOrdersQuery({
+    keyword: searchValue,
+    status: statusFilter,
+  });
+
+  const pendingOrders = data?.data?.filter(
+    (order: any) => order.status === "pending"
+  );
+  const suppliedOrders = data?.data?.filter(
+    (order: any) => order.status === "supplied"
+  );
+
   const columns = [
-  { key: "orderId", label: "Order ID" },
-  { key: "shopName", label: "Shop Name" },
-  { key: "totalAmount", label: "Total Amount" },
-  { key: "pendingAmount", label: "Pending Amount" },
-  { key: "paidAmount", label: "Paid Amount" },
-];
-
-const orderData = [
-  {
-    id: 1,
-    orderId: "ORD-1001",
-    shopName: "Tech Mart",
-    totalAmount: "₹1200",
-    pendingAmount: "₹200",
-    paidAmount: "₹1000",
-  },
-  {
-    id: 2,
-    orderId: "ORD-1002",
-    shopName: "Gadget Hub",
-    totalAmount: "₹800",
-    pendingAmount: "₹0",
-    paidAmount: "₹800",
-  },
-  {
-    id: 3,
-    orderId: "ORD-1003",
-    shopName: "ShopSmart",
-    totalAmount: "₹1500",
-    pendingAmount: "₹500",
-    paidAmount: "₹1000",
-  },
-];
-
+    { key: "_id", label: "Order ID" },
+    { key: "shopName", label: "Shop Name" },
+    { key: "totalAmount", label: "Total Amount" },
+    { key: "pendingAmount", label: "Pending Amount" },
+    { key: "paidAmount", label: "Paid Amount" },
+    { key: "status", label: "Status" },
+  ];
 
   const actions = [
     {
       icon: <FiEye />,
       label: "View",
-      onClick: (row: any) => navigate(`/admin/dashboard/order/${row.id}`),
+      onClick: (row: any) => navigate(`/admin/dashboard/order/${row._id}`),
     },
     {
       icon: <FiEdit />,
@@ -71,19 +57,19 @@ const orderData = [
         {/* Orders */}
         <DashboardCard
           title="Total Orders"
-          value={250}
+          value={data?.data?.length || 0}
           Icon={FaClipboardList}
           bgColor="bg-blue-500"
         />
         <DashboardCard
           title="Pending Orders"
-          value={40}
+          value={pendingOrders?.length || 0}
           Icon={FaHourglassHalf}
           bgColor="bg-orange-500"
         />
         <DashboardCard
           title="Supplied Orders"
-          value={210}
+          value={suppliedOrders?.length || 0}
           Icon={FaTruck}
           bgColor="bg-green-500"
         />
@@ -143,9 +129,10 @@ const orderData = [
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
               >
-                <option value="">Status</option>
+                <option value="">Select Status</option>
                 <option value="pending">Pending</option>
                 <option value="supplied">Supplied</option>
+                <option value="cancelled">Cancelled</option>
               </select>
             </div>
 
@@ -171,7 +158,12 @@ const orderData = [
         </div>
       </div>
 
-      <Table columns={columns} data={orderData} actions={actions} rowKey="id" />
+      <Table
+        columns={columns}
+        data={data?.data}
+        actions={actions}
+        rowKey="_id"
+      />
     </div>
   );
 };

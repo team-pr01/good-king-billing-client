@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import Modal from "../../../Reusable/Modal/Modal";
+import { useAddAreaMutation } from "../../../../redux/Features/Area/areaApi";
+import Button from "../../../Reusable/Button/Button";
 
 type FormValues = {
   state: string;
@@ -40,6 +42,7 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [addArea, { isLoading: isAdding }] = useAddAreaMutation();
   const {
     register,
     handleSubmit,
@@ -50,13 +53,21 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
 
   const [selectedState, setSelectedState] = useState("");
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Area data:", data);
-    // Handle form submission here
-    reset();
-    onClose();
-  };
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const payload = {
+        ...data,
+      };
 
+      const response = await addArea(payload).unwrap();
+      if (response?.success) {
+        reset();
+        onClose();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleClose = () => {
     reset();
     setSelectedState("");
@@ -144,12 +155,7 @@ const AddAreaModal: React.FC<AddAreaModalProps> = ({
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer"
-          >
-            Add Area
-          </button>
+          <Button label="Add Area" isLoading={isAdding} />
         </div>
       </form>
     </Modal>

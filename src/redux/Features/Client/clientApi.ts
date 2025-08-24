@@ -34,7 +34,7 @@ const clientApi = baseApi.injectEndpoints({
     getSingleClientById: builder.query({
       query: (id) => {
         return {
-          url: `/user/${id}`,
+          url: `/client/${id}`,
           method: "GET",
           credentials: "include",
         };
