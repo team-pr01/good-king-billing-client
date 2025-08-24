@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
+import { useChangePasswordMutation } from "../../../redux/Features/Auth/authApi";
+import Button from "../../../components/Reusable/Button/Button";
+import { toast } from "sonner";
 
 type FormValues = {
   currentPassword: string;
@@ -10,6 +14,8 @@ type FormValues = {
 };
 
 const ChangePassword = () => {
+  const [changePassword, { isLoading: isChangingPassword }] =
+    useChangePasswordMutation();
   const {
     register,
     handleSubmit,
@@ -17,18 +23,31 @@ const ChangePassword = () => {
     watch,
     reset,
   } = useForm<FormValues>();
+
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleResetPassword = (data: FormValues) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      console.log("New password:", data.newPassword);
+  const handleResetPassword = async (data: FormValues) => {
+    if (data.newPassword !== data.confirmPassword) {
+      toast.error("New password and confirm password do not match");
+      return;
+    }
+
+    try {
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      }).unwrap();
+
+      toast.success("Password changed successfully!");
       reset();
-      setIsLoading(false);
-    }, 1500);
+    } catch (error: any) {
+      console.error("Change password error:", error);
+      const message =
+        error?.data?.message || "Failed to change password. Please try again.";
+      toast.error(message);
+    }
   };
 
   return (
@@ -38,7 +57,11 @@ const ChangePassword = () => {
           className="space-y-4 py-5 lg:py-8 px-4 lg:px-8"
           onSubmit={handleSubmit(handleResetPassword)}
         >
-        <h1 className="text-2xl font-bold text-gray-800 text-center mb-5">Change Password</h1>
+          <h1 className="text-2xl font-bold text-gray-800 text-center mb-5">
+            Change Password
+          </h1>
+
+          {/* Current Password */}
           <div className="relative">
             <TextInput
               label="Current Password"
@@ -52,12 +75,18 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
             >
-              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              {showCurrentPassword ? (
+                <AiOutlineEyeInvisible />
+              ) : (
+                <AiOutlineEye />
+              )}
             </button>
           </div>
+
+          {/* New Password */}
           <div className="relative">
             <TextInput
               label="New Password"
@@ -71,13 +100,14 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </button>
           </div>
 
+          {/* Confirm Password */}
           <div className="relative">
             <TextInput
               label="Confirm Password"
@@ -92,20 +122,15 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
               onClick={() => setShowConfirm(!showConfirm)}
             >
               {showConfirm ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </button>
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {isLoading ? "Resetting..." : "Reset Password"}
-          </button>
+          {/* Submit Button */}
+          <Button label="Change Password" isLoading={isChangingPassword} />
         </form>
       </div>
     </div>
