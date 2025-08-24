@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useLoginMutation } from "../../../redux/Features/Auth/authApi";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+import { setUser } from "../../../redux/Features/Auth/authSlice";
 
 type FormValues = {
   email: string;
@@ -10,6 +15,9 @@ type FormValues = {
 };
 
 const Login = () => {
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -17,15 +25,31 @@ const Login = () => {
     reset,
   } = useForm<FormValues>();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (data: FormValues) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      console.log("Login data:", data);
+  const handleLogin: SubmitHandler<FormValues> = async (data) => {
+    const loginData = {
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const res = await login(loginData).unwrap();
       reset();
-      setIsLoading(false);
-    }, 1500);
+      const user = res?.data?.user;
+      const token = res?.data?.accessToken;
+      toast.success("Logged in successfully.");
+
+      // Setting the user in Redux state
+      dispatch(setUser({ user, token }));
+      navigate(
+        res?.data?.user?.role === "admin"
+          ? "/admin/dashboard"
+          : res.data.user.role === "salesperson"
+          ? "/salesperson/dashboard"
+          : "/supplier/dashboard"
+      );
+    } catch (err) {
+      toast.error("Invalid email or password!");
+    }
   };
 
   return (

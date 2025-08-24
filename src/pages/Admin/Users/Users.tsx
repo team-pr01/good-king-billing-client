@@ -5,10 +5,13 @@ import Table from "../../../components/Reusable/Table/Table";
 import { FiUserPlus, FiUserCheck } from "react-icons/fi";
 import { FiTrash2 } from "react-icons/fi";
 import AddUserModal from "../../../components/Dashboard/UsersPage/AddUserModal/AddUserModal";
+import { useGetAllUsersQuery } from "../../../redux/Features/Auth/authApi";
 
 const Users = () => {
   const [roleFilter, setRoleFilter] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const {data} = useGetAllUsersQuery({keyword : searchValue, role : roleFilter});
+  console.log(data);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState<boolean>(false);
 
   // Sample user data

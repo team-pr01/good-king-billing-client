@@ -1,15 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiEdit } from "react-icons/fi";
 import { FiPlus, FiMapPin } from "react-icons/fi";
 import AddClientModal from "../../../components/Dashboard/ClientPage/AddClientModal/AddClientModal";
 import AddAreaModal from "../../../components/Dashboard/ClientPage/AddAreaModal/AddAreaModal";
 import Table from "../../../components/Reusable/Table/Table";
+import { useGetAllClientsQuery } from "../../../redux/Features/Client/clientApi";
+import { useNavigate } from "react-router-dom";
 
 const Clients = () => {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [areaFilter, setAreaFilter] = useState("");
+  const { data, isLoading, isFetching } = useGetAllClientsQuery({
+    keyword: searchValue,
+    area: areaFilter,
+  });
+  console.log(data);
   const [isAddClientModalOpen, setIsAddClientModalOpen] =
     useState<boolean>(false);
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
@@ -25,53 +33,14 @@ const Clients = () => {
     "Uptown",
     "Suburbs",
   ];
-
-  // Sample client data
-  const clientsData = [
-    {
-      id: 1,
-      shopName: "Green Grocers",
-      name: "John Smith",
-      status: "active",
-      phoneNumber: "(555) 123-4567",
-      amountDue: "₹0.00",
-      area: "North Area",
-    },
-    {
-      id: 2,
-      shopName: "Tech Haven",
-      name: "Sarah Johnson",
-      status: "inactive",
-      phoneNumber: "(555) 987-6543",
-      amountDue: "₹245.50",
-      area: "South Area",
-    },
-    {
-      id: 3,
-      shopName: "Fashion Boutique",
-      name: "Michael Brown",
-      status: "active",
-      phoneNumber: "(555) 456-7890",
-      amountDue: "₹0.00",
-      area: "East Area",
-    },
-    {
-      id: 4,
-      shopName: "Home Essentials",
-      name: "Emily Davis",
-      status: "inactive",
-      phoneNumber: "(555) 234-5678",
-      amountDue: "₹189.99",
-      area: "West Area",
-    },
-  ];
-
   const columns = [
+    { key: "_id", label: "ID" },
     { key: "shopName", label: "Shop Name" },
     { key: "name", label: "Name" },
-    { key: "status", label: "Status" },
     { key: "phoneNumber", label: "Phone Number" },
-    { key: "amountDue", label: "Amount Due" },
+    { key: "email", label: "Email" },
+    { key: "state", label: "State" },
+    { key: "city", label: "City" },
     { key: "area", label: "Area" },
   ];
 
@@ -79,35 +48,20 @@ const Clients = () => {
     {
       icon: <FiEye />,
       label: "View",
-      onClick: (row: any) => console.log("View", row),
+      onClick: (row: any) => navigate(`/admin/dashboard/client/${row._id}`),
     },
     {
       icon: <FiEdit />,
       label: "Edit",
       onClick: (row: any) => console.log("Edit", row),
     },
-    {
-      icon: <FiTrash2 />,
-      label: "Delete",
-      onClick: (row: any) => console.log("Delete", row),
-      className: "text-red-600",
-    },
+    // {
+    //   icon: <FiTrash2 />,
+    //   label: "Delete",
+    //   onClick: (row: any) => console.log("Delete", row),
+    //   className: "text-red-600",
+    // },
   ];
-
-  // Filter clients based on search and filter values
-  const filteredClients = clientsData.filter((client) => {
-    const matchesSearch =
-      client.shopName.toLowerCase().includes(searchValue.toLowerCase()) ||
-      client.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      client.phoneNumber.includes(searchValue);
-
-    const matchesStatus = statusFilter === "" || client.status === statusFilter;
-    const matchesArea =
-      areaFilter === "" ||
-      client.area.toLowerCase().replace(" ", "-") === areaFilter;
-
-    return matchesSearch && matchesStatus && matchesArea;
-  });
 
   return (
     <div className="min-h-screen">
@@ -170,7 +124,7 @@ const Clients = () => {
           {/* Filters Container */}
           <div className="flex gap-3 flex-wrap items-center">
             {/* Status Filter Dropdown */}
-            <div className="min-w-[150px]">
+            {/* <div className="min-w-[150px]">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -180,7 +134,7 @@ const Clients = () => {
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Areas Filter Dropdown */}
             <div className="min-w-[150px]">
@@ -215,13 +169,7 @@ const Clients = () => {
             </button>
 
             {/* Export Client List Button */}
-            <button
-              onClick={() => {
-                // Handle export functionality here
-                console.log("Exporting client list:", filteredClients);
-              }}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
-            >
+            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -244,9 +192,10 @@ const Clients = () => {
       {/* Clients Table */}
       <Table
         columns={columns}
-        data={clientsData}
+        data={data?.data}
         actions={actions}
         rowKey="id"
+        isLoading={isLoading || isFetching}
       />
       {/* Add Client Modal */}
       <AddClientModal

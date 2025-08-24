@@ -2,9 +2,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import Modal from "../../../Reusable/Modal/Modal";
+import { useAddClientMutation } from "../../../../redux/Features/Client/clientApi";
 
 type FormValues = {
-  clientName: string;
+  name: string;
   email: string;
   phoneNumber: string;
   shopName: string;
@@ -15,7 +16,7 @@ type FormValues = {
   addressLine3: string;
   city: string;
   district: string;
-  pincode: string;
+  pinCode: string;
   state: string;
 };
 
@@ -30,6 +31,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
   onClose,
   areas,
 }) => {
+  const [addClient, { isLoading: isAdding }] = useAddClientMutation();
   const {
     register,
     handleSubmit,
@@ -37,11 +39,20 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
     reset,
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Client data:", data);
-    // Handle form submission here
-    reset();
-    onClose();
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const payload = {
+        ...data,
+      };
+
+      const response = await addClient(payload).unwrap();
+      if (response?.success) {
+        reset();
+        onClose();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
@@ -62,10 +73,10 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
             <TextInput
               label="Client Name"
               placeholder="Enter client name"
-              {...register("clientName", {
+              {...register("name", {
                 required: "Client name is required",
               })}
-              error={errors.clientName}
+              error={errors.name}
             />
 
             <TextInput
@@ -184,14 +195,14 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               <TextInput
                 label="Pincode"
                 placeholder="Enter pincode"
-                {...register("pincode", {
+                {...register("pinCode", {
                   required: "Pincode is required",
                   pattern: {
                     value: /^[0-9]{6}$/,
                     message: "Pincode must be 6 digits",
                   },
                 })}
-                error={errors.pincode}
+                error={errors.pinCode}
               />
 
               {/* State */}
@@ -214,9 +225,36 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              disabled={isAdding}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer transition-colors flex items-center gap-2"
             >
-              Add Client
+              {isAdding ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Loading...
+                </>
+              ) : (
+                "Add Client"
+              )}
             </button>
           </div>
         </form>
