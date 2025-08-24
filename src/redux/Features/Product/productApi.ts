@@ -3,9 +3,19 @@ import { baseApi } from "../../API/baseApi";
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query({
-      query: () => {
+      query: ({ keyword, status }: { keyword?: string; status?: string }) => {
+        const params = new URLSearchParams();
+
+        if (keyword) {
+          params.append("keyword", keyword);
+        }
+
+        if (status && status !== "") {
+          params.append("status", status);
+        }
+
         return {
-          url: `/product`,
+          url: `/product?${params.toString()}`,
           method: "GET",
           credentials: "include",
         };

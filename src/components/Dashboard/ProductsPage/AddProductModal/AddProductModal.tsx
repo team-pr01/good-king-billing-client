@@ -2,12 +2,15 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import Modal from "../../../Reusable/Modal/Modal";
+import { useAddProductMutation } from "../../../../redux/Features/Product/productApi";
+import Button from "../../../Reusable/Button/Button";
 
 type FormValues = {
-  productName: string;
+  name: string;
   availableStock: number;
   price: number;
-  description?: string;
+  taxValue: number;
+  hsnCode: string;
 };
 
 type AddProductModalProps = {
@@ -19,6 +22,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [addProduct, { isLoading: isAdding }] = useAddProductMutation();
   const {
     register,
     handleSubmit,
@@ -26,11 +30,20 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     reset,
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Product data:", data);
-    // Handle form submission here
-    reset();
-    onClose();
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const payload = {
+        ...data,
+      };
+
+      const response = await addProduct(payload).unwrap();
+      if (response?.success) {
+        reset();
+        onClose();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
@@ -48,14 +61,14 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
           <TextInput
             label="Product Name"
             placeholder="Enter product name"
-            {...register("productName", {
+            {...register("name", {
               required: "Product name is required",
               minLength: {
                 value: 2,
                 message: "Product name must be at least 2 characters",
               },
             })}
-            error={errors.productName}
+            error={errors.name}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -73,6 +86,27 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 valueAsNumber: true,
               })}
               error={errors.availableStock}
+            />
+            {/* HSn Code */}
+            <TextInput
+              label="HSN Code"
+              placeholder="Enter HSN Code"
+              {...register("hsnCode", {
+                required: "HSN Code is required",
+              })}
+              error={errors.hsnCode}
+            />
+
+            {/* Price */}
+            <TextInput
+              label="Tax Value(₹)"
+              type="number"
+              placeholder="Enter tax value"
+              {...register("taxValue", {
+                required: "Tax value is required",
+                valueAsNumber: true,
+              })}
+              error={errors.taxValue}
             />
 
             {/* Price */}
@@ -101,12 +135,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer transition-colors"
-          >
-            Add Product
-          </button>
+          <Button label="Add Product" isLoading={isAdding} />
         </div>
       </form>
     </Modal>
