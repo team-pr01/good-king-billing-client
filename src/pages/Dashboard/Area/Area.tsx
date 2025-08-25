@@ -26,8 +26,7 @@ const Area = () => {
     isFetching: isSingleAreaFetching,
   } = useGetSingleAreaByIdQuery(selectedAreaId);
 
-  
-  const [deleteArea, {isLoading:isDeleting}] = useDeleteAreaMutation();
+  const [deleteArea, { isLoading: isDeleting }] = useDeleteAreaMutation();
 
   const columns = [
     { key: "_id", label: "ID" },
@@ -38,22 +37,22 @@ const Area = () => {
   ];
 
   const handleDeleteArea = async (id: string) => {
-      const confirmDelete = window.confirm(
-        "Are you sure you want to delete this area?"
-      );
-      if(isDeleting){
-        toast.loading("Deleting Area...");
-      }
-      if (!confirmDelete) return;
-  
-      try {
-        await deleteArea(id).unwrap();
-        toast.success("Area deleted successfully!");
-      } catch (error) {
-        console.error("Failed to delete Area:", error);
-        toast.error("Failed to delete the Area. Please try again.");
-      }
-    };
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this area?"
+    );
+    if (isDeleting) {
+      toast.loading("Deleting Area...");
+    }
+    if (!confirmDelete) return;
+
+    try {
+      await deleteArea(id).unwrap();
+      toast.success("Area deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete Area:", error);
+      toast.error("Failed to delete the Area. Please try again.");
+    }
+  };
 
   const actions = [
     {

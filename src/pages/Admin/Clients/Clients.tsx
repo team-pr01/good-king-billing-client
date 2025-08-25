@@ -5,10 +5,14 @@ import { FiPlus, FiMapPin } from "react-icons/fi";
 import AddClientModal from "../../../components/Dashboard/ClientPage/AddClientModal/AddClientModal";
 import AddAreaModal from "../../../components/Dashboard/ClientPage/AddAreaModal/AddAreaModal";
 import Table from "../../../components/Reusable/Table/Table";
-import { useGetAllClientsQuery } from "../../../redux/Features/Client/clientApi";
-import { useNavigate } from "react-router-dom";
+import {
+  useGetAllClientsQuery,
+  useGetSingleClientByIdQuery,
+} from "../../../redux/Features/Client/clientApi";
+import { Link, useNavigate } from "react-router-dom";
 
 const Clients = () => {
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -17,9 +21,14 @@ const Clients = () => {
     keyword: searchValue,
     area: areaFilter,
   });
-  const [modalType, setModalType] = useState<string | null>("add");
+  const {
+    data: singleClientData,
+    isLoading: isSingleClientLoading,
+    isFetching: isSingleClientFetching,
+  } = useGetSingleClientByIdQuery(selectedClientId);
   const [isAddClientModalOpen, setIsAddClientModalOpen] =
     useState<boolean>(false);
+    const [modalType, setModalType] = useState<string | null>("add");
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
 
   // Sample areas data
@@ -53,7 +62,11 @@ const Clients = () => {
     {
       icon: <FiEdit />,
       label: "Edit",
-      onClick: () => {setModalType("edit"); setIsAddClientModalOpen(true);},
+      onClick: (row: any) => {
+        setSelectedClientId(row?._id);
+        setModalType("edit");
+        setIsAddClientModalOpen(true);
+      },
     },
     // {
     //   icon: <FiTrash2 />,
@@ -73,13 +86,13 @@ const Clients = () => {
 
         <div className="flex gap-3">
           {/* Add New Area Button */}
-          <button
-            onClick={() => setIsAddAreaModalOpen(true)}
+          <Link
+            to="/admin/dashboard/area"
             className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
           >
             <FiMapPin className="w-5 h-5" />
             View Areas
-          </button>
+          </Link>
           <button
             onClick={() => setIsAddAreaModalOpen(true)}
             className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
@@ -208,13 +221,15 @@ const Clients = () => {
       <AddClientModal
         isOpen={isAddClientModalOpen}
         onClose={() => setIsAddClientModalOpen(false)}
-        areas={areas}
+        defaultValues={singleClientData?.data}
+        modalType={modalType}
+        isLoading={isSingleClientFetching || isSingleClientLoading}
       />
       {/* Add Area Modal */}
       <AddAreaModal
         isOpen={isAddAreaModalOpen}
         onClose={() => setIsAddAreaModalOpen(false)}
-        modalType={modalType}
+        
       />
     </div>
   );

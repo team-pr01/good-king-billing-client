@@ -51,6 +51,15 @@ const clientApi = baseApi.injectEndpoints({
       invalidatesTags: ["clients"],
     }),
 
+    updateClient: builder.mutation({
+      query: ({id, data}) => ({
+        url: `/client/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["clients"],
+    }),
+
     
   }),
 });
@@ -59,5 +68,6 @@ export const {
   useGetAllClientsQuery,
   useGetSingleClientByIdQuery,
   useAddClientMutation,
+  useUpdateClientMutation
 
 } = clientApi;

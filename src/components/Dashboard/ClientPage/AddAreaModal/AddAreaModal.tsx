@@ -22,7 +22,7 @@ type AddAreaModalProps = {
   onClose: () => void;
   defaultValues?: any;
   isLoading?: boolean;
-  modalType: string | null;
+  modalType?: string | null;
 };
 
 // Sample data for states and districts
