@@ -5,13 +5,18 @@ import Table from "../../../components/Reusable/Table/Table";
 import { FiUserPlus, FiUserCheck } from "react-icons/fi";
 import { FiTrash2 } from "react-icons/fi";
 import AddUserModal from "../../../components/Dashboard/UsersPage/AddUserModal/AddUserModal";
-import { useGetAllUsersQuery } from "../../../redux/Features/Auth/authApi";
+import { toast } from "sonner";
+import { useDeleteUserMutation, useGetAllUsersQuery } from "../../../redux/Features/User/userApi";
 
 const Users = () => {
   const [roleFilter, setRoleFilter] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  const {data} = useGetAllUsersQuery({keyword : searchValue, role : roleFilter});
+  const { data, isLoading, isFetching } = useGetAllUsersQuery({
+    keyword: searchValue,
+    role: roleFilter,
+  });
   console.log(data);
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState<boolean>(false);
 
   // Sample user data
@@ -48,22 +53,41 @@ const Users = () => {
 
   // Table columns
   const userColumns = [
-    { key: "id", label: "ID" },
+    { key: "_id", label: "ID" },
     { key: "name", label: "Name" },
     { key: "email", label: "Email" },
     { key: "role", label: "Role" },
     { key: "phoneNumber", label: "Phone Number" },
   ];
 
+  const handleDeleteUser = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if(isDeleting){
+      toast.loading("Deleting user...");
+    }
+    if (!confirmDelete) return;
+
+    try {
+      await deleteUser(id).unwrap();
+      toast.success("User deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete User:", error);
+      toast.error("Failed to delete the User. Please try again.");
+    }
+  };
+
   // Actions (only Delete for users)
   const userActions = [
     {
       icon: <FiTrash2 />,
       label: "Delete",
-      onClick: (row: any) => console.log("Delete User", row),
+      onClick: (row: any) => handleDeleteUser(row._id),
       className: "text-red-600",
     },
   ];
+
   return (
     <div className="min-h-screen">
       <div className="flex justify-between items-start mb-6">
@@ -76,13 +100,19 @@ const Users = () => {
 
         <div className="flex gap-3">
           {/* Add New Supplier Button */}
-          <button onClick={() => setIsAddUserModalOpen(true)} className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer">
+          <button
+            onClick={() => setIsAddUserModalOpen(true)}
+            className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
+          >
             <FiUserPlus className="w-5 h-5" />
             Add New Supplier
           </button>
 
           {/* Add New Salesperson Button */}
-          <button onClick={() => setIsAddUserModalOpen(true)} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
+          <button
+            onClick={() => setIsAddUserModalOpen(true)}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+          >
             <FiUserCheck className="w-5 h-5" />
             Add New Salesperson
           </button>
@@ -129,7 +159,7 @@ const Users = () => {
               >
                 <option value="">Select Role</option>
                 <option value="admin">Admin</option>
-                <option value="salesperson">Salesperson</option>
+                <option value="salesman">Salesman</option>
                 <option value="supplier">Supplier</option>
                 <option value="client">Client</option>
               </select>
@@ -164,9 +194,10 @@ const Users = () => {
       {/* Clients Table */}
       <Table
         columns={userColumns}
-        data={usersData}
+        data={data?.data}
         actions={userActions}
-        rowKey="id"
+        rowKey="_id"
+        isLoading={isLoading || isFetching}
       />
 
       {/* Add Area Modal */}

@@ -53,7 +53,7 @@ const ClientDetails = () => {
     })) || [];
 
   const orderColumns = [
-    { key: "orderId", label: "Order ID" },
+    { key: "_id", label: "Order ID" },
     { key: "totalPayment", label: "Total Payment" },
     { key: "duePayment", label: "Due Payment" },
     { key: "paymentStatus", label: "Payment Status" },

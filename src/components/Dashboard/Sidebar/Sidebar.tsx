@@ -9,6 +9,7 @@ import {
 import { FiLogOut } from "react-icons/fi";
 import logo from "../../../assets/logo.png";
 import { HiOutlineUserGroup } from "react-icons/hi";
+import { BiLocationPlus } from "react-icons/bi";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const Sidebar = () => {
   const navLinks = [
     { name: "Dashboard", path: "/admin/dashboard", icon: <AiFillHome /> },
     { name: "Users", path: "/admin/dashboard/users", icon: <HiOutlineUserGroup /> },
+    { name: "Area", path: "/admin/dashboard/area", icon: <BiLocationPlus /> },
     {
       name: "Clients",
       path: "/admin/dashboard/clients",

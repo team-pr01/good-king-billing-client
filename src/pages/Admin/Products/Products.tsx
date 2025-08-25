@@ -13,8 +13,10 @@ import {
 import { toast } from "sonner";
 
 const Products = () => {
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [modalType, setModalType ] = useState<string | null>("add");
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
+  const [modalType, setModalType] = useState<string | null>("add");
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const {
@@ -22,7 +24,11 @@ const Products = () => {
     isLoading,
     isFetching,
   } = useGetAllProductsQuery({ keyword: searchValue, status: statusFilter });
-  const {data:singleProductData, isLoading:isSingleProductLoading, isFetching:isSingleProductFetching} = useGetSingleProductByIdQuery(selectedProductId);
+  const {
+    data: singleProductData,
+    isLoading: isSingleProductLoading,
+    isFetching: isSingleProductFetching,
+  } = useGetSingleProductByIdQuery(selectedProductId);
   const [deleteProduct] = useDeleteProductMutation();
   const [isAddProductModalOpen, setIsAddProductModalOpen] =
     useState<boolean>(false);
@@ -55,6 +61,8 @@ const Products = () => {
     { key: "name", label: "Name" },
     { key: "price", label: "Price" },
     { key: "availableStock", label: "Available Stock" },
+    { key: "hsnCode", label: "HSN Code" },
+    { key: "taxValue", label: "Tax value" },
     { key: "status", label: "Status" },
   ];
 
@@ -62,7 +70,11 @@ const Products = () => {
     {
       icon: <FiEdit />,
       label: "Update",
-      onClick: (row: any) => {setSelectedProductId(row?._id); setModalType("update"); setIsAddProductModalOpen(true);},
+      onClick: (row: any) => {
+        setSelectedProductId(row?._id);
+        setModalType("update");
+        setIsAddProductModalOpen(true);
+      },
     },
     {
       icon: <FiTrash2 />,
@@ -195,7 +207,6 @@ const Products = () => {
         defaultValues={singleProductData?.data}
         isLoading={isSingleProductLoading || isSingleProductFetching}
         modalType={modalType}
-        
       />
     </div>
   );

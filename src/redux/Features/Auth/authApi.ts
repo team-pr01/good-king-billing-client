@@ -2,16 +2,6 @@ import { baseApi } from "../../API/baseApi";
 
 const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllUsers: builder.query({
-      query: () => {
-        return {
-          url: `/user`,
-          method: "GET",
-          credentials: "include",
-        };
-      },
-      providesTags: ["users"],
-    }),
 
     getSingleUserById: builder.query({
       query: (id) => {
@@ -71,25 +61,14 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["users"],
     }),
-
-    deleteUser: builder.mutation({
-      query: (id) => ({
-        url: `/user/remove-user/${id}`,
-        method: "DELETE",
-        credentials: "include",
-      }),
-      invalidatesTags: ["users"],
-    }),
   }),
 });
 
 export const {
-  useGetAllUsersQuery,
   useGetSingleUserByIdQuery,
   useLoginMutation,
   useSignupMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useChangePasswordMutation,
-  useDeleteUserMutation,
 } = authApi;

@@ -17,7 +17,7 @@ const Clients = () => {
     keyword: searchValue,
     area: areaFilter,
   });
-  console.log(data);
+  const [modalType, setModalType] = useState<string | null>("add");
   const [isAddClientModalOpen, setIsAddClientModalOpen] =
     useState<boolean>(false);
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const Clients = () => {
     {
       icon: <FiEdit />,
       label: "Edit",
-      onClick: (row: any) => console.log("Edit", row),
+      onClick: () => {setModalType("edit"); setIsAddClientModalOpen(true);},
     },
     // {
     //   icon: <FiTrash2 />,
@@ -201,7 +201,7 @@ const Clients = () => {
         columns={columns}
         data={data?.data}
         actions={actions}
-        rowKey="id"
+        rowKey="_id"
         isLoading={isLoading || isFetching}
       />
       {/* Add Client Modal */}
@@ -214,6 +214,7 @@ const Clients = () => {
       <AddAreaModal
         isOpen={isAddAreaModalOpen}
         onClose={() => setIsAddAreaModalOpen(false)}
+        modalType={modalType}
       />
     </div>
   );
