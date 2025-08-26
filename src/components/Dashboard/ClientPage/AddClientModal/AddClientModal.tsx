@@ -10,6 +10,7 @@ import {
 import Button from "../../../Reusable/Button/Button";
 import Loader from "../../../Reusable/Loader/Loader";
 import SelectDropdown from "../../../Reusable/SelectDropdown/SelectDropdown";
+import { useGetAllAreaQuery } from "../../../../redux/Features/Area/areaApi";
 
 type FormValues = {
   name: string;
@@ -42,16 +43,13 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
   isLoading,
   modalType,
 }) => {
-    const areas = [
-    "North Area",
-    "South Area",
-    "East Area",
-    "West Area",
-    "Central Area",
-    "Downtown",
-    "Uptown",
-    "Suburbs",
-  ];
+   const {
+      data: allArea,
+      isLoading: isAllAreaLoading,
+      isFetching,
+    } = useGetAllAreaQuery({});
+
+    const areas = allArea?.data?.map((area: any) => area.area);
   const [addClient, { isLoading: isAdding }] = useAddClientMutation();
   const [updateClient, { isLoading: isUpdating }] = useUpdateClientMutation();
   const {
@@ -117,7 +115,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
   return (
     <div>
       <Modal title="Add New Client" isOpen={isOpen} onClose={handleClose}>
-        {isLoading ? (
+        {isLoading || isAllAreaLoading || isFetching ? (
           <Loader />
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

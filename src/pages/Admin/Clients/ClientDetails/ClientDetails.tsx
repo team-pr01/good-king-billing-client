@@ -43,9 +43,8 @@ const ClientDetails = () => {
   );
 
   const clientOrders =
-    orderData?.data?.map((order: any, index: number) => ({
-      id: String(index + 1),
-      orderId: order._id,
+    orderData?.data?.map((order: any) => ({
+      _id: order._id,
       totalPayment: `₹${order.totalAmount}`,
       duePayment: `₹${order.pendingAmount}`,
       paymentStatus: order.pendingAmount > 0 ? "due" : "paid",

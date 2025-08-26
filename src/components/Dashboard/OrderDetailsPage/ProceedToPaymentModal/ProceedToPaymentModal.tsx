@@ -3,12 +3,15 @@ import React, { useState, useEffect } from "react";
 import Modal from "../../../Reusable/Modal/Modal";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import { useForm } from "react-hook-form";
+import { useUpdateOrderMutation } from "../../../../redux/Features/Order/orderApi";
 
 type ProceedToPaymentModalProps = {
+  orderId: any;
   isOpen: boolean;
   onClose: () => void;
   totalAmount: number;
   onPaymentSuccess: (paymentData: any) => void;
+  dueAmount : number,
 };
 
 type PaymentMethod = "cash" | "online" | "partial" | "";
@@ -20,10 +23,12 @@ type FormValues = {
 };
 
 const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
+  orderId,
   isOpen,
   onClose,
   totalAmount,
   onPaymentSuccess,
+  dueAmount : pendingAmount
 }) => {
   const {
     register,
@@ -31,6 +36,8 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
     formState: { errors },
     setValue,
   } = useForm<FormValues>();
+
+  console.log(pendingAmount);
 
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("");
   const [paidAmount, setPaidAmount] = useState<string>("");
@@ -40,30 +47,27 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
   // Calculate due amount whenever paidAmount or totalAmount changes
   useEffect(() => {
     const paid = parseFloat(paidAmount) || 0;
-    const calculatedDue = Math.max(0, totalAmount - paid);
+    const calculatedDue = pendingAmount - paid;
+    console.log(totalAmount);
     setDueAmount(calculatedDue);
-    setValue("dueAmount", calculatedDue.toFixed(2).toString());
+    setValue("dueAmount", Number(pendingAmount).toFixed(2).toString());
   }, [paidAmount, totalAmount]);
 
+   const [updateOrder] = useUpdateOrderMutation();
+
   const handlePayment = async () => {
-    setIsProcessing(true);
-
-    // Validate payment amount based on selected method
-    const paid = parseFloat(paidAmount) || 0;
-
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
-      onPaymentSuccess({
-        method: selectedMethod,
-        amount: paid,
+    try{
+      const payload = {
         totalAmount,
-        dueAmount: dueAmount,
-        status: dueAmount > 0 ? "partial" : "completed",
-        timestamp: new Date().toISOString(),
-      });
-      onClose();
-    }, 1500);
+        paymentMethod: selectedMethod,
+        paidAmount: parseFloat(paidAmount) || 0,
+        pendingAmount : dueAmount,
+      }
+      const response = await updateOrder({id:orderId, data:payload}).unwrap();
+      console.log(response);
+    } catch(error){
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
@@ -232,7 +236,7 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
             type="button"
             onClick={handlePayment}
             // disabled={isPaymentDisabled || isProcessing}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isProcessing ?
             <span className="flex items-center">

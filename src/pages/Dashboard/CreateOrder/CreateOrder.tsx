@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm, useFieldArray } from "react-hook-form";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
@@ -16,6 +17,7 @@ type FormValues = {
     productId: string;
     quantity: number;
     price: number;
+    taxValue: number;
   }[];
 };
 
@@ -40,7 +42,7 @@ const CreateOrder = () => {
     reset,
   } = useForm<FormValues>({
     defaultValues: {
-      products: [{ productId: "", quantity: 1, price: 0 }],
+      products: [{ productId: "", quantity: 1, price: 0, taxValue: 0 }],
     },
   });
 
@@ -53,21 +55,23 @@ const CreateOrder = () => {
   const totalAmount =
     watchedProducts?.reduce((total, product) => {
       const productData = allProducts?.data?.find(
-        (p) => p?._id.toString() === product.productId
+        (p: any) => p?._id.toString() === product.productId
       );
       const price = productData ? productData.price : 0;
       const quantity = product.quantity || 0;
-      return total + price * quantity;
+      const tax = productData ? productData.taxValue || 0 : 0; // ✅ get tax from product API
+
+      return total + price * quantity + tax;
     }, 0) || 0;
 
   const onSubmit = async (data: FormValues) => {
     // Find shop details by shopName
-    const shop = allShops?.data?.find((s) => s.shopName === data.shopName);
+    const shop = allShops?.data?.find((s: any) => s.shopName === data.shopName);
 
     // Build products array
     const products = data.products.map((p) => {
       const productData = allProducts?.data?.find(
-        (prod) => prod._id.toString() === p.productId
+        (prod: any) => prod._id.toString() === p.productId
       );
       return {
         productId: p.productId,
@@ -80,7 +84,7 @@ const CreateOrder = () => {
 
     // Calculate total
     const totalAmount = products.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, item) => sum + (item.price + item.taxValue) * item.quantity,
       0
     );
 
@@ -122,9 +126,16 @@ const CreateOrder = () => {
 
   const getProductPrice = (productId: string) => {
     const product = allProducts?.data?.find(
-      (p) => p._id.toString() === productId
+      (p: any) => p._id.toString() === productId
     );
     return product ? product.price : 0;
+  };
+
+  const getProductTax = (productId: string) => {
+    const product = allProducts?.data?.find(
+      (p: any) => p._id.toString() === productId
+    );
+    return product ? product.taxValue : 0;
   };
 
   return (
@@ -153,7 +164,7 @@ const CreateOrder = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select Area</option>
-                    {allArea?.data?.map((area, index) => (
+                    {allArea?.data?.map((area: any, index: number) => (
                       <option key={index} value={area?.area}>
                         {area?.area}
                       </option>
@@ -178,7 +189,7 @@ const CreateOrder = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select Shop</option>
-                    {allShops?.data?.map((shop, index) => (
+                    {allShops?.data?.map((shop: any, index: number) => (
                       <option key={index} value={shop?.shopName}>
                         {shop?.shopName} - (Owner: {shop?.name})
                       </option>
@@ -198,21 +209,13 @@ const CreateOrder = () => {
                   <h3 className="text-lg font-medium text-gray-800">
                     Products
                   </h3>
-                  <button
-                    type="button"
-                    onClick={handleAddProduct}
-                    className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-                  >
-                    <FiPlus className="w-4 h-4" />
-                    Add Product
-                  </button>
                 </div>
 
                 <div className="space-y-4">
                   {fields.map((field, index) => (
                     <div
                       key={field.id}
-                      className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-4 border border-gray-200 rounded-lg"
+                      className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 border border-gray-200 rounded-lg"
                     >
                       {/* Product Selection */}
                       <div className="md:col-span-4 flex flex-col gap-2">
@@ -226,7 +229,7 @@ const CreateOrder = () => {
                           className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                         >
                           <option value="">Select Product</option>
-                          {allProducts?.data?.map((product) => (
+                          {allProducts?.data?.map((product: any) => (
                             <option key={product?._id} value={product?._id}>
                               {product?.name} - ₹{product?.price}
                             </option>
@@ -264,6 +267,21 @@ const CreateOrder = () => {
                         />
                       </div>
 
+                      {/* Tax Value */}
+                      <TextInput
+                        name="taxValue"
+                        label="Tax"
+                        type="text"
+                        value={
+                          watchedProducts?.[index]?.productId
+                            ? `₹${getProductTax(
+                                watchedProducts[index].productId
+                              )}`
+                            : "₹0.00"
+                        }
+                        isDisabled={true}
+                      />
+
                       {/* Total for this product */}
                       <div className="md:col-span-2">
                         <TextInput
@@ -275,20 +293,24 @@ const CreateOrder = () => {
                               ? `₹${(
                                   getProductPrice(
                                     watchedProducts[index].productId
-                                  ) * watchedProducts[index].quantity
+                                  ) *
+                                    watchedProducts[index].quantity +
+                                  getProductTax(
+                                    watchedProducts[index].productId
+                                  )
                                 ).toFixed(2)}`
-                              : "$0.00"
+                              : "₹0.00"
                           }
                           isDisabled={true}
                         />
                       </div>
 
                       {/* Remove Button */}
-                      <div className="md:col-span-2 flex justify-center">
+                      <div className="">
                         <button
                           type="button"
                           onClick={() => handleRemoveProduct(index)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                           disabled={fields.length === 1}
                         >
                           <FiTrash2 className="w-5 h-5" />
@@ -297,6 +319,15 @@ const CreateOrder = () => {
                     </div>
                   ))}
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddProduct}
+                  className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm mt-4 cursor-pointer"
+                >
+                  <FiPlus className="w-4 h-4" />
+                  Add Product
+                </button>
 
                 {/* Grand Total */}
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">

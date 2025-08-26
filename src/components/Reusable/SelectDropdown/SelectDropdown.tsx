@@ -20,7 +20,7 @@ const SelectDropdown = forwardRef<HTMLSelectElement, DropdownProps>(
         <select
           ref={ref}
           required={isRequired}
-          className={`px-4 py-3 rounded-lg bg-neutral-70 border text-neutral-65 focus:outline-none focus:border-primary-10 transition duration-300 ${
+          className={`px-4 py-3 rounded-lg bg-neutral-70 border text-neutral-65 focus:outline-none focus:border-primary-10 transition duration-300 border-neutral-200 cursor-pointer ${
             error ? "border-red-500" : "border-neutral-75"
           }`}
           defaultValue=""

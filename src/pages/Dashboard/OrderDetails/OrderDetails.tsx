@@ -11,13 +11,13 @@ import { useGetAllProductsQuery } from "../../../redux/Features/Product/productA
 const OrderDetails = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
+  console.log(data);
   const { data: allProducts } = useGetAllProductsQuery({});
   const [updateOrder] = useUpdateOrderMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [orderItems, setOrderItems] = useState([]);
-  console.log(orderItems);
 
   // Load API order products into local state
   useEffect(() => {
@@ -28,12 +28,11 @@ const OrderDetails = () => {
 
   // Calculate totals
   const subtotal = orderItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + (item.price + item.taxValue) * item.quantity,
     0
   );
-  const gstRate = 0.18; // 18% GST
-  const gstAmount = subtotal * gstRate;
-  const totalAmount = subtotal + gstAmount;
+
+  const totalAmount = subtotal;
 
   // Handle quantity change
   const handleQuantityChange = (productId: string, newQuantity: number) => {
@@ -41,9 +40,7 @@ const OrderDetails = () => {
     if (newQuantity < 1) return;
     setOrderItems((prev) =>
       prev.map((item) =>
-        item.productId === productId
-          ? { ...item, quantity: newQuantity }
-          : item
+        item.productId === productId ? { ...item, quantity: newQuantity } : item
       )
     );
   };
@@ -51,7 +48,9 @@ const OrderDetails = () => {
   // Remove product
   const handleDeleteItem = (productId: string) => {
     console.log(productId);
-    setOrderItems((prev) => prev.filter((item) => item.productId?._id !== productId));
+    setOrderItems((prev) =>
+      prev.filter((item) => item.productId?._id !== productId)
+    );
   };
 
   // Add new product
@@ -82,7 +81,7 @@ const OrderDetails = () => {
         products: orderItems,
       };
 
-      await updateOrder({id:data?.data?._id, data:payload}).unwrap();
+      await updateOrder({ id: data?.data?._id, data: payload }).unwrap();
       setIsEditing(false);
     } catch (err) {
       console.error("Update order failed", err);
@@ -164,6 +163,9 @@ const OrderDetails = () => {
                       Price
                     </th>
                     <th className="pb-3 text-right text-sm font-medium text-gray-500">
+                      Tax Value
+                    </th>
+                    <th className="pb-3 text-right text-sm font-medium text-gray-500">
                       Total
                     </th>
                     {isEditing && (
@@ -175,7 +177,10 @@ const OrderDetails = () => {
                 </thead>
                 <tbody>
                   {orderItems?.map((item) => (
-                    <tr key={item?.productId?._id} className="border-b border-gray-100">
+                    <tr
+                      key={item?.productId?._id}
+                      className="border-b border-gray-100"
+                    >
                       <td className="py-4 text-sm font-medium text-gray-800">
                         {isEditing ? (
                           <select
@@ -235,13 +240,18 @@ const OrderDetails = () => {
                       <td className="py-4 text-right text-sm text-gray-600">
                         ₹{item.price.toFixed(2)}
                       </td>
+                      <td className="py-4 text-right text-sm text-gray-600">
+                        ₹{item.taxValue.toFixed(2)}
+                      </td>
                       <td className="py-4 text-right text-sm font-medium text-gray-800">
-                        ₹{(item.price * item.quantity).toFixed(2)}
+                        ₹{(item.price + item.taxValue) * item.quantity}
                       </td>
                       {isEditing && (
                         <td className="py-4 text-center">
                           <button
-                            onClick={() => handleDeleteItem(item?.productId?._id)}
+                            onClick={() =>
+                              handleDeleteItem(item?.productId?._id)
+                            }
                             className="text-red-600 hover:text-red-800 p-1"
                           >
                             <FiTrash2 className="w-4 h-4" />
@@ -275,14 +285,14 @@ const OrderDetails = () => {
 
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-gray-600">Subtotal (Including Tax):</span>
                 <span className="font-medium">₹{subtotal.toFixed(2)}</span>
               </div>
 
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-gray-600">GST (18%):</span>
                 <span className="font-medium">₹{gstAmount.toFixed(2)}</span>
-              </div>
+              </div> */}
 
               <div className="border-t border-gray-200 pt-3">
                 <div className="flex justify-between text-lg font-semibold">
@@ -313,7 +323,7 @@ const OrderDetails = () => {
               ) : (
                 <button
                   onClick={() => setIsPaymentModalOpen(true)}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium"
+                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
                 >
                   Proceed to Payment
                 </button>
@@ -325,10 +335,12 @@ const OrderDetails = () => {
 
       {/* Payment Modal */}
       <ProceedToPaymentModal
+        orderId={id}
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         totalAmount={totalAmount}
         onPaymentSuccess={() => setIsPaymentModalOpen(false)}
+        dueAmount={data?.data?.pendingAmount}
       />
     </div>
   );

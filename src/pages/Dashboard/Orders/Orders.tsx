@@ -5,8 +5,9 @@ import DashboardCard from "../../../components/Dashboard/DashboardCard/Dashboard
 import { Link, useNavigate } from "react-router-dom";
 import { FiEdit, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
 import Table from "../../../components/Reusable/Table/Table";
-import { useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
+import { useDeleteOrderMutation, useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
 import Loader from "../../../components/Reusable/Loader/Loader";
+import { toast } from "sonner";
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const Orders = () => {
     keyword: searchValue,
     status: statusFilter,
   });
+
+  console.log(data);
 
   const pendingOrders = data?.data?.filter(
     (order: any) => order.status === "pending"
@@ -34,6 +37,26 @@ const Orders = () => {
     { key: "status", label: "Status" },
   ];
 
+  const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
+
+  const handleDeleteOrder = async (id: string) => {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this order?"
+      );
+      if (isDeleting) {
+        toast.loading("Deleting Order...");
+      }
+      if (!confirmDelete) return;
+  
+      try {
+        await deleteOrder(id).unwrap();
+        toast.success("Order deleted successfully!");
+      } catch (error) {
+        console.error("Failed to delete Order:", error);
+        toast.error("Failed to delete the Order. Please try again.");
+      }
+    };
+
   const actions = [
     {
       icon: <FiEye />,
@@ -48,7 +71,7 @@ const Orders = () => {
     {
       icon: <FiTrash2 />,
       label: "Delete",
-      onClick: (row: any) => console.log("Delete", row),
+      onClick: (row: any) => handleDeleteOrder(row?._id),
       className: "text-red-600",
     },
   ];
