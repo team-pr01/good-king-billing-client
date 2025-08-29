@@ -12,8 +12,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { useGetAllAreaQuery } from "../../../redux/Features/Area/areaApi";
 
 const Clients = () => {
+  const { data: allArea } = useGetAllAreaQuery({});
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -33,17 +35,6 @@ const Clients = () => {
   const [modalType, setModalType] = useState<string | null>("add");
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
 
-  // Sample areas data
-  const areas = [
-    "North Area",
-    "South Area",
-    "East Area",
-    "West Area",
-    "Central Area",
-    "Downtown",
-    "Uptown",
-    "Suburbs",
-  ];
   const columns = [
     { key: "_id", label: "ID" },
     { key: "shopName", label: "Shop Name" },
@@ -175,20 +166,9 @@ const Clients = () => {
 
           {/* Filters Container */}
           <div className="flex gap-3 flex-wrap items-center">
-            {/* Status Filter Dropdown */}
-            {/* <div className="min-w-[150px]">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
-              >
-                <option value="">Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div> */}
 
-            {/* Areas Filter Dropdown */}
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Areas Filter Dropdown */}
             <div className="min-w-[150px]">
               <select
                 value={areaFilter}
@@ -196,14 +176,11 @@ const Clients = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
               >
                 <option value="">All Areas</option>
-                {areas.map((area, index) => (
-                  <option
-                    key={index}
-                    value={area.toLowerCase().replace(" ", "-")}
-                  >
-                    {area}
-                  </option>
-                ))}
+                {allArea?.data?.map((area: any, index: number) => (
+                      <option key={index} value={area?.area}>
+                        {area?.area}
+                      </option>
+                    ))}
               </select>
             </div>
 
@@ -215,15 +192,16 @@ const Clients = () => {
                 setSearchValue("");
               }}
               disabled={!statusFilter && !areaFilter && !searchValue}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="px-2 md:px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               Remove Filters
             </button>
+            </div>
 
             {/* Export Client List Button */}
             <button
               onClick={handleExportClients}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center gap-2 transition-colors cursor-pointer w-full md:w-fit"
             >
               <svg
                 className="w-4 h-4"

@@ -248,7 +248,7 @@ console.log(filteredShops);
                           <option value="">Select Product</option>
                           {allProducts?.data?.map((product: any) => (
                             <option key={product?._id} value={product?._id}>
-                              {product?.name} - ₹{product?.price}
+                              {product?.name} - ₹{product?.price} ({allProducts?.data?.length})
                             </option>
                           ))}
                         </select>
