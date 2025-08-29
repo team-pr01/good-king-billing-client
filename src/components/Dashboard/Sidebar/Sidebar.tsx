@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AiFillHome,
   AiOutlineUsergroupAdd,
@@ -10,9 +10,13 @@ import { FiLogOut } from "react-icons/fi";
 import logo from "../../../assets/logo.png";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { BiLocationPlus } from "react-icons/bi";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../redux/Features/Auth/authSlice";
 
 const Sidebar = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const navLinks = [
     { name: "Dashboard", path: "/admin/dashboard", icon: <AiFillHome /> },
@@ -40,6 +44,11 @@ const Sidebar = () => {
     },
   ];
 
+   const handleLogout = async () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   return (
     <aside className="w-72 max-w-[280px] h-screen sticky top-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-shrink-0 py-6 px-4 flex flex-col justify-between gap-10">
       <img src={logo} alt="" className="w-48 mx-auto" />
@@ -64,7 +73,7 @@ const Sidebar = () => {
           })}
         </nav>
       </div>
-      <button className="w-full flex items-center justify-center gap-2 border border-red-500 text-red-500 py-3 rounded-lg hover:bg-red-50 font-medium transition-colors duration-200 cursor-pointer">
+      <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 border border-red-500 text-red-500 py-3 rounded-lg hover:bg-red-50 font-medium transition-colors duration-200 cursor-pointer">
         <FiLogOut className="w-5 h-5" />
         Logout
       </button>

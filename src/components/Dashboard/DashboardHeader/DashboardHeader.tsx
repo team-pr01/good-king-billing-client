@@ -1,8 +1,10 @@
-const DashboardHeader = () => {
-  const handleLogout = () => {
-    console.log("User logged out");
-  };
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../../redux/Features/Auth/authSlice";
 
+const DashboardHeader = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const today = new Date();
 
   const day = today.getDate();
@@ -26,6 +28,11 @@ const DashboardHeader = () => {
   const year = today.getFullYear();
 
   const finalDate = `${weekday}, ${day}${getDaySuffix(day)} ${month}, ${year}`;
+
+  const handleLogout = async () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
   return (
     <div className="flex justify-between items-center p-5 bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
