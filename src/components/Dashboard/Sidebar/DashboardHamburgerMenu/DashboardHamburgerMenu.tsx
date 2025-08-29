@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   AiFillHome,
@@ -11,6 +11,8 @@ import { TbLogout2 } from "react-icons/tb";
 import { HiMenuAlt2, HiOutlineUserGroup } from "react-icons/hi";
 import { BiLocationPlus } from "react-icons/bi";
 import logo from "../../../../assets/logo.png";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../../redux/Features/Auth/authSlice";
 
 const DashboardHamburgerMenu = () => {
   const location = useLocation();
@@ -65,6 +67,14 @@ const DashboardHamburgerMenu = () => {
       icon: <AiOutlineSetting />,
     },
   ];
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    dispatch(logout());
+    navigate("/");
+  };
   return (
     <div className="relative hamburgerMenu flex xl:hidden">
       <button
@@ -112,6 +122,7 @@ const DashboardHamburgerMenu = () => {
         </div>
 
         <button
+          onClick={handleLogout}
           className={`text-lg flex items-center gap-2 rounded-lg p-2 transform transition-transform duration-500 hover:-translate-y-1 text-white font-semibold cursor-pointer`}
         >
           <TbLogout2 className="text-xl" />
