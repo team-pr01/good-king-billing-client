@@ -4,6 +4,7 @@ import Modal from "../../../Reusable/Modal/Modal";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import { useForm } from "react-hook-form";
 import { useUpdateOrderMutation } from "../../../../redux/Features/Order/orderApi";
+import { useNavigate } from "react-router-dom";
 
 type ProceedToPaymentModalProps = {
   orderId: any;
@@ -12,6 +13,8 @@ type ProceedToPaymentModalProps = {
   totalAmount: number;
   onPaymentSuccess: (paymentData: any) => void;
   dueAmount : number,
+  previousOrderId : any,
+  previousPendingAmount : number
 };
 
 type PaymentMethod = "cash" | "online" | "partial" | "";
@@ -27,44 +30,43 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
   isOpen,
   onClose,
   totalAmount,
-  onPaymentSuccess,
-  dueAmount : pendingAmount
+  // onPaymentSuccess,
+  dueAmount : pendingAmount,
+  previousOrderId,
+  previousPendingAmount,
 }) => {
+  const navigate = useNavigate();
   const {
     register,
-    handleSubmit,
-    formState: { errors },
     setValue,
   } = useForm<FormValues>();
 
-  console.log(pendingAmount);
-
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("");
   const [paidAmount, setPaidAmount] = useState<string>("");
-  const [dueAmount, setDueAmount] = useState<number>(0);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [previousOrderMessage, setPreviousOrderMessage] = useState("");
 
   // Calculate due amount whenever paidAmount or totalAmount changes
   useEffect(() => {
-    const paid = parseFloat(paidAmount) || 0;
-    const calculatedDue = pendingAmount - paid;
-    console.log(totalAmount);
-    setDueAmount(calculatedDue);
     setValue("dueAmount", Number(pendingAmount).toFixed(2).toString());
+    if(previousOrderId){
+      setPreviousOrderMessage(`You have ₹${previousPendingAmount} due from ${previousOrderId} order and it's been merged with this order.`);
+    }
   }, [paidAmount, totalAmount]);
 
-   const [updateOrder] = useUpdateOrderMutation();
+   const [updateOrder, {isLoading}] = useUpdateOrderMutation();
 
   const handlePayment = async () => {
     try{
       const payload = {
-        totalAmount,
+        coveredDueAmount : previousPendingAmount,
         paymentMethod: selectedMethod,
         paidAmount: parseFloat(paidAmount) || 0,
-        pendingAmount : dueAmount,
       }
       const response = await updateOrder({id:orderId, data:payload}).unwrap();
       console.log(response);
+      if(response?.success){
+        navigate(`/admin/dashboard/order-confirmed/${orderId}`);
+      }
     } catch(error){
       console.log(error);
     }
@@ -73,7 +75,6 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
   const handleClose = () => {
     setSelectedMethod("");
     setPaidAmount("");
-    setDueAmount(0);
     onClose();
   };
 
@@ -202,12 +203,10 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
               />
             </div>
 
-            {dueAmount > 0 && (
+            {previousOrderMessage && (
               <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-700">
-                  <span className="font-medium">Note:</span> This will be marked
-                  as a partial payment. The remaining amount of ₹
-                  {dueAmount.toFixed(2)} will be due.
+                  {previousOrderMessage}
                 </p>
               </div>
             )}
@@ -238,7 +237,7 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
             // disabled={isPaymentDisabled || isProcessing}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            {isProcessing ?
+            {isLoading ?
             <span className="flex items-center">
                 <svg
                   className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"

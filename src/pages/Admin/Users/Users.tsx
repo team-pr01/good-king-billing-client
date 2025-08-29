@@ -161,7 +161,7 @@ const Users = () => {
                 <option value="admin">Admin</option>
                 <option value="salesman">Salesman</option>
                 <option value="supplier">Supplier</option>
-                <option value="client">Client</option>
+                {/* <option value="client">Client</option> */}
               </select>
             </div>
 

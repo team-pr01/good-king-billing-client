@@ -88,6 +88,8 @@ const OrderDetails = () => {
     }
   };
 
+
+
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -340,7 +342,9 @@ const OrderDetails = () => {
         onClose={() => setIsPaymentModalOpen(false)}
         totalAmount={totalAmount}
         onPaymentSuccess={() => setIsPaymentModalOpen(false)}
-        dueAmount={data?.data?.pendingAmount}
+        dueAmount={data?.data?.totalPendingAmount}
+        previousPendingAmount={data?.data?.previousDue}
+        previousOrderId={data?.data?.previousOrderId || ""}
       />
     </div>
   );

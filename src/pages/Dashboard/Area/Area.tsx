@@ -102,7 +102,7 @@ const Area = () => {
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 transition duration-300"
-                placeholder="Search clients..."
+                placeholder="Search area..."
               />
             </div>
           </div>
