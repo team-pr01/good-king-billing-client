@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm, useFieldArray } from "react-hook-form";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import {  FiPlus, FiTrash2 } from "react-icons/fi";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { useCreateOrderMutation } from "../../../redux/Features/Order/orderApi";
 import { useGetAllProductsQuery } from "../../../redux/Features/Product/productApi";
@@ -115,7 +115,7 @@ const CreateOrder = () => {
   };
 
   const handleAddProduct = () => {
-    append({ productId: "", quantity: 1, price: 0 });
+    append({ productId: "", quantity: 1, price: 0, taxValue: 0 });
   };
 
   const handleRemoveProduct = (index: number) => {
@@ -266,6 +266,25 @@ const CreateOrder = () => {
                           error={errors.products?.[index]?.quantity}
                         />
                       </div>
+
+                      {/* <div className="md:col-span-2 flex flex-col gap-1">
+                        <label className="text-neutral-65">
+                          Quantity
+                        </label>
+                        <div className="flex gap-2">
+                          <div className="px-[18px] py-3 rounded-lg border bg-neutral-50 border-neutral-200 w-full">
+                          1
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button className="bg-neutral-200/50 px-[18px] py- rounded-lg font-bold">
+                            <FiMinus />
+                          </button>
+                          <button className="bg-neutral-200/50 px-[18px] py- rounded-lg font-bold">
+                            <FiPlus />
+                          </button>
+                        </div>
+                        </div>
+                      </div> */}
 
                       {/* Tax Value */}
                       <TextInput

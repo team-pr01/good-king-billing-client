@@ -14,16 +14,19 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetSingleClientByIdQuery } from "../../../../redux/Features/Client/clientApi";
 import { useGetOrdersByShopIdQuery } from "../../../../redux/Features/Order/orderApi";
 import Loader from "../../../../components/Reusable/Loader/Loader";
+import { useState } from "react";
 
 const ClientDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
   const { data, isLoading } = useGetSingleClientByIdQuery(id);
 
   const { data: orderData, isLoading: orderLoading } =
     useGetOrdersByShopIdQuery(data?.data?._id, {
       skip: !data?.data?._id,
     });
+  console.log(orderData);
 
   // Total due and paid amount
   const totals = orderData?.data?.reduce(
@@ -42,6 +45,9 @@ const ClientDetails = () => {
     (order: any) => order.status === "supplied"
   );
 
+  const [statusFilter, setStatusFilter] = useState("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
+
   const clientOrders =
     orderData?.data?.map((order: any) => ({
       _id: order._id,
@@ -49,7 +55,24 @@ const ClientDetails = () => {
       duePayment: `₹${order.pendingAmount}`,
       paymentStatus: order.pendingAmount > 0 ? "due" : "paid",
       deliveryStatus: order.status || "pending",
+      createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
     })) || [];
+
+  // Filtered Orders based on statusFilter and paymentStatusFilter
+  const filteredOrders = clientOrders.filter((order: any) => {
+    const matchesStatus = statusFilter
+      ? order.deliveryStatus.toLowerCase() === statusFilter.toLowerCase()
+      : true;
+    const matchesPayment = paymentStatusFilter
+      ? order.paymentStatus.toLowerCase() === paymentStatusFilter.toLowerCase()
+      : true;
+
+    return matchesStatus && matchesPayment;
+  });
 
   const orderColumns = [
     { key: "_id", label: "Order ID" },
@@ -57,6 +80,7 @@ const ClientDetails = () => {
     { key: "duePayment", label: "Due Payment" },
     { key: "paymentStatus", label: "Payment Status" },
     { key: "deliveryStatus", label: "Delivery Status" },
+    { key: "createdAt", label: "Order Date" },
   ];
 
   const orderActions = [
@@ -68,7 +92,7 @@ const ClientDetails = () => {
     {
       icon: <FiEye />,
       label: "View Details",
-      onClick: (row: any) => navigate(`/admin/dashboard/order/${row.orderId}`),
+      onClick: (row: any) => navigate(`/admin/dashboard/order/${row._id}`),
     },
   ];
 
@@ -135,12 +159,40 @@ const ClientDetails = () => {
         <ClientInfo client={data?.data} />
 
         <div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            All Orders
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 ">All Orders</h2>
+            {/* Filters Container */}
+            <div className="flex gap-3 flex-wrap items-center">
+              {/* Status Filter Dropdown */}
+              <div className="min-w-[150px]">
+                <select
+                  value={paymentStatusFilter}
+                  onChange={(e) => setPaymentStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
+                >
+                  <option value="">Select Payment Status</option>
+                  <option value="paid">Paid</option>
+                  <option value="due">Due</option>
+                </select>
+              </div>
+              {/* Delivery Status Filter Dropdown */}
+              <div className="min-w-[150px]">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
+                >
+                  <option value="">Select Delivery Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="supplied">Supplied</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <Table
             columns={orderColumns}
-            data={clientOrders}
+            data={filteredOrders}
             actions={orderActions}
             rowKey="_id"
             isLoading={orderLoading}
