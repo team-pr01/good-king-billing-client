@@ -43,18 +43,19 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
   isLoading,
   modalType,
 }) => {
-   const {
-      data: allArea,
-      isLoading: isAllAreaLoading,
-      isFetching,
-    } = useGetAllAreaQuery({});
+  console.log(defaultValues);
+  const {
+    data: allArea,
+    isLoading: isAllAreaLoading,
+    isFetching,
+  } = useGetAllAreaQuery({});
 
-     const [areaData, setAreaData] = useState<any[]>([]);
+  const [areaData, setAreaData] = useState<any[]>([]);
   const areas = allArea?.data?.map((area: any) => area.area);
-  
+
   const [addClient, { isLoading: isAdding }] = useAddClientMutation();
   const [updateClient, { isLoading: isUpdating }] = useUpdateClientMutation();
-  
+
   const {
     register,
     handleSubmit,
@@ -63,21 +64,39 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
     setValue,
     watch,
   } = useForm<FormValues>();
-  
+
+  useEffect(() => {
+    if (defaultValues && modalType === "edit") {
+      setValue("name", defaultValues.name);
+      setValue("email", defaultValues.email);
+      setValue("phoneNumber", defaultValues.phoneNumber);
+      setValue("shopName", defaultValues.shopName);
+      setValue("gstNumber", defaultValues.gstNumber);
+      setValue("area", defaultValues.area);
+      setValue("addressLine1", defaultValues.addressLine1);
+      setValue("addressLine2", defaultValues.addressLine2);
+      setValue("addressLine3", defaultValues.addressLine3);
+      setValue("city", defaultValues.city);
+      setValue("district", defaultValues.district);
+      setValue("pinCode", defaultValues.pinCode);
+      setValue("state", defaultValues.state);
+    }
+  }, [defaultValues, modalType, setValue]);
+
   // Watch area field for changes
   const selectedArea = watch("area");
-  
+
   // Extract area data from API response
   useEffect(() => {
     if (allArea?.data) {
       setAreaData(allArea.data);
     }
   }, [allArea]);
-  
+
   // Handle area selection change
   useEffect(() => {
     if (selectedArea) {
-      const areaInfo = areaData.find(area => area.area === selectedArea);
+      const areaInfo = areaData.find((area) => area.area === selectedArea);
       if (areaInfo) {
         setValue("city", areaInfo.city || "");
         setValue("district", areaInfo.district || "");
@@ -141,7 +160,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               options={areas}
             />
 
-             <div className="space-y-4">
+            <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2">
                 Address Information
               </h2>
@@ -217,7 +236,6 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               </div>
             </div>
 
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <TextInput
                 label="Client Name"
@@ -267,8 +285,6 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               isRequired={false}
             />
 
-           
-
             <div className="flex justify-end gap-3 pt-4">
               <button
                 type="button"
@@ -277,7 +293,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               >
                 Cancel
               </button>
-              <Button label="Add Client" isLoading={isAdding || isUpdating} />
+              <Button label={modalType === "add" ? "Add Client" : "Update"} isLoading={isAdding || isUpdating} />
             </div>
           </form>
         )}
