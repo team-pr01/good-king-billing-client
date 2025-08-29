@@ -83,22 +83,23 @@ const AdminDashboardHome = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <DashboardCard
           title="Today Cash Collection"
-          value={todayCashCollection}
+          value={`₹${todayCashCollection}`}
           Icon={FaMoneyBillWave}
           bgColor="bg-green-400"
         />
         <DashboardCard
           title="Today Online Collection"
-          value={todayOnlineCollection}
+          value={`₹${todayOnlineCollection}`}
           Icon={FaCreditCard}
           bgColor="bg-blue-400"
         />
         <DashboardCard
           title="Pending Payment Amount"
-          value={pendingPaymentAmount}
+          value={`₹${pendingPaymentAmount}`}
           Icon={FaHourglassHalf}
           bgColor="bg-yellow-400"
         />
+
         <DashboardCard
           title="Clients with Pending Amount"
           value={clientsWithPendingAmount}
