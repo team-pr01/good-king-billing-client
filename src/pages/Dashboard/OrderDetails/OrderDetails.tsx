@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import ProceedToPaymentModal from "../../../components/Dashboard/OrderDetailsPage/ProceedToPaymentModal/ProceedToPaymentModal";
@@ -7,17 +8,25 @@ import {
   useUpdateOrderMutation,
 } from "../../../redux/Features/Order/orderApi";
 import { useGetAllProductsQuery } from "../../../redux/Features/Product/productApi";
+import Loader from "../../../components/Reusable/Loader/Loader";
 
 const OrderDetails = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
-  console.log(data);
   const { data: allProducts } = useGetAllProductsQuery({});
-  const [updateOrder] = useUpdateOrderMutation();
+  const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [orderItems, setOrderItems] = useState([]);
+  type OrderItem = {
+    productId: { _id: string } | string;
+    name: string;
+    quantity: number;
+    price: number;
+    taxValue: number;
+  };
+
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
   // Load API order products into local state
   useEffect(() => {
@@ -38,8 +47,8 @@ const OrderDetails = () => {
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     console.log(productId);
     if (newQuantity < 1) return;
-    setOrderItems((prev) =>
-      prev.map((item) =>
+    setOrderItems((prev: any) =>
+      prev.map((item: any) =>
         item.productId === productId ? { ...item, quantity: newQuantity } : item
       )
     );
@@ -49,7 +58,11 @@ const OrderDetails = () => {
   const handleDeleteItem = (productId: string) => {
     console.log(productId);
     setOrderItems((prev) =>
-      prev.filter((item) => item.productId?._id !== productId)
+      prev.filter((item) =>
+        typeof item.productId === "string"
+          ? item.productId !== productId
+          : item.productId._id !== productId
+      )
     );
   };
 
@@ -57,7 +70,7 @@ const OrderDetails = () => {
   const handleAddProduct = () => {
     if (!allProducts?.data?.length) return;
     const firstProduct = allProducts.data[0];
-    setOrderItems((prev) => [
+    setOrderItems((prev: any) => [
       ...prev,
       {
         productId: firstProduct._id,
@@ -88,9 +101,9 @@ const OrderDetails = () => {
     }
   };
 
-
-
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="min-h-screen">
       {/* Header */}
       <div className="flex items-center mb-6">
@@ -140,7 +153,7 @@ const OrderDetails = () => {
               <h2 className="text-xl font-semibold text-gray-800">
                 Order Summary
               </h2>
-              {!isEditing && (
+              {!isEditing && data?.data?.pendingAmount > 0 && (
                 <button
                   onClick={() => setIsEditing(true)}
                   className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
@@ -180,21 +193,39 @@ const OrderDetails = () => {
                 <tbody>
                   {orderItems?.map((item) => (
                     <tr
-                      key={item?.productId?._id}
+                      key={
+                        typeof item.productId === "string"
+                          ? item.productId
+                          : item.productId._id
+                      }
                       className="border-b border-gray-100"
                     >
                       <td className="py-4 text-sm font-medium text-gray-800">
                         {isEditing ? (
                           <select
-                            value={item?.productId?._id}
+                            value={
+                              typeof item.productId === "string"
+                                ? item.productId
+                                : item.productId._id
+                            }
                             onChange={(e) => {
                               const product = allProducts?.data?.find(
-                                (p) => p._id === e.target.value
+                                (p: any) => p._id === e.target.value
                               );
                               if (product) {
-                                setOrderItems((prev) =>
-                                  prev.map((p) =>
-                                    p.productId?._id === item?.productId?._id
+                                setOrderItems((prev: any) =>
+                                  prev.map((p: any) =>
+                                    (
+                                      typeof p.productId === "string"
+                                        ? p.productId ===
+                                          (typeof item.productId === "string"
+                                            ? item.productId
+                                            : item.productId._id)
+                                        : p.productId._id ===
+                                          (typeof item.productId === "string"
+                                            ? item.productId
+                                            : item.productId._id)
+                                    )
                                       ? {
                                           ...p,
                                           productId: product._id,
@@ -209,7 +240,7 @@ const OrderDetails = () => {
                             }}
                             className="border border-gray-300 rounded px-2 py-1"
                           >
-                            {allProducts?.data?.map((p) => (
+                            {allProducts?.data?.map((p: any) => (
                               <option key={p._id} value={p._id}>
                                 {p.name}
                               </option>
@@ -227,7 +258,9 @@ const OrderDetails = () => {
                             value={item.quantity}
                             onChange={(e) =>
                               handleQuantityChange(
-                                item?.productId?._id,
+                                typeof item.productId === "string"
+                                  ? item.productId
+                                  : item.productId._id,
                                 parseInt(e.target.value)
                               )
                             }
@@ -252,7 +285,11 @@ const OrderDetails = () => {
                         <td className="py-4 text-center">
                           <button
                             onClick={() =>
-                              handleDeleteItem(item?.productId?._id)
+                              handleDeleteItem(
+                                typeof item.productId === "string"
+                                  ? item.productId
+                                  : item.productId._id
+                              )
                             }
                             className="text-red-600 hover:text-red-800 p-1"
                           >
@@ -311,9 +348,9 @@ const OrderDetails = () => {
                 <>
                   <button
                     onClick={handleSaveChanges}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
                   >
-                    Save Changes
+                    {isUpdating ? "Please wait..." : "Save Changes"}
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
@@ -324,6 +361,7 @@ const OrderDetails = () => {
                 </>
               ) : (
                 <button
+                disabled={data?.data?.pendingAmount === 0}
                   onClick={() => setIsPaymentModalOpen(true)}
                   className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
                 >

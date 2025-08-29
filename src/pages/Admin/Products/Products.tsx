@@ -11,6 +11,8 @@ import {
   useGetSingleProductByIdQuery,
 } from "../../../redux/Features/Product/productApi";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Products = () => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
@@ -83,6 +85,32 @@ const Products = () => {
       className: "text-red-600",
     },
   ];
+
+  const handleExportProducts = () => {
+    if (!allProducts?.data || allProducts.length === 0) return;
+
+    // Map product data dynamically based on productColumns
+    const exportData = allProducts?.data?.map((product: any) => {
+      const row: Record<string, any> = {};
+      productColumns.forEach((col) => {
+        row[col.label] = product[col.key] ?? ""; // use label as header, key as value source
+      });
+      return row;
+    });
+
+    // Convert to sheet
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+
+    // Generate and download Excel
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "products.xlsx");
+  };
   return (
     <div className="font-Nunito flex flex-col gap-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -172,7 +200,10 @@ const Products = () => {
             </div>
 
             {/* Export Client List Button */}
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
+            <button
+              onClick={handleExportProducts}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+            >
               <svg
                 className="w-4 h-4"
                 fill="none"

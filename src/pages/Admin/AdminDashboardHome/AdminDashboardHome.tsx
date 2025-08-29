@@ -1,7 +1,5 @@
 import DashboardCard from "../../../components/Dashboard/DashboardCard/DashboardCard";
 import { 
-  FaUsers, 
-  FaUserSlash, 
   FaMoneyBillWave, 
   FaCreditCard, 
   FaHourglassHalf, 
@@ -10,6 +8,7 @@ import {
   FaClock 
 } from "react-icons/fa";
 import { MdPendingActions } from "react-icons/md";
+import OrdersTable from "../../Dashboard/Orders/OrdersTable";
 
 const AdminDashboardHome = () => {
   return (
@@ -68,6 +67,8 @@ const AdminDashboardHome = () => {
           bgColor="bg-pink-400"
         />
       </div>
+
+      <OrdersTable/>
     </div>
   );
 };

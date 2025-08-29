@@ -10,6 +10,8 @@ import {
   useGetSingleClientByIdQuery,
 } from "../../../redux/Features/Client/clientApi";
 import { Link, useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Clients = () => {
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
@@ -75,6 +77,30 @@ const Clients = () => {
     //   className: "text-red-600",
     // },
   ];
+
+  const handleExportClients = () => {
+  if (!data?.data || data.data.length === 0) return;
+
+  // Map client data to match your columns
+  const exportData = data?.data?.map((client: any) => ({
+    "ID": client._id,
+    "Shop Name": client.shopName,
+    "Name": client.name,
+    "Phone Number": client.phoneNumber,
+    "Email": client.email,
+    "State": client.state,
+    "City": client.city,
+    "Area": client.area,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Clients");
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, "clients.xlsx");
+};
 
   return (
     <div className="min-h-screen">
@@ -189,7 +215,7 @@ const Clients = () => {
             </button>
 
             {/* Export Client List Button */}
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
+            <button onClick={handleExportClients} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"

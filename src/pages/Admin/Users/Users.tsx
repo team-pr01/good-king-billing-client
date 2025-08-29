@@ -7,6 +7,9 @@ import { FiTrash2 } from "react-icons/fi";
 import AddUserModal from "../../../components/Dashboard/UsersPage/AddUserModal/AddUserModal";
 import { toast } from "sonner";
 import { useDeleteUserMutation, useGetAllUsersQuery } from "../../../redux/Features/User/userApi";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 const Users = () => {
   const [roleFilter, setRoleFilter] = useState("");
@@ -15,41 +18,9 @@ const Users = () => {
     keyword: searchValue,
     role: roleFilter,
   });
-  console.log(data);
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState<boolean>(false);
 
-  // Sample user data
-  const usersData = [
-    {
-      id: 1,
-      name: "John Smith",
-      email: "john.smith@example.com",
-      role: "Admin",
-      phoneNumber: "(555) 123-4567",
-    },
-    {
-      id: 2,
-      name: "Sarah Johnson",
-      email: "sarah.johnson@example.com",
-      role: "Salesperson",
-      phoneNumber: "(555) 987-6543",
-    },
-    {
-      id: 3,
-      name: "Michael Brown",
-      email: "michael.brown@example.com",
-      role: "Supplier",
-      phoneNumber: "(555) 456-7890",
-    },
-    {
-      id: 4,
-      name: "Emily Davis",
-      email: "emily.davis@example.com",
-      role: "Client",
-      phoneNumber: "(555) 234-5678",
-    },
-  ];
 
   // Table columns
   const userColumns = [
@@ -87,6 +58,28 @@ const Users = () => {
       className: "text-red-600",
     },
   ];
+
+  const handleExportUsers = () => {
+  if (!data?.data || data.data.length === 0) return;
+
+  // Map user data to match columns
+  const exportData = data.data.map((user: any) => ({
+    "ID": user._id,
+    "Name": user.name,
+    "Email": user.email,
+    "Role": user.role,
+    "Phone Number": user.phoneNumber,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, "users.xlsx");
+};
+
 
   return (
     <div className="min-h-screen">
@@ -179,10 +172,7 @@ const Users = () => {
 
             {/* Export Client List Button */}
             <button
-              onClick={() => {
-                // Handle export functionality here
-                console.log("Exporting client list:", usersData);
-              }}
+              onClick={() => handleExportUsers()}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
             >
               <FiDownload className="w-4 h-4" />

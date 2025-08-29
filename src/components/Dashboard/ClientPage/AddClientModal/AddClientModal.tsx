@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../../../Reusable/TextInput/TextInput";
 import Modal from "../../../Reusable/Modal/Modal";
@@ -49,34 +49,45 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
       isFetching,
     } = useGetAllAreaQuery({});
 
-    const areas = allArea?.data?.map((area: any) => area.area);
+     const [areaData, setAreaData] = useState<any[]>([]);
+  const areas = allArea?.data?.map((area: any) => area.area);
+  
   const [addClient, { isLoading: isAdding }] = useAddClientMutation();
   const [updateClient, { isLoading: isUpdating }] = useUpdateClientMutation();
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm<FormValues>();
+  
+  // Watch area field for changes
+  const selectedArea = watch("area");
+  
+  // Extract area data from API response
   useEffect(() => {
-    if (defaultValues) {
-      setValue("name", defaultValues.name);
-      setValue("email", defaultValues.email);
-      setValue("phoneNumber", defaultValues.phoneNumber);
-      setValue("shopName", defaultValues.shopName);
-      setValue("gstNumber", defaultValues.gstNumber);
-      setValue("area", defaultValues.area);
-      console.log(defaultValues?.area);
-      setValue("addressLine1", defaultValues.addressLine1);
-      setValue("addressLine2", defaultValues.addressLine2);
-      setValue("addressLine3", defaultValues.addressLine3);
-      setValue("city", defaultValues.city);
-      setValue("district", defaultValues.district);
-      setValue("pinCode", defaultValues.pinCode);
-      setValue("state", defaultValues.state);
+    if (allArea?.data) {
+      setAreaData(allArea.data);
     }
-  }, [defaultValues, setValue]);
+  }, [allArea]);
+  
+  // Handle area selection change
+  useEffect(() => {
+    if (selectedArea) {
+      const areaInfo = areaData.find(area => area.area === selectedArea);
+      if (areaInfo) {
+        setValue("city", areaInfo.city || "");
+        setValue("district", areaInfo.district || "");
+        setValue("state", areaInfo.state || "");
+        if (areaInfo.pinCode) {
+          setValue("pinCode", areaInfo.pinCode);
+        }
+      }
+    }
+  }, [selectedArea, areaData, setValue]);
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -129,56 +140,8 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               error={errors?.area}
               options={areas}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <TextInput
-                label="Client Name"
-                placeholder="Enter client name"
-                {...register("name", {
-                  required: "Client name is required",
-                })}
-                error={errors.name}
-              />
 
-              <TextInput
-                label="Email (Optional)"
-                type="email"
-                placeholder="Enter email address"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                error={errors.email}
-                isRequired={false}
-              />
-
-              <TextInput
-                label="Phone Number"
-                placeholder="Enter phone number"
-                {...register("phoneNumber", {
-                  required: "Phone number is required",
-                })}
-                error={errors.phoneNumber}
-              />
-
-              <TextInput
-                label="Shop Name"
-                placeholder="Enter shop name"
-                {...register("shopName", { required: "Shop name is required" })}
-                error={errors.shopName}
-              />
-            </div>
-            <TextInput
-              label="GST Number (Optional)"
-              placeholder="Enter GST number"
-              {...register("gstNumber")}
-              error={errors.gstNumber}
-              isRequired={false}
-            />
-
-            <div className="space-y-4">
+             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2">
                 Address Information
               </h2>
@@ -253,6 +216,58 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
                 />
               </div>
             </div>
+
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <TextInput
+                label="Client Name"
+                placeholder="Enter client name"
+                {...register("name", {
+                  required: "Client name is required",
+                })}
+                error={errors.name}
+              />
+
+              <TextInput
+                label="Email (Optional)"
+                type="email"
+                placeholder="Enter email address"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                })}
+                error={errors.email}
+                isRequired={false}
+              />
+
+              <TextInput
+                label="Phone Number"
+                placeholder="Enter phone number"
+                {...register("phoneNumber", {
+                  required: "Phone number is required",
+                })}
+                error={errors.phoneNumber}
+              />
+
+              <TextInput
+                label="Shop Name"
+                placeholder="Enter shop name"
+                {...register("shopName", { required: "Shop name is required" })}
+                error={errors.shopName}
+              />
+            </div>
+            <TextInput
+              label="GST Number (Optional)"
+              placeholder="Enter GST number"
+              {...register("gstNumber")}
+              error={errors.gstNumber}
+              isRequired={false}
+            />
+
+           
 
             <div className="flex justify-end gap-3 pt-4">
               <button
