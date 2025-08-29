@@ -9,6 +9,7 @@ import { useGetAllClientsQuery } from "../../../redux/Features/Client/clientApi"
 import Loader from "../../../components/Reusable/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import Button from "../../../components/Reusable/Button/Button";
+import { useState } from "react";
 
 type FormValues = {
   area: string;
@@ -23,14 +24,28 @@ type FormValues = {
 
 const CreateOrder = () => {
   const navigate = useNavigate();
+
+  const [selectedArea, setSelectedArea] = useState<string>("");
+  
+  
   // Get all products
   const { data: allProducts, isLoading: isAllProductsLoading } =
-    useGetAllProductsQuery({});
+  useGetAllProductsQuery({});
   // Get all areas
   const { data: allArea, isLoading: isAllAreaLoading } = useGetAllAreaQuery({});
+  
   // Get all clients/shops
   const { data: allShops, isLoading: isAllShopsLoading } =
-    useGetAllClientsQuery({});
+  useGetAllClientsQuery({});
+  console.log(allShops?.data);
+
+  // Filtered shops based on selected area
+const filteredShops = allShops?.data?.filter(
+  (shop: any) => shop?.area === selectedArea
+) || [];
+
+console.log(filteredShops);
+
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreateOrderMutation();
   const {
@@ -161,6 +176,8 @@ const CreateOrder = () => {
                   </label>
                   <select
                     {...register("area", { required: "Area is required" })}
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select Area</option>
@@ -189,7 +206,7 @@ const CreateOrder = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   >
                     <option value="">Select Shop</option>
-                    {allShops?.data?.map((shop: any, index: number) => (
+                    {filteredShops?.map((shop: any, index: number) => (
                       <option key={index} value={shop?.shopName}>
                         {shop?.shopName} - (Owner: {shop?.name})
                       </option>
