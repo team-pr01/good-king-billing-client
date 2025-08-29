@@ -382,23 +382,27 @@ const Invoice = ({ data }: any) => (
                   {data?.amount}{" "}
                   {data?.status === "Paid" ? "Paid" : "Current Due"}
                 </Text>
-                <Image
-                  source={rupeeWhite}
-                  style={{
-                    width: 9,
-                    height: 9,
-                    marginLeft: 4,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: 9,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {data?.dueAmount}
-                </Text>
+                {data?.dueAmount > 1 && (
+                  <Image
+                    source={rupeeWhite}
+                    style={{
+                      width: 9,
+                      height: 9,
+                      marginLeft: 4,
+                    }}
+                  />
+                )}
+                {data?.dueAmount > 1 && (
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontSize: 9,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {data?.dueAmount}
+                  </Text>
+                )}
               </View>
             </View>
           </View>
@@ -463,7 +467,7 @@ const Invoice = ({ data }: any) => (
           <View style={styles.amountRow}>
             <Text style={styles.normalText}>Previous Due :</Text>
             <Image source={rupee} style={styles.dueRupeeIcon} />
-            <Text style={styles.normalText}>{data?.coveredDueAmount}</Text>
+            <Text style={styles.normalText}>{data?.coveredDueAmount || 0}</Text>
           </View>
           <Text style={styles.normalText}>
             Order ID : {data?.previousOrderId || "N/A"}
@@ -476,7 +480,7 @@ const Invoice = ({ data }: any) => (
           <View style={styles.amountRow}>
             <Text style={styles.subtotalText}>Previous Due :</Text>
             <Image source={rupee} style={styles.rupeeIcon} />
-            <Text style={styles.subtotalText}>{data?.coveredDueAmount}</Text>
+            <Text style={styles.subtotalText}>{data?.coveredDueAmount || 0}</Text>
           </View>
           <View style={styles.amountRow}>
             <Text style={styles.subtotalText}>Subtotal :</Text>
@@ -488,7 +492,7 @@ const Invoice = ({ data }: any) => (
             <Text style={styles.totalText}>Total :</Text>
             <Image source={rupee} style={styles.rupeeIcon} />
             <Text style={styles.totalText}>
-              {data?.subtotal + data?.coveredDueAmount}
+              {data?.subtotal + (data?.coveredDueAmount || 0)}
             </Text>
           </View>
 

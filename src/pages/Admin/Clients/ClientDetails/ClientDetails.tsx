@@ -6,19 +6,81 @@ import {
   FaClock,
   FaTruck,
 } from "react-icons/fa";
-import { FiDownload, FiEye, FiPlus } from "react-icons/fi";
+import {
+  FiCheckCircle,
+  FiDownload,
+  FiEye,
+  FiPlus,
+  FiXCircle,
+} from "react-icons/fi";
 import ClientInfo from "../../../../components/Dashboard/ClientDetailsPage/ClientInfo/ClientInfo";
 import DashboardCard from "../../../../components/Dashboard/DashboardCard/DashboardCard";
 import Table from "../../../../components/Reusable/Table/Table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useGetSingleClientByIdQuery } from "../../../../redux/Features/Client/clientApi";
-import { useGetOrdersByShopIdQuery } from "../../../../redux/Features/Order/orderApi";
+import {
+  useGetOrdersByShopIdQuery,
+  useGetSingleOrderByIdQuery,
+  useUpdateOrderStatusMutation,
+} from "../../../../redux/Features/Order/orderApi";
 import Loader from "../../../../components/Reusable/Loader/Loader";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { pdf } from "@react-pdf/renderer";
+import Invoice from "../../../../components/Dashboard/Invoice/Invoice";
+import { toast } from "sonner";
 const ClientDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+
+  const { data: singleOrder, isLoading: isSingleOrderLoading } =
+    useGetSingleOrderByIdQuery(selectedOrderId!, {
+      skip: !selectedOrderId,
+    });
+
+  // When API finishes, trigger download
+  useEffect(() => {
+    if (!isSingleOrderLoading && singleOrder?.data) {
+      handleDownload(singleOrder.data);
+    }
+  }, [isSingleOrderLoading, singleOrder]);
+
+  // For download invoice
+  const handleDownload = async (order: any) => {
+    const totalAmount = order.products.reduce(
+      (sum: number, item: any) =>
+        sum + (item.price + item.taxValue) * item.quantity,
+      0
+    );
+
+    const invoiceData = {
+      invoiceNumber: order._id,
+      date: new Date(order.createdAt).toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      customerName: order.shopId?.name,
+      businessEmail: order.shopId?.email,
+      businessPhone: order.shopId?.phoneNumber,
+      businessAddress: `${order.shopId?.city}, ${order.shopId?.area}, ${order.shopId?.district}, ${order.shopId?.state}, ${order.shopId?.pinCode}`,
+      businessName: order.shopId?.shopName,
+      items: order.products,
+      status: order.pendingAmount > 0 ? "Due" : "Paid",
+      dueAmount: order.pendingAmount,
+      previousOrderId: order.previousOrderId,
+      subtotal: totalAmount,
+      coveredDueAmount: order.coveredDueAmount,
+    };
+
+    // Generate PDF
+    const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `invoice_${invoiceData.invoiceNumber}.pdf`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
 
   const { data, isLoading } = useGetSingleClientByIdQuery(id);
 
@@ -26,7 +88,6 @@ const ClientDetails = () => {
     useGetOrdersByShopIdQuery(data?.data?._id, {
       skip: !data?.data?._id,
     });
-  console.log(orderData);
 
   // Total due and paid amount
   const totals = orderData?.data?.reduce(
@@ -49,20 +110,48 @@ const ClientDetails = () => {
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
 
   const clientOrders =
-    orderData?.data?.map((order: any) => ({
-      _id: order._id,
-      totalPayment: `₹${order.totalAmount}`,
-      duePayment: `₹${order.pendingAmount}`,
-      paymentStatus: order.pendingAmount > 0 ? "due" : "paid",
-      deliveryStatus: order.status || "pending",
-      createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-    })) || [];
+    orderData?.data?.map((order: any) => {
+      // Payment status color
+      const paymentColor =
+        order.pendingAmount > 0
+          ? "bg-yellow-100 text-yellow-800" // due
+          : "bg-green-100 text-green-800"; // paid
 
-  // Filtered Orders based on statusFilter and paymentStatusFilter
+      // Delivery status color
+      let deliveryColor = "bg-yellow-100 text-yellow-800"; // pending
+      if (order.status === "supplied")
+        deliveryColor = "bg-green-100 text-green-800";
+      if (order.status === "cancelled")
+        deliveryColor = "bg-red-100 text-red-800";
+
+      return {
+        _id: order._id,
+        totalPayment: `₹${order.totalAmount}`,
+        duePayment: `₹${order.pendingAmount}`,
+        paymentStatus: (
+          <span
+            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${paymentColor}`}
+          >
+            {order.pendingAmount > 0 ? "Due" : "Paid"}
+          </span>
+        ),
+        deliveryStatus: (
+          <span
+            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${deliveryColor}`}
+          >
+            {order.status.charAt(0).toUpperCase() + order.status.slice(1) ||
+              "Pending"}
+          </span>
+        ),
+        createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      };
+    }) || [];
+
+  // Filtered Orders
   const filteredOrders = clientOrders.filter((order: any) => {
     const matchesStatus = statusFilter
       ? order.deliveryStatus.toLowerCase() === statusFilter.toLowerCase()
@@ -83,16 +172,50 @@ const ClientDetails = () => {
     { key: "createdAt", label: "Order Date" },
   ];
 
+  const [updateOrderStatus, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
+
+  const handleUpdateOrderStatus = async (status: string, id: string) => {
+    if (isUpdating) {
+      toast.loading("Updating order status...");
+    }
+    try {
+      // Show loading toast
+
+      const payload = { status };
+      await updateOrderStatus({ id, data: payload }).unwrap();
+      toast.success("Order updated successfully!");
+    } catch (error) {
+      console.error("Failed to update Order:", error);
+      // Update toast to error
+      toast.error("Failed to update the Order. Please try again.");
+    }
+  };
+
   const orderActions = [
     {
       icon: <FiDownload />,
-      label: "Download Invoice",
-      onClick: (row: any) => console.log("Download invoice for:", row.orderId),
+      label: isSingleOrderLoading ? "Downloading..." : "Download Invoice",
+      onClick: (row: any) => {
+        setSelectedOrderId(row._id);
+      },
     },
     {
       icon: <FiEye />,
       label: "View Details",
       onClick: (row: any) => navigate(`/admin/dashboard/order/${row._id}`),
+    },
+    {
+      icon: <FiCheckCircle />,
+      label: "Supplied",
+      onClick: (row: any) => handleUpdateOrderStatus("supplied", row?._id),
+      className: "text-green-600",
+    },
+    {
+      icon: <FiXCircle />,
+      label: "Cancelled",
+      onClick: (row: any) => handleUpdateOrderStatus("cancelled", row?._id),
+      className: "text-red-600",
     },
   ];
 
@@ -133,6 +256,7 @@ const ClientDetails = () => {
           bgColor="bg-blue-500"
         />
       </div>
+
       {/* Header */}
       <div className="flex justify-between items-start mt-4">
         <div>

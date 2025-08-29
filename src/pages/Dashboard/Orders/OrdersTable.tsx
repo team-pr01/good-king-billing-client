@@ -1,10 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
+import {
+  FiCheckCircle,
+  FiEye,
+  FiPlus,
+  FiTrash2,
+  FiXCircle,
+} from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import {
   useDeleteOrderMutation,
   useGetAllOrdersQuery,
+  useUpdateOrderStatusMutation,
 } from "../../../redux/Features/Order/orderApi";
 import { toast } from "sonner";
 import Table from "../../../components/Reusable/Table/Table";
@@ -52,19 +59,56 @@ const OrdersTable = () => {
   ];
 
   const allOrders =
-    data?.data?.map((order: any) => ({
+  data?.data?.map((order: any) => {
+    // Determine tag color based on status
+    let statusColor = "bg-yellow-100 text-yellow-800"; // default pending
+    if (order.status === "supplied") statusColor = "bg-green-100 text-green-800";
+    if (order.status === "cancelled") statusColor = "bg-red-100 text-red-800";
+
+    return {
       _id: order._id,
       shopName: order.shopName,
       totalAmount: `₹${order.totalAmount}`,
       pendingAmount: `₹${order.pendingAmount}`,
       paidAmount: `₹${order.totalAmount - order.pendingAmount}`,
-      status: order.status || "pending",
+      // Return JSX for status tag
+      status: (
+        <span
+          className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
+        >
+          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+        </span>
+      ),
       createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
       }),
-    })) || [];
+    };
+  }) || [];
+
+
+  const [updateOrderStatus, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
+
+  const handleUpdateOrderStatus = async (status: string, id: string) => {
+    if (isUpdating) {
+      toast.loading("Updating order status...");
+    }
+    try {
+      // Show loading toast
+
+      const payload = { status };
+      await updateOrderStatus({ id, data: payload }).unwrap();
+
+      // Update toast to success
+      toast.success("Order updated successfully!");
+    } catch (error) {
+      console.error("Failed to update Order:", error);
+      // Update toast to error
+      toast.error("Failed to update the Order. Please try again.");
+    }
+  };
 
   const actions = [
     {
@@ -73,36 +117,50 @@ const OrdersTable = () => {
       onClick: (row: any) => navigate(`/admin/dashboard/order/${row._id}`),
     },
     {
+      icon: <FiCheckCircle />,
+      label: "Supplied",
+      onClick: (row: any) => handleUpdateOrderStatus("supplied", row?._id),
+      className: "text-green-600",
+    },
+    {
+      icon: <FiXCircle />,
+      label: "Cancelled",
+      onClick: (row: any) => handleUpdateOrderStatus("cancelled", row?._id),
+      className: "text-red-600",
+    },
+    {
       icon: <FiTrash2 />,
       label: "Delete",
-      onClick: (row: any) => handleDeleteOrder(row?._id),
+      onClick: (row: any) => handleDeleteOrder(row._id),
       className: "text-red-600",
     },
   ];
 
-
   const handleExport = () => {
-  if (!allOrders || allOrders.length === 0) return;
+    if (!allOrders || allOrders.length === 0) return;
 
-  // map data to match columns labels
-  const exportData = allOrders.map((order:any) => ({
-    "Order ID": order._id,
-    "Shop Name": order.shopName,
-    "Total Amount": order.totalAmount,
-    "Pending Amount": order.pendingAmount,
-    "Paid Amount": order.paidAmount,
-    "Delivery Status": order.status,
-    "Date": order.createdAt,
-  }));
+    // map data to match columns labels
+    const exportData = allOrders.map((order: any) => ({
+      "Order ID": order._id,
+      "Shop Name": order.shopName,
+      "Total Amount": order.totalAmount,
+      "Pending Amount": order.pendingAmount,
+      "Paid Amount": order.paidAmount,
+      "Delivery Status": order.status,
+      Date: order.createdAt,
+    }));
 
-  const worksheet = XLSX.utils.json_to_sheet(exportData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
 
-  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
-  saveAs(data, "orders.xlsx");
-};
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "orders.xlsx");
+  };
   return (
     <div className="flex flex-col gap-4 mt-5">
       <div className="flex justify-between items-start">
@@ -167,7 +225,10 @@ const OrdersTable = () => {
             </div>
 
             {/* Export Client List Button */}
-            <button onClick={handleExport} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer">
+            <button
+              onClick={handleExport}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+            >
               <svg
                 className="w-4 h-4"
                 fill="none"
