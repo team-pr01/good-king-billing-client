@@ -107,7 +107,7 @@ const OrderDetails = () => {
     <div className="min-h-screen">
       {/* Header */}
       <div className="flex items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-base md:text-2xl font-bold text-gray-800">
           Order #{data?.data?._id}
         </h1>
         <span
@@ -165,143 +165,117 @@ const OrderDetails = () => {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="pb-3 text-left text-sm font-medium text-gray-500">
-                      Product
-                    </th>
-                    <th className="pb-3 text-center text-sm font-medium text-gray-500">
-                      Quantity
-                    </th>
-                    <th className="pb-3 text-right text-sm font-medium text-gray-500">
-                      Price
-                    </th>
-                    <th className="pb-3 text-right text-sm font-medium text-gray-500">
-                      Tax Value
-                    </th>
-                    <th className="pb-3 text-right text-sm font-medium text-gray-500">
-                      Total
-                    </th>
-                    {isEditing && (
-                      <th className="pb-3 text-center text-sm font-medium text-gray-500">
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {orderItems?.map((item) => (
-                    <tr
-                      key={
-                        typeof item.productId === "string"
-                          ? item.productId
-                          : item.productId._id
-                      }
-                      className="border-b border-gray-100"
-                    >
-                      <td className="py-4 text-sm font-medium text-gray-800">
-                        {isEditing ? (
-                          <select
-                            value={
-                              typeof item.productId === "string"
-                                ? item.productId
-                                : item.productId._id
+  <table className="min-w-full divide-y divide-gray-200">
+    <thead className="bg-gray-50">
+      <tr>
+        <th className="px-2 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+          Product
+        </th>
+        <th className="px-2 py-2 text-center text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+          Quantity
+        </th>
+        <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+          Price
+        </th>
+        <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+          Tax Value
+        </th>
+        <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+          Total
+        </th>
+        {isEditing && (
+          <th className="px-2 py-2 text-center text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+            Actions
+          </th>
+        )}
+      </tr>
+    </thead>
+    <tbody className="bg-white divide-y divide-gray-100">
+      {orderItems?.map((item) => (
+        <tr key={typeof item.productId === "string" ? item.productId : item.productId._id}>
+          <td className="px-2 py-2 text-sm sm:text-base font-medium text-gray-800 whitespace-nowrap">
+            {isEditing ? (
+              <select
+                value={typeof item.productId === "string" ? item.productId : item.productId._id}
+                onChange={(e) => {
+                  const product = allProducts?.data?.find((p: any) => p._id === e.target.value);
+                  if (product) {
+                    setOrderItems((prev: any) =>
+                      prev.map((p: any) =>
+                        (typeof p.productId === "string"
+                          ? p.productId ===
+                            (typeof item.productId === "string" ? item.productId : item.productId._id)
+                          : p.productId._id ===
+                            (typeof item.productId === "string" ? item.productId : item.productId._id))
+                          ? {
+                              ...p,
+                              productId: product._id,
+                              name: product.name,
+                              price: product.price,
+                              taxValue: product.taxValue || 0,
                             }
-                            onChange={(e) => {
-                              const product = allProducts?.data?.find(
-                                (p: any) => p._id === e.target.value
-                              );
-                              if (product) {
-                                setOrderItems((prev: any) =>
-                                  prev.map((p: any) =>
-                                    (
-                                      typeof p.productId === "string"
-                                        ? p.productId ===
-                                          (typeof item.productId === "string"
-                                            ? item.productId
-                                            : item.productId._id)
-                                        : p.productId._id ===
-                                          (typeof item.productId === "string"
-                                            ? item.productId
-                                            : item.productId._id)
-                                    )
-                                      ? {
-                                          ...p,
-                                          productId: product._id,
-                                          name: product.name,
-                                          price: product.price,
-                                          taxValue: product.taxValue || 0,
-                                        }
-                                      : p
-                                  )
-                                );
-                              }
-                            }}
-                            className="border border-gray-300 rounded px-2 py-1"
-                          >
-                            {allProducts?.data?.map((p: any) => (
-                              <option key={p._id} value={p._id}>
-                                {p.name}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          item.name
-                        )}
-                      </td>
-                      <td className="py-4 text-center">
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) =>
-                              handleQuantityChange(
-                                typeof item.productId === "string"
-                                  ? item.productId
-                                  : item.productId._id,
-                                parseInt(e.target.value)
-                              )
-                            }
-                            className="w-20 px-2 py-1 border border-gray-300 rounded text-center"
-                          />
-                        ) : (
-                          <span className="text-sm text-gray-600">
-                            {item.quantity}
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-4 text-right text-sm text-gray-600">
-                        ₹{item.price.toFixed(2)}
-                      </td>
-                      <td className="py-4 text-right text-sm text-gray-600">
-                        ₹{item.taxValue.toFixed(2)}
-                      </td>
-                      <td className="py-4 text-right text-sm font-medium text-gray-800">
-                        ₹{(item.price + item.taxValue) * item.quantity}
-                      </td>
-                      {isEditing && (
-                        <td className="py-4 text-center">
-                          <button
-                            onClick={() =>
-                              handleDeleteItem(
-                                typeof item.productId === "string"
-                                  ? item.productId
-                                  : item.productId._id
-                              )
-                            }
-                            className="text-red-600 hover:text-red-800 p-1"
-                          >
-                            <FiTrash2 className="w-4 h-4" />
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                          : p
+                      )
+                    );
+                  }
+                }}
+                className="border border-gray-300 rounded px-2 py-1 min-w-[150px] w-full sm:w-auto"
+              >
+                {allProducts?.data?.map((p: any) => (
+                  <option key={p._id} value={p._id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              item.name
+            )}
+          </td>
+          <td className="px-2 py-2 text-center whitespace-nowrap">
+            {isEditing ? (
+              <input
+                type="number"
+                min="1"
+                value={item.quantity}
+                onChange={(e) =>
+                  handleQuantityChange(
+                    typeof item.productId === "string" ? item.productId : item.productId._id,
+                    parseInt(e.target.value)
+                  )
+                }
+                className="w-16 sm:w-20 px-2 py-1 border border-gray-300 rounded text-center"
+              />
+            ) : (
+              <span className="text-sm text-gray-600">{item.quantity}</span>
+            )}
+          </td>
+          <td className="px-2 py-2 text-right text-sm sm:text-base text-gray-600 whitespace-nowrap">
+            ₹{item.price.toFixed(2)}
+          </td>
+          <td className="px-2 py-2 text-right text-sm sm:text-base text-gray-600 whitespace-nowrap">
+            ₹{item.taxValue.toFixed(2)}
+          </td>
+          <td className="px-2 py-2 text-right text-sm sm:text-base font-medium text-gray-800 whitespace-nowrap">
+            ₹{((item.price + item.taxValue) * item.quantity).toFixed(2)}
+          </td>
+          {isEditing && (
+            <td className="px-2 py-2 text-center whitespace-nowrap">
+              <button
+                onClick={() =>
+                  handleDeleteItem(typeof item.productId === "string" ? item.productId : item.productId._id)
+                }
+                className="text-red-600 hover:text-red-800 p-1"
+              >
+                <FiTrash2 className="w-4 h-4" />
+              </button>
+            </td>
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
 
             {isEditing && (
               <button

@@ -83,7 +83,7 @@ const Users = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex flex-col md:flex-row gap-5 md:gap-0 justify-between items-start mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Users</h1>
           <p className="text-gray-600">
@@ -95,19 +95,19 @@ const Users = () => {
           {/* Add New Supplier Button */}
           <button
             onClick={() => setIsAddUserModalOpen(true)}
-            className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-2 md:px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
           >
             <FiUserPlus className="w-5 h-5" />
-            Add New Supplier
+            Add Supplier
           </button>
 
           {/* Add New Salesperson Button */}
           <button
             onClick={() => setIsAddUserModalOpen(true)}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-2 md:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
           >
             <FiUserCheck className="w-5 h-5" />
-            Add New Salesperson
+            Add Salesperson
           </button>
         </div>
       </div>
@@ -144,7 +144,8 @@ const Users = () => {
           {/* Filters Container */}
           <div className="flex gap-3 flex-wrap items-center">
             {/* Status Filter Dropdown */}
-            <div className="min-w-[150px]">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="min-w-[150px]">
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
@@ -165,15 +166,16 @@ const Users = () => {
                 setRoleFilter("");
               }}
               disabled={!roleFilter && !searchValue}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="px-2 md:px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               Remove Filters
             </button>
+            </div>
 
             {/* Export Client List Button */}
             <button
               onClick={() => handleExportUsers()}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer w-full sm:w-fit"
             >
               <FiDownload className="w-4 h-4" />
               Export User List

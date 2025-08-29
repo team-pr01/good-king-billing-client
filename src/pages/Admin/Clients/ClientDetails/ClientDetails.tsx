@@ -224,7 +224,7 @@ const ClientDetails = () => {
   ) : (
     <div className=" min-h-screen font-Nunito flex flex-col gap-6">
       {/* Data Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <DashboardCard
           title="Paid Amount"
           value={`₹${totals?.paid.toFixed(2)}`}
@@ -258,7 +258,7 @@ const ClientDetails = () => {
       </div>
 
       {/* Header */}
-      <div className="flex justify-between items-start mt-4">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-start mt-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
             Client Information
@@ -278,17 +278,17 @@ const ClientDetails = () => {
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col gap-8">
+      <div className="bg-transparent md:bg-white rounded-lg shadow-none md:shadow-sm border-none md:border border-gray-200 p-0 md:p-6 flex flex-col gap-8">
         {/* Clients Table */}
         <ClientInfo client={data?.data} />
 
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row gap-3 md:gap-0 items-center md:items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-800 ">All Orders</h2>
             {/* Filters Container */}
             <div className="flex gap-3 flex-wrap items-center">
               {/* Status Filter Dropdown */}
-              <div className="min-w-[150px]">
+              <div className="min-w-[150px] w-full md:w-fit">
                 <select
                   value={paymentStatusFilter}
                   onChange={(e) => setPaymentStatusFilter(e.target.value)}
@@ -300,7 +300,7 @@ const ClientDetails = () => {
                 </select>
               </div>
               {/* Delivery Status Filter Dropdown */}
-              <div className="min-w-[150px]">
+              <div className="min-w-[150px] w-full md:w-fit">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}

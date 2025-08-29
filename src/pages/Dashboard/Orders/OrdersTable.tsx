@@ -209,7 +209,7 @@ const OrdersTable = () => {
           </div>
 
           {/* Filters Container */}
-          <div className="flex gap-3 flex-wrap items-center">
+          <div className="flex gap-3 flex-row items-center">
             {/* Status Filter Dropdown */}
             <div className="min-w-[150px]">
               <select
@@ -227,7 +227,7 @@ const OrdersTable = () => {
             {/* Export Client List Button */}
             <button
               onClick={handleExport}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-2 md:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
             >
               <svg
                 className="w-4 h-4"
@@ -243,7 +243,7 @@ const OrdersTable = () => {
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-              Export Order List
+              Export Data
             </button>
           </div>
         </div>

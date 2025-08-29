@@ -107,27 +107,27 @@ const Clients = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 justify-between items-start mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Clients</h1>
           <p className="text-gray-600">Manage your client list</p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col md:flex-row w-full md:w-fit gap-3">
           {/* Add New Area Button */}
           <Link
             to="/admin/dashboard/area"
-            className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex justify-center items-center gap-2 transition-colors cursor-pointer w-full md:w-fit text-center"
           >
             <FiMapPin className="w-5 h-5" />
             View Areas
           </Link>
           <button
             onClick={() => setIsAddAreaModalOpen(true)}
-            className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center gap-2 transition-colors cursor-pointer w-full md:w-fit justify-center"
           >
             <FiMapPin className="w-5 h-5" />
-            Add New Area
+            Add Area
           </button>
 
           {/* Add New Client Button */}
@@ -136,10 +136,10 @@ const Clients = () => {
               setIsAddClientModalOpen(true);
               setModalType("add");
             }}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 gap-2 transition-colors cursor-pointer w-full md:w-fit flex items-center justify-center"
           >
             <FiPlus className="w-5 h-5" />
-            Add New Client
+            Add Client
           </button>
         </div>
       </div>
