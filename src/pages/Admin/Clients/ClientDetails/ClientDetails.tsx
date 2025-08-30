@@ -54,7 +54,7 @@ const ClientDetails = () => {
     );
 
     const invoiceData = {
-      invoiceNumber: order._id,
+      invoiceNumber: order.orderId,
       date: new Date(order.createdAt).toLocaleString("en-US", {
         year: "numeric",
         month: "long",
@@ -71,6 +71,7 @@ const ClientDetails = () => {
       previousOrderId: order.previousOrderId,
       subtotal: totalAmount,
       coveredDueAmount: order.coveredDueAmount,
+      paidAmount: order?.paidAmount,
     };
 
     // Generate PDF
@@ -125,15 +126,15 @@ const ClientDetails = () => {
         deliveryColor = "bg-red-100 text-red-800";
 
       return {
-        roeId : order._id,
-       _id: (
-      <Link
-        to={`/admin/dashboard/order/${order._id}`}
-        className="text-blue-600 hover:underline"
-      >
-        {order._id}
-      </Link>
-    ),
+        roeId: order._id,
+        _id: (
+          <Link
+            to={`/admin/dashboard/order/${order._id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {order._id}
+          </Link>
+        ),
         totalPayment: `₹${order.totalAmount}`,
         duePayment: `₹${order.pendingAmount}`,
         paymentStatus: (

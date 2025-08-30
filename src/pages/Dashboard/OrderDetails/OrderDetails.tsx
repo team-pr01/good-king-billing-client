@@ -105,7 +105,7 @@ const OrderDetails = () => {
   };
 
   const invoiceData = {
-    invoiceNumber: data?.data?._id,
+    invoiceNumber: data?.data?.orderId,
     date: new Date(data?.data?.createdAt).toLocaleString("en-US", {
       year: "numeric",
       month: "long",
@@ -122,6 +122,7 @@ const OrderDetails = () => {
     previousOrderId: data?.data?.previousOrderId,
     subtotal: totalAmount,
     coveredDueAmount: data?.data?.coveredDueAmount,
+    paidAmount: data?.data?.paidAmount,
   };
 
   const handleDownload = async () => {
