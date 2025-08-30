@@ -125,7 +125,14 @@ const ClientDetails = () => {
         deliveryColor = "bg-red-100 text-red-800";
 
       return {
-        _id: order._id,
+       _id: (
+      <Link
+        to={`/admin/dashboard/order/${order._id}`}
+        className="text-blue-600 hover:underline"
+      >
+        {order._id}
+      </Link>
+    ),
         totalPayment: `₹${order.totalAmount}`,
         duePayment: `₹${order.pendingAmount}`,
         paymentStatus: (

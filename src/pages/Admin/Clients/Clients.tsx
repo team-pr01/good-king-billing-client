@@ -35,6 +35,25 @@ const Clients = () => {
   const [modalType, setModalType] = useState<string | null>("add");
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
 
+  const allClients =
+  data?.data?.map((client: any) => ({
+    _id: (
+      <Link
+        to={`/admin/dashboard/client/${client._id}`}
+        className="text-blue-600 hover:underline"
+      >
+        {client._id}
+      </Link>
+    ),
+    shopName: client.shopName,
+    name: client.name,
+    phoneNumber: client.phoneNumber,
+    email: client.email,
+    state: client.state,
+    city: client.city,
+    area: client.area,
+  })) || [];
+
   const columns = [
     { key: "_id", label: "ID" },
     { key: "shopName", label: "Shop Name" },
@@ -225,7 +244,7 @@ const Clients = () => {
       {/* Clients Table */}
       <Table
         columns={columns}
-        data={data?.data}
+        data={allClients}
         actions={actions}
         rowKey="_id"
         isLoading={isLoading || isFetching}

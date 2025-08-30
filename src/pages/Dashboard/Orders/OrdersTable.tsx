@@ -58,20 +58,26 @@ const OrdersTable = () => {
     { key: "createdAt", label: "Date" },
   ];
 
-  const allOrders =
+
+const allOrders =
   data?.data?.map((order: any) => {
-    // Determine tag color based on status
-    let statusColor = "bg-yellow-100 text-yellow-800"; // default pending
+    let statusColor = "bg-yellow-100 text-yellow-800";
     if (order.status === "supplied") statusColor = "bg-green-100 text-green-800";
     if (order.status === "cancelled") statusColor = "bg-red-100 text-red-800";
 
     return {
-      _id: order._id,
+      _id: (
+        <Link
+          to={`/admin/dashboard/order/${order._id}`}
+          className="text-blue-600 hover:underline"
+        >
+          {order._id}
+        </Link>
+      ),
       shopName: order.shopName,
       totalAmount: `₹${order.totalAmount}`,
       pendingAmount: `₹${order.pendingAmount}`,
       paidAmount: `₹${order.totalAmount - order.pendingAmount}`,
-      // Return JSX for status tag
       status: (
         <span
           className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
@@ -86,6 +92,7 @@ const OrdersTable = () => {
       }),
     };
   }) || [];
+
 
 
   const [updateOrderStatus, { isLoading: isUpdating }] =

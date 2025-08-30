@@ -11,6 +11,7 @@ import Button from "../../../Reusable/Button/Button";
 import Loader from "../../../Reusable/Loader/Loader";
 import SelectDropdown from "../../../Reusable/SelectDropdown/SelectDropdown";
 import { useGetAllAreaQuery } from "../../../../redux/Features/Area/areaApi";
+import { toast } from "sonner";
 
 type FormValues = {
   name: string;
@@ -130,7 +131,8 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
           onClose();
         }
       }
-    } catch (error) {
+    } catch (error:any) {
+      toast.error(error?.data?.errorSourse[0].message)
       console.log(error);
     }
   };

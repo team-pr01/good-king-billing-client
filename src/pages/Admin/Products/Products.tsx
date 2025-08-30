@@ -58,6 +58,31 @@ const Products = () => {
     }
   };
 
+  const allProductsData =
+  allProducts?.data?.map((product: any) => {
+    const statusColor =
+      product.availableStock > 0
+        ? "bg-green-100 text-green-800"
+        : "bg-red-100 text-red-800";
+
+    return {
+      _id: product._id,
+      name: product.name,
+      price: `₹${product.price}`,
+      availableStock: product.availableStock,
+      hsnCode: product.hsnCode,
+      taxValue: product.taxValue,
+      status: (
+        <span
+          className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
+        >
+          {product.availableStock > 0 ? "Available" : "Out of Stock"}
+        </span>
+      ),
+    };
+  }) || [];
+
+
   const productColumns = [
     { key: "_id", label: "ID" },
     { key: "name", label: "Name" },
@@ -225,7 +250,7 @@ const Products = () => {
       </div>
       <Table
         columns={productColumns}
-        data={allProducts?.data}
+        data={allProductsData}
         actions={productActions}
         rowKey="_id"
         isLoading={isLoading || isFetching}

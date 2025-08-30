@@ -56,26 +56,26 @@ const OrderConfirmed = () => {
     URL.revokeObjectURL(link.href);
   };
 
-const handleShareWhatsApp = async () => {
-  const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
-  const formData = new FormData();
-  formData.append("file", blob, `invoice_${invoiceData.invoiceNumber}.pdf`);
+  const handleShareWhatsApp = async () => {
+    if (!invoiceData.businessPhone) {
+      alert("Business phone not available");
+      return;
+    }
 
-  const response = await fetch("/api/upload", { method: "POST", body: formData });
-  const result = await response.json();
-  const fileUrl = result.url; // Publicly accessible URL
+    const phone = invoiceData.businessPhone.replace(/\D/g, "");
 
-  const message = `Invoice #${invoiceData.invoiceNumber}
-Shop: ${invoiceData.customerName}
-Total: ₹${invoiceData.subtotal?.toFixed(2)}
-Date: ${invoiceData.date}
-Download PDF: ${fileUrl}`;
+    const message = `Invoice #${invoiceData.invoiceNumber}
+Shop Owner: ${invoiceData.customerName}
+Business Name: ${invoiceData.businessName}
+Total Price: ₹${invoiceData.subtotal?.toFixed(2)}
+Due Amount: ₹${invoiceData.dueAmount?.toFixed(2)}
+Date: ${invoiceData.date}`;
 
-  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
-};
-
-
-
+    const whatsappUrl = `https://wa.me/+91${phone}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   const handleBackToOrders = () => {
     // Navigate back to orders list

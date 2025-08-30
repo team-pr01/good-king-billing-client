@@ -40,7 +40,7 @@ function Table<T extends Record<string, any>>({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-[1000px] 2xl:max-w-[1200px]">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 max-w-[1000px] 2xl:max-w-full">
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse divide-y divide-gray-200">
           <thead className="bg-gray-50">
