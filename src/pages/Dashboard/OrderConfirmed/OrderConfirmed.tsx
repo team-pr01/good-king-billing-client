@@ -56,30 +56,26 @@ const OrderConfirmed = () => {
     URL.revokeObjectURL(link.href);
   };
 
-  const handleShareWhatsApp = async () => {
-  // 1. Generate PDF
+const handleShareWhatsApp = async () => {
   const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
-
-  // 2. Upload blob to server (pseudo-code)
   const formData = new FormData();
   formData.append("file", blob, `invoice_${invoiceData.invoiceNumber}.pdf`);
 
-  const response = await fetch("/api/upload", {
-    method: "POST",
-    body: formData,
-  });
-
+  const response = await fetch("/api/upload", { method: "POST", body: formData });
   const result = await response.json();
-  const fileUrl = result.url; // server should return public URL
+  const fileUrl = result.url; // Publicly accessible URL
 
-  // 3. Open WhatsApp share link with PDF URL
-  const message = `Invoice for Order #${invoiceData.invoiceNumber}\nShop: ${invoiceData.customerName}\nTotal: ₹${invoiceData.subtotal.toFixed(
-    2
-  )}\nDate: ${invoiceData.date}\nDownload PDF: ${fileUrl}`;
+  const message = `Invoice #${invoiceData.invoiceNumber}
+Shop: ${invoiceData.customerName}
+Total: ₹${invoiceData.subtotal?.toFixed(2)}
+Date: ${invoiceData.date}
+Download PDF: ${fileUrl}`;
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, "_blank");
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
 };
+
+
+
 
   const handleBackToOrders = () => {
     // Navigate back to orders list
