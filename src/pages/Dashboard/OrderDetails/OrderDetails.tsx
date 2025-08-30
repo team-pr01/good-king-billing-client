@@ -10,6 +10,14 @@ import {
 import { useGetAllProductsQuery } from "../../../redux/Features/Product/productApi";
 import Loader from "../../../components/Reusable/Loader/Loader";
 
+type OrderItem = {
+  productId: { _id: string };
+  name: string;
+  quantity: number;
+  price: number;
+  taxValue: number;
+};
+
 const OrderDetails = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
@@ -18,15 +26,9 @@ const OrderDetails = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  type OrderItem = {
-    productId: { _id: string } | string;
-    name: string;
-    quantity: number;
-    price: number;
-    taxValue: number;
-  };
 
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  console.log(orderItems);
 
   // Load API order products into local state
   useEffect(() => {
@@ -45,11 +47,12 @@ const OrderDetails = () => {
 
   // Handle quantity change
   const handleQuantityChange = (productId: string, newQuantity: number) => {
-    console.log(productId);
     if (newQuantity < 1) return;
     setOrderItems((prev: any) =>
       prev.map((item: any) =>
-        item.productId === productId ? { ...item, quantity: newQuantity } : item
+        item?.productId?._id === productId
+          ? { ...item, quantity: newQuantity }
+          : item
       )
     );
   };
@@ -58,26 +61,23 @@ const OrderDetails = () => {
   const handleDeleteItem = (productId: string) => {
     console.log(productId);
     setOrderItems((prev) =>
-      prev.filter((item) =>
-        typeof item.productId === "string"
-          ? item.productId !== productId
-          : item.productId._id !== productId
-      )
+      prev.filter((item) => item?.productId?._id !== productId)
     );
   };
 
   // Add new product
   const handleAddProduct = () => {
     if (!allProducts?.data?.length) return;
-    const firstProduct = allProducts.data[0];
     setOrderItems((prev: any) => [
       ...prev,
       {
-        productId: firstProduct._id,
-        name: firstProduct.name,
+        productId: {
+          _id: "",
+        },
+        name: "",
         quantity: 1,
-        price: firstProduct.price,
-        taxValue: firstProduct.taxValue || 0,
+        price: "",
+        taxValue: 0,
       },
     ]);
   };
@@ -165,117 +165,133 @@ const OrderDetails = () => {
             </div>
 
             <div className="overflow-x-auto">
-  <table className="min-w-full divide-y divide-gray-200">
-    <thead className="bg-gray-50">
-      <tr>
-        <th className="px-2 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
-          Product
-        </th>
-        <th className="px-2 py-2 text-center text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
-          Quantity
-        </th>
-        <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
-          Price
-        </th>
-        <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
-          Tax Value
-        </th>
-        <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
-          Total
-        </th>
-        {isEditing && (
-          <th className="px-2 py-2 text-center text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
-            Actions
-          </th>
-        )}
-      </tr>
-    </thead>
-    <tbody className="bg-white divide-y divide-gray-100">
-      {orderItems?.map((item) => (
-        <tr key={typeof item.productId === "string" ? item.productId : item.productId._id}>
-          <td className="px-2 py-2 text-sm sm:text-base font-medium text-gray-800 whitespace-nowrap">
-            {isEditing ? (
-              <select
-                value={typeof item.productId === "string" ? item.productId : item.productId._id}
-                onChange={(e) => {
-                  const product = allProducts?.data?.find((p: any) => p._id === e.target.value);
-                  if (product) {
-                    setOrderItems((prev: any) =>
-                      prev.map((p: any) =>
-                        (typeof p.productId === "string"
-                          ? p.productId ===
-                            (typeof item.productId === "string" ? item.productId : item.productId._id)
-                          : p.productId._id ===
-                            (typeof item.productId === "string" ? item.productId : item.productId._id))
-                          ? {
-                              ...p,
-                              productId: product._id,
-                              name: product.name,
-                              price: product.price,
-                              taxValue: product.taxValue || 0,
-                            }
-                          : p
-                      )
-                    );
-                  }
-                }}
-                className="border border-gray-300 rounded px-2 py-1 min-w-[150px] w-full sm:w-auto"
-              >
-                {allProducts?.data?.map((p: any) => (
-                  <option key={p._id} value={p._id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              item.name
-            )}
-          </td>
-          <td className="px-2 py-2 text-center whitespace-nowrap">
-            {isEditing ? (
-              <input
-                type="number"
-                min="1"
-                value={item.quantity}
-                onChange={(e) =>
-                  handleQuantityChange(
-                    typeof item.productId === "string" ? item.productId : item.productId._id,
-                    parseInt(e.target.value)
-                  )
-                }
-                className="w-16 sm:w-20 px-2 py-1 border border-gray-300 rounded text-center"
-              />
-            ) : (
-              <span className="text-sm text-gray-600">{item.quantity}</span>
-            )}
-          </td>
-          <td className="px-2 py-2 text-right text-sm sm:text-base text-gray-600 whitespace-nowrap">
-            ₹{item.price.toFixed(2)}
-          </td>
-          <td className="px-2 py-2 text-right text-sm sm:text-base text-gray-600 whitespace-nowrap">
-            ₹{item.taxValue.toFixed(2)}
-          </td>
-          <td className="px-2 py-2 text-right text-sm sm:text-base font-medium text-gray-800 whitespace-nowrap">
-            ₹{((item.price + item.taxValue) * item.quantity).toFixed(2)}
-          </td>
-          {isEditing && (
-            <td className="px-2 py-2 text-center whitespace-nowrap">
-              <button
-                onClick={() =>
-                  handleDeleteItem(typeof item.productId === "string" ? item.productId : item.productId._id)
-                }
-                className="text-red-600 hover:text-red-800 p-1"
-              >
-                <FiTrash2 className="w-4 h-4" />
-              </button>
-            </td>
-          )}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-2 py-2 text-left text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Product
+                    </th>
+                    <th className="px-2 py-2 text-center text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Quantity
+                    </th>
+                    <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Price
+                    </th>
+                    <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Tax Value
+                    </th>
+                    <th className="px-2 py-2 text-right text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Total
+                    </th>
+                    {isEditing && (
+                      <th className="px-2 py-2 text-center text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
+                        Actions
+                      </th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {orderItems?.map((item) => (
+                    <tr key={item?.productId?._id}>
+                      <td className="px-2 py-2 text-sm sm:text-base font-medium text-gray-800 whitespace-nowrap">
+                        {isEditing ? (
+                          <select
+                            value={item.productId?._id || ""} // 👈 empty if no product
+                            onChange={(e) => {
+                              const selectedId = e.target.value;
+                              const product = allProducts?.data?.find(
+                                (p: any) => p._id === selectedId
+                              );
 
+                              setOrderItems((prev: any) =>
+                                prev.map((p: any) =>
+                                  p.productId?._id === item.productId?._id
+                                    ? product
+                                      ? {
+                                          ...p,
+                                          productId: { _id: product._id }, // 👈 keep object format
+                                          name: product.name,
+                                          price: product.price,
+                                          taxValue: product.taxValue || 0,
+                                        }
+                                      : {
+                                          ...p,
+                                          productId: null, // 👈 reset if no product
+                                          name: "",
+                                          price: 0,
+                                          taxValue: 0,
+                                        }
+                                    : p
+                                )
+                              );
+                            }}
+                            className="border border-gray-300 rounded px-2 py-1 min-w-[150px] w-full sm:w-auto"
+                          >
+                            {/* Placeholder so first product is NOT auto-selected */}
+                            <option value="">-- Select a product --</option>
+
+                            {allProducts?.data?.map((p: any) => (
+                              <option key={p._id} value={p._id}>
+                                {p.name}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          item.name
+                        )}
+                      </td>
+                      <td className="px-2 py-2 text-center whitespace-nowrap">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleQuantityChange(
+                                typeof item.productId === "string"
+                                  ? item.productId
+                                  : item.productId._id,
+                                parseInt(e.target.value)
+                              )
+                            }
+                            className="w-16 sm:w-20 px-2 py-1 border border-gray-300 rounded text-center"
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-600">
+                            {item.quantity}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 text-right text-sm sm:text-base text-gray-600 whitespace-nowrap">
+                        ₹{item.price}
+                      </td>
+                      <td className="px-2 py-2 text-right text-sm sm:text-base text-gray-600 whitespace-nowrap">
+                        ₹{item.taxValue}
+                      </td>
+                      <td className="px-2 py-2 text-right text-sm sm:text-base font-medium text-gray-800 whitespace-nowrap">
+                        ₹{(item.price + item.taxValue) * item.quantity}
+                      </td>
+                      {isEditing && (
+                        <td className="px-2 py-2 text-center whitespace-nowrap">
+                          <button
+                            onClick={() =>
+                              handleDeleteItem(
+                                typeof item.productId === "string"
+                                  ? item.productId
+                                  : item.productId._id
+                              )
+                            }
+                            className="text-red-600 hover:text-red-800 p-1"
+                          >
+                            <FiTrash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {isEditing && (
               <button
@@ -335,7 +351,7 @@ const OrderDetails = () => {
                 </>
               ) : (
                 <button
-                disabled={data?.data?.pendingAmount === 0}
+                  disabled={data?.data?.pendingAmount === 0}
                   onClick={() => setIsPaymentModalOpen(true)}
                   className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
                 >

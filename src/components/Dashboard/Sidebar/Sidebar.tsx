@@ -50,7 +50,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-72 max-w-[280px] h-screen sticky top-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-shrink-0 py-6 px-4 hidden xl:flex flex-col justify-between gap-10 ">
+    <aside className="w-72 max-w-[240px] 2xl:max-w-[280px] h-screen sticky top-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-shrink-0 py-6 px-4 hidden xl:flex flex-col justify-between gap-10 ">
       <img src={logo} alt="" className="w-48 mx-auto" />
       <div className="flex flex-col h-full">
         <nav className="flex-1">
