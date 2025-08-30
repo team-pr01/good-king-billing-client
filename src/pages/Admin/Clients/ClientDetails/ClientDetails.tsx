@@ -125,6 +125,7 @@ const ClientDetails = () => {
         deliveryColor = "bg-red-100 text-red-800";
 
       return {
+        roeId : order._id,
        _id: (
       <Link
         to={`/admin/dashboard/order/${order._id}`}
@@ -204,7 +205,7 @@ const ClientDetails = () => {
       icon: <FiDownload />,
       label: isSingleOrderLoading ? "Downloading..." : "Download Invoice",
       onClick: (row: any) => {
-        setSelectedOrderId(row._id);
+        setSelectedOrderId(row.roeId);
       },
     },
     {

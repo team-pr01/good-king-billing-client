@@ -110,6 +110,7 @@ console.log(filteredShops);
     const orderPayload = {
       shopId: shop?._id,
       shopName: shop?.shopName,
+      area: selectedArea,
       totalAmount,
       paidAmount,
       pendingAmount,

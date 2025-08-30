@@ -4,7 +4,6 @@ import {
   FiCheckCircle,
   FiDownload,
   FiShare2,
-  FiArrowLeft,
 } from "react-icons/fi";
 import Invoice from "../../../components/Dashboard/Invoice/Invoice";
 import { useParams } from "react-router-dom";
@@ -14,7 +13,6 @@ import Loader from "../../../components/Reusable/Loader/Loader";
 const OrderConfirmed = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
-  console.log(data);
 
   // Calculate totals
   const totalAmount = data?.data?.products?.reduce(
@@ -77,27 +75,10 @@ Date: ${invoiceData.date}`;
     window.open(whatsappUrl, "_blank");
   };
 
-  const handleBackToOrders = () => {
-    // Navigate back to orders list
-    console.log("Going back to orders");
-    // Typically you would use: navigate('/orders');
-  };
-
   return isLoading ? (
     <Loader />
   ) : (
     <div className="min-h-screen">
-      {/* Header */}
-      <div className="flex items-center mb-6">
-        <button
-          onClick={handleBackToOrders}
-          className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
-        >
-          <FiArrowLeft className="w-5 h-5 mr-1" />
-          Back to Orders
-        </button>
-      </div>
-
       {/* Success Message */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 text-center">
         <div className="flex justify-center mb-4">

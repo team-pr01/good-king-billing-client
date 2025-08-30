@@ -37,15 +37,15 @@ const Clients = () => {
 
   const allClients =
   data?.data?.map((client: any) => ({
-    _id: (
+    rowId : client._id,
+    shopName:  (
       <Link
         to={`/admin/dashboard/client/${client._id}`}
         className="text-blue-600 hover:underline"
       >
-        {client._id}
+        {client.shopName}
       </Link>
     ),
-    shopName: client.shopName,
     name: client.name,
     phoneNumber: client.phoneNumber,
     email: client.email,
@@ -55,7 +55,7 @@ const Clients = () => {
   })) || [];
 
   const columns = [
-    { key: "_id", label: "ID" },
+    // { key: "_id", label: "ID" },
     { key: "shopName", label: "Shop Name" },
     { key: "name", label: "Name" },
     { key: "phoneNumber", label: "Phone Number" },
@@ -69,13 +69,13 @@ const Clients = () => {
     {
       icon: <FiEye />,
       label: "View",
-      onClick: (row: any) => navigate(`/admin/dashboard/client/${row._id}`),
+      onClick: (row: any) => navigate(`/admin/dashboard/client/${row.rowId}`),
     },
     {
       icon: <FiEdit />,
       label: "Edit",
       onClick: (row: any) => {
-        setSelectedClientId(row?._id);
+        setSelectedClientId(row?.rowId);
         setModalType("edit");
         setIsAddClientModalOpen(true);
       },

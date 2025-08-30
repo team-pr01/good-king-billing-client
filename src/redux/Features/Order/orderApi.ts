@@ -3,20 +3,24 @@ import { baseApi } from "../../API/baseApi";
 const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllOrders: builder.query({
-      query: ({ keyword = "", status = "" }) => {
-        let queryParams = `?keyword=${keyword}`;
-        if (status !== "") {
-          queryParams += `&status=${status}`;
-        }
+  query: ({ keyword = "", status = "", area = "" }) => {
+    let queryParams = `?keyword=${keyword}`;
+    if (status !== "") {
+      queryParams += `&status=${status}`;
+    }
+    if (area !== "") {
+      queryParams += `&area=${area}`;
+    }
 
-        return {
-          url: `/order${queryParams}`,
-          method: "GET",
-          credentials: "include",
-        };
-      },
-      providesTags: ["order"],
-    }),
+    return {
+      url: `/order${queryParams}`,
+      method: "GET",
+      credentials: "include",
+    };
+  },
+  providesTags: ["order"],
+}),
+
 
     getSingleOrderById: builder.query({
       query: (id) => {

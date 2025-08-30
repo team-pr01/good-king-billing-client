@@ -17,15 +17,19 @@ import { toast } from "sonner";
 import Table from "../../../components/Reusable/Table/Table";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { useGetAllAreaQuery } from "../../../redux/Features/Area/areaApi";
 
 const OrdersTable = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [selectedArea, setSelectedArea] = useState("");
+  const { data: allArea } = useGetAllAreaQuery({});
 
-  const { data, isLoading } = useGetAllOrdersQuery({
+  const { data, isLoading, isFetching } = useGetAllOrdersQuery({
     keyword: searchValue,
     status: statusFilter,
+    area: selectedArea,
   });
 
   const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
@@ -51,12 +55,15 @@ const OrdersTable = () => {
   const columns = [
     { key: "_id", label: "Order ID" },
     { key: "shopName", label: "Shop Name" },
+    { key: "area", label: "Area" },
     { key: "totalAmount", label: "Total Amount" },
     { key: "pendingAmount", label: "Pending Amount" },
     { key: "paidAmount", label: "Paid Amount" },
     { key: "status", label: "Delivery Status" },
     { key: "createdAt", label: "Date" },
   ];
+
+  console.log(data);
 
 
 const allOrders =
@@ -66,6 +73,7 @@ const allOrders =
     if (order.status === "cancelled") statusColor = "bg-red-100 text-red-800";
 
     return {
+      rowId : order._id,
       _id: (
         <Link
           to={`/admin/dashboard/order/${order._id}`}
@@ -75,6 +83,7 @@ const allOrders =
         </Link>
       ),
       shopName: order.shopName,
+      area : order.area,
       totalAmount: `₹${order.totalAmount}`,
       pendingAmount: `₹${order.pendingAmount}`,
       paidAmount: `₹${order.totalAmount - order.pendingAmount}`,
@@ -121,24 +130,24 @@ const allOrders =
     {
       icon: <FiEye />,
       label: "View",
-      onClick: (row: any) => navigate(`/admin/dashboard/order/${row._id}`),
+      onClick: (row: any) => navigate(`/admin/dashboard/order/${row.rowId}`),
     },
     {
       icon: <FiCheckCircle />,
       label: "Supplied",
-      onClick: (row: any) => handleUpdateOrderStatus("supplied", row?._id),
+      onClick: (row: any) => handleUpdateOrderStatus("supplied", row?.rowId),
       className: "text-green-600",
     },
     {
       icon: <FiXCircle />,
       label: "Cancelled",
-      onClick: (row: any) => handleUpdateOrderStatus("cancelled", row?._id),
+      onClick: (row: any) => handleUpdateOrderStatus("cancelled", row?.rowId),
       className: "text-red-600",
     },
     {
       icon: <FiTrash2 />,
       label: "Delete",
-      onClick: (row: any) => handleDeleteOrder(row._id),
+      onClick: (row: any) => handleDeleteOrder(row.rowId),
       className: "text-red-600",
     },
   ];
@@ -150,6 +159,7 @@ const allOrders =
     const exportData = allOrders.map((order: any) => ({
       "Order ID": order._id,
       "Shop Name": order.shopName,
+      "Area" : order.area,
       "Total Amount": order.totalAmount,
       "Pending Amount": order.pendingAmount,
       "Paid Amount": order.paidAmount,
@@ -216,8 +226,25 @@ const allOrders =
           </div>
 
           {/* Filters Container */}
-          <div className="flex gap-3 flex-row items-center">
-            {/* Status Filter Dropdown */}
+          <div className="flex flex-col md:flex-row gap-3 items-center">
+             {/* Area */}
+                <div className="w-full md:w-fit">
+                  <select
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
+                  >
+                    <option value="">Select Area</option>
+                    {allArea?.data?.map((area: any, index: number) => (
+                      <option key={index} value={area?.area}>
+                        {area?.area}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+           <div className="flex items-center gap-3">
+             {/* Status Filter Dropdown */}
             <div className="min-w-[150px]">
               <select
                 value={statusFilter}
@@ -252,6 +279,7 @@ const allOrders =
               </svg>
               Export Data
             </button>
+           </div>
           </div>
         </div>
       </div>
@@ -261,7 +289,7 @@ const allOrders =
         data={allOrders}
         actions={actions}
         rowKey="_id"
-        isLoading={isLoading}
+        isLoading={isLoading || isFetching}
       />
     </div>
   );

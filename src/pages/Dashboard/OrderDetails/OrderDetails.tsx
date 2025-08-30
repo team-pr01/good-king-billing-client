@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiPlus, FiDownload } from "react-icons/fi";
 import ProceedToPaymentModal from "../../../components/Dashboard/OrderDetailsPage/ProceedToPaymentModal/ProceedToPaymentModal";
 import { useParams } from "react-router-dom";
 import {
@@ -9,6 +9,8 @@ import {
 } from "../../../redux/Features/Order/orderApi";
 import { useGetAllProductsQuery } from "../../../redux/Features/Product/productApi";
 import Loader from "../../../components/Reusable/Loader/Loader";
+import { pdf } from "@react-pdf/renderer";
+import Invoice from "../../../components/Dashboard/Invoice/Invoice";
 
 type OrderItem = {
   productId: { _id: string };
@@ -20,6 +22,7 @@ type OrderItem = {
 
 const OrderDetails = () => {
   const { id } = useParams();
+
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
   const { data: allProducts } = useGetAllProductsQuery({});
   const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
@@ -99,6 +102,40 @@ const OrderDetails = () => {
     } catch (err) {
       console.error("Update order failed", err);
     }
+  };
+
+  const invoiceData = {
+    invoiceNumber: data?.data?._id,
+    date: new Date(data?.data?.createdAt).toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    customerName: data?.data?.shopId?.name,
+    businessEmail: data?.data?.shopId?.email,
+    businessPhone: data?.data?.shopId?.phoneNumber,
+    businessAddress: `${data?.data?.shopId?.city}, ${data?.data?.shopId?.area}, ${data?.data?.shopId?.district}, ${data?.data?.shopId?.state}, ${data?.data?.shopId?.pinCode}`,
+    businessName: data?.data?.shopId?.shopName,
+    items: data?.data?.products,
+    status: data?.data?.pendingAmount > 0 ? "Due" : "Paid",
+    dueAmount: data?.data?.pendingAmount,
+    previousOrderId: data?.data?.previousOrderId,
+    subtotal: totalAmount,
+    coveredDueAmount: data?.data?.coveredDueAmount,
+  };
+
+  const handleDownload = async () => {
+    // Create the PDF instance
+    const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
+
+    // Create a temporary link to trigger download
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `invoice_${invoiceData.invoiceNumber}.pdf`;
+    link.click();
+
+    // Clean up
+    URL.revokeObjectURL(link.href);
   };
 
   return isLoading ? (
@@ -353,9 +390,21 @@ const OrderDetails = () => {
                 <button
                   disabled={data?.data?.pendingAmount === 0}
                   onClick={() => setIsPaymentModalOpen(true)}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
+                  className={`w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer disabled:bg-green-800 disabled:cursor-not-allowed`}
                 >
-                  Proceed to Payment
+                  {data?.data?.pendingAmount === 0
+                    ? "Paid"
+                    : " Proceed to Payment"}
+                </button>
+              )}
+
+              {data?.data?.pendingAmount === 0 && (
+                <button
+                  onClick={handleDownload}
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
+                >
+                  <FiDownload className="w-5 h-5" />
+                  Download Invoice
                 </button>
               )}
             </div>
