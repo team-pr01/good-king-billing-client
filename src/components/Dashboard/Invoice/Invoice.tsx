@@ -499,7 +499,7 @@ const Invoice = ({ data }: any) => (
           <View style={styles.totalPaidBox}>
             <Text style={[styles.totalText, { color: "#00A63E" }]}>Paid :</Text>
             <Image source={rupeeGreen} style={styles.rupeeIcon} />
-            <Text style={[styles.totalText, { color: "#00A63E" }]}>45000</Text>
+            <Text style={[styles.totalText, { color: "#00A63E" }]}>{data?.paidAmount}</Text>
           </View>
         </View>
       </View>

@@ -59,47 +59,59 @@ const OrdersTable = () => {
     { key: "totalAmount", label: "Total Amount" },
     { key: "pendingAmount", label: "Pending Amount" },
     { key: "paidAmount", label: "Paid Amount" },
+    { key: "paymentMethod", label: "Payment Method" },
     { key: "status", label: "Delivery Status" },
     { key: "createdAt", label: "Date" },
   ];
 
 
-
 const allOrders =
-  data?.data?.map((order: any) => {
-    let statusColor = "bg-yellow-100 text-yellow-800";
-    if (order.status === "supplied") statusColor = "bg-green-100 text-green-800";
-    if (order.status === "cancelled") statusColor = "bg-red-100 text-red-800";
+  data?.data
+    ?.slice() // make a shallow copy so we don't mutate original
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // newest first
+    .map((order: any) => {
+      let statusColor = "bg-yellow-100 text-yellow-800";
+      if (order.status === "supplied") statusColor = "bg-green-100 text-green-800";
+      if (order.status === "cancelled") statusColor = "bg-red-100 text-red-800";
 
-    return {
-      rowId : order._id,
-      _id: (
-        <Link
-          to={`/admin/dashboard/order/${order._id}`}
-          className="text-blue-600 hover:underline"
-        >
-          {order._id}
-        </Link>
-      ),
-      shopName: order.shopName,
-      area : order.area,
-      totalAmount: `₹${order.totalAmount}`,
-      pendingAmount: `₹${order.pendingAmount}`,
-      paidAmount: `₹${order.totalAmount - order.pendingAmount}`,
-      status: (
-        <span
-          className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
-        >
-          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-        </span>
-      ),
-      createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-    };
-  }) || [];
+      return {
+        rowId: order._id,
+        _id: (
+          <Link
+            to={`/admin/dashboard/order/${order._id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {order?.orderId}
+          </Link>
+        ),
+        shopName: (
+          <Link
+            to={`/admin/dashboard/client/${order.shopId}`}
+            className="text-blue-600 hover:underline"
+          >
+            {order.shopName}
+          </Link>
+        ),
+        area: order.area,
+        totalAmount: `₹${order.totalAmount}`,
+        pendingAmount: `₹${order.pendingAmount}`,
+        paidAmount: `₹${order.totalAmount - order.pendingAmount}`,
+        paymentMethod: <span className="capitalize">{order.paymentMethod}</span>,
+        status: (
+          <span
+            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
+          >
+            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+          </span>
+        ),
+        createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      };
+    }) || [];
+
 
 
 

@@ -218,14 +218,10 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
                 <TextInput
                   label="Pincode"
                   placeholder="Enter pincode"
-                  {...register("pinCode", {
-                    required: "Pincode is required",
-                    pattern: {
-                      value: /^[0-9]{6}$/,
-                      message: "Pincode must be 6 digits",
-                    },
-                  })}
+                  type="number"
+                  {...register("pinCode")}
                   error={errors.pinCode}
+                  isRequired={false}
                 />
 
                 {/* State */}
@@ -238,6 +234,9 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               </div>
             </div>
 
+              <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-300 pb-2">
+                Personal Information
+              </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <TextInput
                 label="Client Name"
@@ -249,11 +248,10 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
               />
 
               <TextInput
-                label="Email (Optional)"
+                label="Email"
                 type="email"
                 placeholder="Enter email address"
                 {...register("email", {
-                  required: "Email is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: "Invalid email address",

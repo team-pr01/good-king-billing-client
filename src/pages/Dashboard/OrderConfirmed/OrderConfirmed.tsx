@@ -21,7 +21,7 @@ const OrderConfirmed = () => {
   );
 
   const invoiceData = {
-    invoiceNumber: data?.data?._id,
+    invoiceNumber: data?.data?.orderId,
     date: new Date(data?.data?.createdAt).toLocaleString("en-US", {
       year: "numeric",
       month: "long",
@@ -38,6 +38,7 @@ const OrderConfirmed = () => {
     previousOrderId: data?.data?.previousOrderId,
     subtotal: totalAmount,
     coveredDueAmount: data?.data?.coveredDueAmount,
+    paidAmount: data?.data?.paidAmount,
   };
 
   const handleDownload = async () => {
@@ -112,7 +113,7 @@ Date: ${invoiceData.date}`;
         </p>
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 inline-block">
           <p className="text-green-700 font-medium">
-            Order ID: <span className="font-bold">{id}</span>
+            Order ID: <span className="font-bold">{data?.data?.orderId}</span>
           </p>
         </div>
       </div>

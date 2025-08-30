@@ -145,7 +145,7 @@ const OrderDetails = () => {
       {/* Header */}
       <div className="flex items-center mb-6">
         <h1 className="text-base md:text-2xl font-bold text-gray-800">
-          Order #{data?.data?._id}
+          Order #{data?.data?.orderId}
         </h1>
         <span
           className={`ml-4 px-3 py-1 rounded-full text-sm font-medium capitalize ${
