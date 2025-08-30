@@ -63,7 +63,6 @@ const OrdersTable = () => {
     { key: "createdAt", label: "Date" },
   ];
 
-  console.log(data);
 
 
 const allOrders =

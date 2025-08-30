@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { pdf } from "@react-pdf/renderer";
-import {
-  FiCheckCircle,
-  FiDownload,
-  FiShare2,
-} from "react-icons/fi";
+import { FiCheckCircle, FiDownload, FiShare2 } from "react-icons/fi";
 import Invoice from "../../../components/Dashboard/Invoice/Invoice";
 import { useParams } from "react-router-dom";
-import { useGetSingleOrderByIdQuery } from "../../../redux/Features/Order/orderApi";
+import {
+  useGetSingleOrderByIdQuery,
+  useUpdateOrderStatusMutation,
+} from "../../../redux/Features/Order/orderApi";
 import Loader from "../../../components/Reusable/Loader/Loader";
+import { toast } from "sonner";
 
 const OrderConfirmed = () => {
   const { id } = useParams();
@@ -73,6 +73,25 @@ Date: ${invoiceData.date}`;
       message
     )}`;
     window.open(whatsappUrl, "_blank");
+  };
+
+  const [updateOrderStatus, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
+
+  const handleUpdateOrderStatusToSupplied = async (status: string) => {
+    try {
+      // Show loading toast
+
+      const payload = { status };
+      await updateOrderStatus({ id, data: payload }).unwrap();
+
+      // Update toast to success
+      toast.success("Order updated successfully!");
+    } catch (error) {
+      console.error("Failed to update Order:", error);
+      // Update toast to error
+      toast.error("Failed to update the Order. Please try again.");
+    }
   };
 
   return isLoading ? (
@@ -247,6 +266,14 @@ Date: ${invoiceData.date}`;
               >
                 <FiShare2 className="w-5 h-5" />
                 Share Invoice via WhatsApp
+              </button>
+
+              <button
+                onClick={() => handleUpdateOrderStatusToSupplied("supplied")}
+                className="w-full flex items-center justify-center gap-2 border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-50 font-medium cursor-pointer"
+              >
+                <FiCheckCircle className="w-5 h-5" />
+                {isUpdating ? "Please wait..." : "Mark As Supplied"}
               </button>
             </div>
           </div>
