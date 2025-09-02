@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import Invoice from "../../../../components/Dashboard/Invoice/Invoice";
 import { toast } from "sonner";
+import { MdOutlineFileDownload } from "react-icons/md";
 const ClientDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -132,7 +133,8 @@ const ClientDetails = () => {
             to={`/admin/dashboard/order/${order._id}`}
             className="text-blue-600 hover:underline"
           >
-            {order._id}
+           {order.orderId}{order?.paymentMethod ? `-${order.paymentMethod}` : ""}
+
           </Link>
         ),
         totalPayment: `₹${order.totalAmount}`,
@@ -152,11 +154,22 @@ const ClientDetails = () => {
               "Pending"}
           </span>
         ),
+        paymentMethod : order.paymentMethod,
         createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
+          hour: "numeric",
+            minute: "numeric",
         }),
+        download: (
+          <button
+            onClick={() => setSelectedOrderId(order._id)}
+            className="text-blue-600 hover:underline flex items-center gap-1 text-2xl cursor-pointer text-center w-full justify-center"
+          >
+            <MdOutlineFileDownload />
+          </button>
+        ),
       };
     }) || [];
 
@@ -178,7 +191,9 @@ const ClientDetails = () => {
     { key: "duePayment", label: "Due Payment" },
     { key: "paymentStatus", label: "Payment Status" },
     { key: "deliveryStatus", label: "Delivery Status" },
+    { key: "paymentMethod", label: "Payment Method" },
     { key: "createdAt", label: "Order Date" },
+     { key: "download", label: "PDF Bill" },
   ];
 
   const [updateOrderStatus, { isLoading: isUpdating }] =
