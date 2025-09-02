@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   qrCode: {
-    width: 90,
-    height: 90,
+    width: 120,
+    height: 120,
     marginRight: 10,
   },
   verifiedText: {
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#F1C40F",
-    color: "white",
+    backgroundColor: "#000000",
+    color: "#FFFFFF",
     fontWeight: "bold",
     padding: 5,
     marginTop: 7,
@@ -131,22 +131,18 @@ const styles = StyleSheet.create({
   descriptionCol: {
     width: "45%",
     paddingLeft: 5,
-    color: "#555555",
   },
   priceCol: {
     width: "18%",
     textAlign: "center",
-    color: "#555555",
   },
   qtyCol: {
     width: "18%",
     textAlign: "center",
-    color: "#555555",
   },
   subtotalCol: {
     width: "19%",
     textAlign: "center",
-    color: "#555555",
   },
 
   summaryRow: {
@@ -166,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   dueBox: {
-    backgroundColor: "#DDE7F1",
+    backgroundColor: "#000000",
     padding: 5,
     borderRadius: 5,
     flexDirection: "row",
@@ -195,12 +191,13 @@ const styles = StyleSheet.create({
   },
 
   totalBox: {
-    backgroundColor: "#FFC107B3",
+    backgroundColor: "#000000",
     padding: 5,
     borderRadius: 3,
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-end",
+    color: "#ffffff",
   },
 
   totalPaidBox: {
@@ -216,7 +213,6 @@ const styles = StyleSheet.create({
   totalText: {
     fontWeight: 500,
     fontSize: 13,
-    color: "#000000",
     marginHorizontal: 2,
   },
 
@@ -230,7 +226,7 @@ const styles = StyleSheet.create({
   normalText: {
     fontSize: 9,
     fontWeight: "semibold",
-    color: "#333333",
+    color: "#ffffff",
     marginHorizontal: 2,
   },
 
@@ -466,7 +462,7 @@ const Invoice = ({ data }: any) => (
         <View style={styles.dueBox}>
           <View style={styles.amountRow}>
             <Text style={styles.normalText}>Previous Due :</Text>
-            <Image source={rupee} style={styles.dueRupeeIcon} />
+            <Image source={rupeeWhite} style={styles.dueRupeeIcon} />
             <Text style={styles.normalText}>{data?.coveredDueAmount || 0}</Text>
           </View>
           <Text style={styles.normalText}>
@@ -490,7 +486,7 @@ const Invoice = ({ data }: any) => (
 
           <View style={styles.totalBox}>
             <Text style={styles.totalText}>Total :</Text>
-            <Image source={rupee} style={styles.rupeeIcon} />
+            <Image source={rupeeWhite} style={styles.rupeeIcon} />
             <Text style={styles.totalText}>
               {data?.subtotal + (data?.coveredDueAmount || 0)}
             </Text>

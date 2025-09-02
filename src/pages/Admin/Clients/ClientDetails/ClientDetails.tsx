@@ -134,7 +134,6 @@ const ClientDetails = () => {
             className="text-blue-600 hover:underline"
           >
            {order.orderId}{order?.paymentMethod ? `-${order.paymentMethod}` : ""}
-
           </Link>
         ),
         totalPayment: `₹${order.totalAmount}`,
