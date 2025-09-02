@@ -113,6 +113,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
     try {
       const payload = {
         ...data,
+        email : data.email || null
       };
 
       if (modalType === "add") {

@@ -31,7 +31,6 @@ const OrderDetails = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-  console.log(orderItems);
 
   // Load API order products into local state
   useEffect(() => {
@@ -121,7 +120,7 @@ const OrderDetails = () => {
     dueAmount: data?.data?.pendingAmount,
     previousOrderId: data?.data?.previousOrderId,
     subtotal: totalAmount,
-    coveredDueAmount: data?.data?.coveredDueAmount,
+    coveredDueAmount: data?.data?.coveredDueAmount  === 0 || data?.data?.coveredDueAmount === undefined ? data?.data?.previousDue : data?.data?.coveredDueAmount,
     paidAmount: data?.data?.paidAmount,
   };
 

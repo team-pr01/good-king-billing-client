@@ -62,6 +62,7 @@ const OrdersTable = () => {
     { key: "area", label: "Area" },
     { key: "totalAmount", label: "Total Amount" },
     { key: "pendingAmount", label: "Pending Amount" },
+    { key: "transactionAmount", label: "Transaction Amount" },
     { key: "paidAmount", label: "Paid Amount" },
     { key: "paymentMethod", label: "Payment Method" },
     { key: "status", label: "Delivery Status" },
@@ -83,6 +84,7 @@ const OrdersTable = () => {
     }
   }, [isSingleOrderLoading, singleOrder]);
 
+  console.log(data?.data);
   // For download invoice
   const handleDownload = async (order: any) => {
     const totalAmount = order.products.reduce(
@@ -108,7 +110,10 @@ const OrdersTable = () => {
       dueAmount: order.pendingAmount,
       previousOrderId: order.previousOrderId,
       subtotal: totalAmount,
-      coveredDueAmount: order.coveredDueAmount,
+      coveredDueAmount:
+        order?.coveredDueAmount === 0 || order?.coveredDueAmount=== undefined
+          ? order?.previousDue
+          : order?.coveredDueAmount,
       paidAmount: order?.paidAmount,
     };
 
@@ -143,6 +148,7 @@ const OrdersTable = () => {
               className="text-blue-600 hover:underline"
             >
               {order?.orderId}
+              {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
             </Link>
           ),
           shopName: (
@@ -156,7 +162,12 @@ const OrdersTable = () => {
           area: order.area,
           totalAmount: `₹${order.totalAmount}`,
           pendingAmount: `₹${order.pendingAmount}`,
-          paidAmount: `₹${order.totalAmount - order.pendingAmount}`,
+          transactionAmount: `₹${order.paidAmount}`,
+          paidAmount: (
+            <span className="bg-primary-10/20 text-xs px-2 py-1 rounded-full">
+              ₹{order.totalAmount - order.pendingAmount}
+            </span>
+          ),
           paymentMethod: (
             <span className="capitalize">{order.paymentMethod}</span>
           ),

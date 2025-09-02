@@ -71,7 +71,7 @@ const ClientDetails = () => {
       dueAmount: order.pendingAmount,
       previousOrderId: order.previousOrderId,
       subtotal: totalAmount,
-      coveredDueAmount: order.coveredDueAmount,
+       coveredDueAmount: order?.coveredDueAmount  === 0 || order?.coveredDueAmount === undefined ? order?.previousDue : order?.coveredDueAmount,
       paidAmount: order?.paidAmount,
     };
 
