@@ -269,13 +269,15 @@ Date: ${invoiceData.date}`;
                 Share Invoice via WhatsApp
               </button>
 
-              <button
-                onClick={() => handleUpdateOrderStatusToSupplied("supplied")}
-                className="w-full flex items-center justify-center gap-2 border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-50 font-medium cursor-pointer"
-              >
-                <FiCheckCircle className="w-5 h-5" />
-                {isUpdating ? "Please wait..." : "Mark As Supplied"}
-              </button>
+              {data?.data?.status !== "supplied" && (
+                <button
+                  onClick={() => handleUpdateOrderStatusToSupplied("supplied")}
+                  className="w-full flex items-center justify-center gap-2 border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-50 font-medium cursor-pointer"
+                >
+                  <FiCheckCircle className="w-5 h-5" />
+                  {isUpdating ? "Please wait..." : "Mark As Supplied"}
+                </button>
+              )}
             </div>
           </div>
         </div>
