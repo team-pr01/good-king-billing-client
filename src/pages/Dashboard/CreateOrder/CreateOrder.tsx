@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm, useFieldArray } from "react-hook-form";
-import {  FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import { useCreateOrderMutation } from "../../../redux/Features/Order/orderApi";
 import { useGetAllProductsQuery } from "../../../redux/Features/Product/productApi";
@@ -26,25 +26,23 @@ const CreateOrder = () => {
   const navigate = useNavigate();
 
   const [selectedArea, setSelectedArea] = useState<string>("");
-  
-  
+
   // Get all products
   const { data: allProducts, isLoading: isAllProductsLoading } =
-  useGetAllProductsQuery({});
+    useGetAllProductsQuery({});
   // Get all areas
   const { data: allArea, isLoading: isAllAreaLoading } = useGetAllAreaQuery({});
-  
+
   // Get all clients/shops
   const { data: allShops, isLoading: isAllShopsLoading } =
-  useGetAllClientsQuery({});
+    useGetAllClientsQuery({});
   console.log(allShops?.data);
 
   // Filtered shops based on selected area
-const filteredShops = allShops?.data?.filter(
-  (shop: any) => shop?.area === selectedArea
-) || [];
+  const filteredShops =
+    allShops?.data?.filter((shop: any) => shop?.area === selectedArea) || [];
 
-console.log(filteredShops);
+  console.log(filteredShops);
 
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreateOrderMutation();
@@ -54,6 +52,7 @@ console.log(filteredShops);
     formState: { errors },
     watch,
     control,
+     setValue,
     reset,
   } = useForm<FormValues>({
     defaultValues: {
@@ -76,7 +75,7 @@ console.log(filteredShops);
       const quantity = product.quantity || 0;
       const tax = productData ? productData.taxValue || 0 : 0; // ✅ get tax from product API
 
-      return total + price * quantity + tax;
+      return total + price * quantity + tax * quantity;
     }, 0) || 0;
 
   const onSubmit = async (data: FormValues) => {
@@ -249,7 +248,8 @@ console.log(filteredShops);
                           <option value="">Select Product</option>
                           {allProducts?.data?.map((product: any) => (
                             <option key={product?._id} value={product?._id}>
-                              {product?.name} - ₹{product?.price} ({product?.availableStock})
+                              {product?.name} - ₹{product?.price} (
+                              {product?.availableStock})
                             </option>
                           ))}
                         </select>
@@ -271,19 +271,50 @@ console.log(filteredShops);
                         />
                       </div>
 
-                      {/* Quantity */}
-                      <div className="md:col-span-2">
-                        <TextInput
-                          label="Quantity"
-                          type="number"
-                          {...register(`products.${index}.quantity` as const, {
-                            required: "Quantity is required",
-                            min: { value: 1, message: "Minimum quantity is 1" },
-                            valueAsNumber: true,
-                          })}
-                          error={errors.products?.[index]?.quantity}
-                        />
-                      </div>
+                      <div className="md:col-span-2 flex flex-col gap-2">
+  <label className="block text-sm font-medium text-gray-700">
+    Quantity <span className="text-red-600">*</span>
+  </label>
+  <div className="flex items-center border rounded-lg overflow-hidden">
+    <button
+      type="button"
+      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-lg font-bold"
+      onClick={() => {
+        const current = watchedProducts[index]?.quantity || 1;
+        if (current > 1) {
+          setValue(`products.${index}.quantity` as const, current - 1);
+        }
+      }}
+    >
+      –
+    </button>
+    <input
+      type="number"
+      {...register(`products.${index}.quantity` as const, {
+        required: "Quantity is required",
+        min: { value: 1, message: "Minimum quantity is 1" },
+        valueAsNumber: true,
+      })}
+      className="w-full text-center py-2 outline-none"
+    />
+    <button
+      type="button"
+      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-lg font-bold"
+      onClick={() => {
+        const current = watchedProducts[index]?.quantity || 1;
+        setValue(`products.${index}.quantity` as const, current + 1);
+      }}
+    >
+      +
+    </button>
+  </div>
+  {errors.products?.[index]?.quantity && (
+    <p className="text-sm text-red-600">
+      {errors.products[index]?.quantity?.message}
+    </p>
+  )}
+</div>
+
 
                       {/* <div className="md:col-span-2 flex flex-col gap-1">
                         <label className="text-neutral-65">
@@ -311,9 +342,11 @@ console.log(filteredShops);
                         type="text"
                         value={
                           watchedProducts?.[index]?.productId
-                            ? `₹${getProductTax(
-                                watchedProducts[index].productId
-                              )}`
+                            ? `₹${(
+                                getProductTax(
+                                  watchedProducts[index].productId
+                                ) * (watchedProducts[index].quantity || 1)
+                              ).toFixed(2)}`
                             : "₹0.00"
                         }
                         isDisabled={true}
@@ -328,13 +361,13 @@ console.log(filteredShops);
                             watchedProducts?.[index]?.productId &&
                             watchedProducts[index].quantity
                               ? `₹${(
-                                  getProductPrice(
+                                  (getProductPrice(
                                     watchedProducts[index].productId
-                                  ) *
-                                    watchedProducts[index].quantity +
-                                  getProductTax(
-                                    watchedProducts[index].productId
-                                  )
+                                  ) +
+                                    getProductTax(
+                                      watchedProducts[index].productId
+                                    )) *
+                                  (watchedProducts[index].quantity || 1)
                                 ).toFixed(2)}`
                               : "₹0.00"
                           }

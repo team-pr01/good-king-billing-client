@@ -26,9 +26,10 @@ import {
 import Loader from "../../../../components/Reusable/Loader/Loader";
 import { useEffect, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
-import Invoice from "../../../../components/Dashboard/Invoice/Invoice";
+// import Invoice from "../../../../components/Dashboard/Invoice/Invoice";
 import { toast } from "sonner";
 import { MdOutlineFileDownload } from "react-icons/md";
+import TwoInvoice from "../../../../components/Dashboard/Invoice/TwoInvoices";
 const ClientDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -76,7 +77,7 @@ const ClientDetails = () => {
     };
 
     // Generate PDF
-    const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
+    const blob = await pdf(<TwoInvoice data={invoiceData} />).toBlob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `invoice_${invoiceData.invoiceNumber}.pdf`;
@@ -173,7 +174,7 @@ const ClientDetails = () => {
     }) || [];
 
   // Filtered Orders
-  const filteredOrders = clientOrders.filter((order: any) => {
+  const filteredOrders = clientOrders.reverse().filter((order: any) => {
     const matchesStatus = statusFilter
       ? order.deliveryStatus.toLowerCase() === statusFilter.toLowerCase()
       : true;
