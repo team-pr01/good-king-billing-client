@@ -17,6 +17,13 @@ type ClientInfoProps = {
 };
 
 const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
+  const createdAt = new Date(client?.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        });
   return (
     <div>
       <h2 className="text-xl font-semibold text-gray-800 mb-6 pb-3 border-b border-gray-200">
@@ -51,7 +58,7 @@ const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
                 Registered Date
               </span>
               <p className="text-gray-800 font-medium">
-                {client?.createdAt}
+                {createdAt}
               </p>
             </div>
           </div>

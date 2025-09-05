@@ -114,10 +114,10 @@ const ClientDetails = () => {
 
   const clientOrders =
   orderData?.data
-    ?.slice() // copy array to avoid mutating original
+    ?.slice() // copy to avoid mutating original
     ?.sort(
       (a: any, b: any) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     )
     ?.map((order: any) => {
       // Payment status color
@@ -162,7 +162,7 @@ const ClientDetails = () => {
           </span>
         ),
         paymentMethod: order.paymentMethod,
-        createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+        updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
@@ -179,6 +179,7 @@ const ClientDetails = () => {
         ),
       };
     }) || [];
+
 
 
   // Filtered Orders
@@ -200,7 +201,7 @@ const ClientDetails = () => {
     { key: "paymentStatus", label: "Payment Status" },
     { key: "deliveryStatus", label: "Delivery Status" },
     { key: "paymentMethod", label: "Payment Method" },
-    { key: "createdAt", label: "Order Date" },
+    { key: "updatedAt", label: "Date" },
      { key: "download", label: "PDF Bill" },
   ];
 
@@ -350,7 +351,7 @@ const ClientDetails = () => {
             columns={orderColumns}
             data={filteredOrders}
             actions={orderActions}
-            rowKey="_id"
+            rowKey="rowId"
             isLoading={orderLoading}
           />
         </div>
