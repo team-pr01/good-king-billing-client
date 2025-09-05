@@ -449,10 +449,10 @@ const Invoice = ({ data }: any) => (
         <View style={styles.tableRow} key={i}>
           <Text style={styles.descriptionCol}>{item?.name}</Text>
           <Text style={styles.priceCol}>{item?.price}</Text>
-          <Text style={styles.priceCol}>{item?.taxValue}</Text>
+          <Text style={styles.priceCol}>{item?.taxValue }</Text>
           <Text style={styles.qtyCol}>{item?.quantity}</Text>
           <Text style={styles.subtotalCol}>
-            {item?.quantity * item?.price + item?.taxValue}
+            {item?.quantity * item?.price + item?.taxValue*item?.quantity}
           </Text>{" "}
         </View>
       ))}

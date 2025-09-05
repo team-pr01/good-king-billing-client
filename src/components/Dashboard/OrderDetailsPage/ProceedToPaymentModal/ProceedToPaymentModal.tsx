@@ -156,7 +156,7 @@ const ProceedToPaymentModal: React.FC<ProceedToPaymentModalProps> = ({
               />
               <div className="ml-3">
                 <span className="block text-sm font-medium text-gray-700">
-                  Partial Payment
+                  Partial or Zero Payment
                 </span>
                 <span className="block text-sm text-gray-500">
                   Pay a portion of the total amount
