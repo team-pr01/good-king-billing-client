@@ -67,7 +67,7 @@ const OrdersTable = () => {
     { key: "paidAmount", label: "Paid Amount" },
     { key: "paymentMethod", label: "Payment Method" },
     { key: "status", label: "Delivery Status" },
-    { key: "createdAt", label: "Date" },
+    { key: "updatedAt", label: "Date" },
     { key: "download", label: "PDF Bill" },
   ];
 
@@ -85,7 +85,6 @@ const OrdersTable = () => {
     }
   }, [isSingleOrderLoading, singleOrder]);
 
-  console.log(data?.data);
   // For download invoice
   const handleDownload = async (order: any) => {
     const totalAmount = order.products.reduce(
@@ -176,7 +175,7 @@ const OrdersTable = () => {
             </span>
           ),
           paymentMethod: (
-            <span className="capitalize">{order.paymentMethod}</span>
+            <span className="capitalize">{order.paymentMethod || "N/A"}</span>
           ),
           status: (
             <span
@@ -185,7 +184,7 @@ const OrdersTable = () => {
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
             </span>
           ),
-          createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+          updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",

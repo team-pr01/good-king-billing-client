@@ -15,7 +15,7 @@ import { toast } from "sonner";
 
 type FormValues = {
   name: string;
-  email: string;
+  emailId: string;
   phoneNumber: string;
   shopName: string;
   gstNumber: string;
@@ -69,7 +69,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
   useEffect(() => {
     if (defaultValues && modalType === "edit") {
       setValue("name", defaultValues.name);
-      setValue("email", defaultValues.email);
+      setValue("emailId", defaultValues.emailId);
       setValue("phoneNumber", defaultValues.phoneNumber);
       setValue("shopName", defaultValues.shopName);
       setValue("gstNumber", defaultValues.gstNumber);
@@ -113,7 +113,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
     try {
       const payload = {
         ...data,
-        email : data.email || null
+        email : data.emailId || null
       };
 
       if (modalType === "add") {
@@ -195,13 +195,13 @@ const AddClientModal: React.FC<AddClientModalProps> = ({
                 label="Email"
                 type="email"
                 placeholder="Enter email address"
-                {...register("email", {
+                {...register("emailId", {
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: "Invalid email address",
                   },
                 })}
-                error={errors.email}
+                error={errors.emailId}
                 isRequired={false}
               />
             </div>

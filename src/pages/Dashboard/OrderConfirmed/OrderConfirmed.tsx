@@ -4,6 +4,7 @@ import { FiCheckCircle, FiDownload, FiShare2 } from "react-icons/fi";
 import Invoice from "../../../components/Dashboard/Invoice/Invoice";
 import { useParams } from "react-router-dom";
 import {
+  useGetOrdersByShopIdQuery,
   useGetSingleOrderByIdQuery,
   useUpdateOrderStatusMutation,
 } from "../../../redux/Features/Order/orderApi";
@@ -13,6 +14,7 @@ import { toast } from "sonner";
 const OrderConfirmed = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
+  console.log(data);
 
   // Calculate totals
   const totalAmount = data?.data?.products?.reduce(
@@ -55,6 +57,21 @@ const OrderConfirmed = () => {
     URL.revokeObjectURL(link.href);
   };
 
+  const { data: orderData, isLoading: orderLoading } =
+    useGetOrdersByShopIdQuery(data?.data?.shopId?._id, {
+      skip: !data?.data?.shopId?._id,
+    });
+
+  // Total due and paid amount
+  const totals = orderData?.data?.reduce(
+    (acc: { paid: number; due: number }, order: any) => {
+      acc.paid += order.paidAmount || 0;
+      acc.due += order.pendingAmount || 0;
+      return acc;
+    },
+    { paid: 0, due: 0 }
+  );
+
   const handleShareWhatsApp = async () => {
     if (!invoiceData.businessPhone) {
       alert("Business phone not available");
@@ -67,7 +84,7 @@ const OrderConfirmed = () => {
 Shop Owner: ${invoiceData.customerName}
 Business Name: ${invoiceData.businessName}
 Total Price: ₹${invoiceData.subtotal?.toFixed(2)}
-Due Amount: ₹${invoiceData.dueAmount?.toFixed(2)}
+Total Due Amount: ₹${totals?.due.toFixed(2)}
 Date: ${invoiceData.date}`;
 
     const whatsappUrl = `https://wa.me/+91${phone}?text=${encodeURIComponent(
@@ -95,7 +112,7 @@ Date: ${invoiceData.date}`;
     }
   };
 
-  return isLoading ? (
+  return isLoading || orderLoading ? (
     <Loader />
   ) : (
     <div className="min-h-screen">
@@ -253,6 +270,16 @@ Date: ${invoiceData.date}`;
 
             {/* Action Buttons */}
             <div className="space-y-3">
+              {data?.data?.status !== "supplied" && (
+                <button
+                  onClick={() => handleUpdateOrderStatusToSupplied("supplied")}
+                  className="w-full flex items-center justify-center gap-2 border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-50 font-medium cursor-pointer"
+                >
+                  <FiCheckCircle className="w-5 h-5" />
+                  {isUpdating ? "Please wait..." : "Mark As Supplied"}
+                </button>
+              )}
+              
               <button
                 onClick={handleDownload}
                 className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
@@ -267,14 +294,6 @@ Date: ${invoiceData.date}`;
               >
                 <FiShare2 className="w-5 h-5" />
                 Share Invoice via WhatsApp
-              </button>
-
-              <button
-                onClick={() => handleUpdateOrderStatusToSupplied("supplied")}
-                className="w-full flex items-center justify-center gap-2 border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-50 font-medium cursor-pointer"
-              >
-                <FiCheckCircle className="w-5 h-5" />
-                {isUpdating ? "Please wait..." : "Mark As Supplied"}
               </button>
             </div>
           </div>

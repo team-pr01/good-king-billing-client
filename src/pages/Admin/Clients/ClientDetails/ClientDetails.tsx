@@ -120,7 +120,13 @@ const ClientDetails = () => {
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
 
   const clientOrders =
-    orderData?.data?.map((order: any) => {
+  orderData?.data
+    ?.slice() // copy to avoid mutating original
+    ?.sort(
+      (a: any, b: any) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    )
+    ?.map((order: any) => {
       // Payment status color
       const paymentColor =
         order.pendingAmount > 0
@@ -135,13 +141,14 @@ const ClientDetails = () => {
         deliveryColor = "bg-red-100 text-red-800";
 
       return {
-        roeId: order._id,
+        rowId: order._id,
         _id: (
           <Link
             to={`/admin/dashboard/order/${order._id}`}
             className="text-blue-600 hover:underline"
           >
-           {order.orderId}{order?.paymentMethod ? `-${order.paymentMethod}` : ""}
+            {order.orderId}
+            {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
           </Link>
         ),
         totalPayment: `₹${order.totalAmount}`,
@@ -161,13 +168,13 @@ const ClientDetails = () => {
               "Pending"}
           </span>
         ),
-        paymentMethod : order.paymentMethod,
-        createdAt: new Date(order.createdAt).toLocaleDateString("en-US", {
+        paymentMethod: order.paymentMethod,
+        updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
           hour: "numeric",
-            minute: "numeric",
+          minute: "numeric",
         }),
         download: (
           <button
@@ -179,6 +186,8 @@ const ClientDetails = () => {
         ),
       };
     }) || [];
+
+
 
   // Filtered Orders
   const filteredOrders = clientOrders.reverse().filter((order: any) => {
@@ -199,7 +208,7 @@ const ClientDetails = () => {
     { key: "paymentStatus", label: "Payment Status" },
     { key: "deliveryStatus", label: "Delivery Status" },
     { key: "paymentMethod", label: "Payment Method" },
-    { key: "createdAt", label: "Order Date" },
+    { key: "updatedAt", label: "Date" },
      { key: "download", label: "PDF Bill" },
   ];
 
@@ -228,24 +237,24 @@ const ClientDetails = () => {
       icon: <FiDownload />,
       label: isSingleOrderLoading ? "Downloading..." : "Download Invoice",
       onClick: (row: any) => {
-        setSelectedOrderId(row.roeId);
+        setSelectedOrderId(row.rowId);
       },
     },
     {
       icon: <FiEye />,
       label: "View Details",
-      onClick: (row: any) => navigate(`/admin/dashboard/order/${row._id}`),
+      onClick: (row: any) => navigate(`/admin/dashboard/order/${row.rowId}`),
     },
     {
       icon: <FiCheckCircle />,
       label: "Supplied",
-      onClick: (row: any) => handleUpdateOrderStatus("supplied", row?._id),
+      onClick: (row: any) => handleUpdateOrderStatus("supplied", row?.rowId),
       className: "text-green-600",
     },
     {
       icon: <FiXCircle />,
       label: "Cancelled",
-      onClick: (row: any) => handleUpdateOrderStatus("cancelled", row?._id),
+      onClick: (row: any) => handleUpdateOrderStatus("cancelled", row?.rowId),
       className: "text-red-600",
     },
   ];
@@ -349,7 +358,7 @@ const ClientDetails = () => {
             columns={orderColumns}
             data={filteredOrders}
             actions={orderActions}
-            rowKey="_id"
+            rowKey="rowId"
             isLoading={orderLoading}
           />
         </div>
