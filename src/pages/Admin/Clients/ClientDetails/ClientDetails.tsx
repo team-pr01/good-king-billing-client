@@ -30,6 +30,7 @@ import { pdf } from "@react-pdf/renderer";
 import { toast } from "sonner";
 import { MdOutlineFileDownload } from "react-icons/md";
 import TwoInvoice from "../../../../components/Dashboard/Invoice/TwoInvoices";
+import Invoice from "../../../../components/Dashboard/Invoice/Invoice";
 const ClientDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -77,10 +78,16 @@ const ClientDetails = () => {
     };
 
     // Generate PDF
-    const blob = await pdf(<TwoInvoice data={invoiceData} />).toBlob();
+   const blob = await pdf(
+  invoiceData.paidAmount > 0 ? (
+    <Invoice data={invoiceData} />
+  ) : (
+    <TwoInvoice data={invoiceData} />
+  )
+).toBlob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `invoice_${invoiceData.invoiceNumber}.pdf`;
+    link.download = `iyesnvoice_${invoiceData.invoiceNumber}.pdf`;
     link.click();
     URL.revokeObjectURL(link.href);
   };

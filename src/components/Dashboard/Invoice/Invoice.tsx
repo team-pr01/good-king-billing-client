@@ -30,15 +30,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#EEEEEE",
     paddingBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "#000000",
   },
   logoContainer: {
+    backgroundColor: "#FFFFFF",
     flexDirection: "row",
     alignItems: "center",
+    padding: 6, // Reduced padding
+    borderRadius: 5,
   },
   logo: {
-    width: 30,
-    height: 30,
-    marginRight: 5,
+    width: 80, // Reduced logo size
+    height: 20,
   },
   companyName: {
     fontSize: 18,
@@ -48,12 +52,12 @@ const styles = StyleSheet.create({
   invoiceTitle: {
     fontSize: 30,
     fontWeight: "bold",
-    color: "#333333",
+    color: "#fff",
   },
   invoiceDetails: {
     textAlign: "right",
     fontSize: 10,
-    color: "#555555",
+    color: "#fff",
   },
   section: {
     marginBottom: 15,
@@ -67,6 +71,7 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 3,
     color: "#555555",
+    fontWeight: "bold",
   },
   bold: {
     fontWeight: "bold",
@@ -261,18 +266,25 @@ const styles = StyleSheet.create({
     textAlign: "right",
     width: "50%",
   },
-  goodkingLogoFooter: {
-    width: 80,
-    height: 50,
-    alignSelf: "center",
-    marginTop: 20,
-  },
-  addressFooter: {
-    fontSize: 9,
-    textAlign: "center",
-    color: "#555555",
-    marginTop: 10,
-  },
+goodkingLogoFooter: {
+  width: 60,
+  height: 30,
+  backgroundColor: "#fff",
+  borderRadius: 5,
+  padding: 3,
+  marginBottom: 5, // instead of absolute positioning
+},
+addressFooter: {
+  fontSize: 14,
+  textAlign: "center",
+  color: "#fff",
+  backgroundColor: "#000",
+  paddingVertical: 5,
+  paddingHorizontal: 10,
+  width: "100%",
+  fontWeight: "bold",
+},
+
 
   statusRow: {
     flexDirection: "row",
@@ -317,7 +329,6 @@ const Invoice = ({ data }: any) => (
             src={logo} // Replace with actual Goodking logo URL
             style={styles.logo}
           />
-          <Text style={styles.companyName}>GoodkinG</Text>
         </View>
         <View>
           <Text style={styles.invoiceTitle}>INVOICE</Text>
@@ -449,10 +460,10 @@ const Invoice = ({ data }: any) => (
         <View style={styles.tableRow} key={i}>
           <Text style={styles.descriptionCol}>{item?.name}</Text>
           <Text style={styles.priceCol}>{item?.price}</Text>
-          <Text style={styles.priceCol}>{item?.taxValue }</Text>
+          <Text style={styles.priceCol}>{item?.taxValue}</Text>
           <Text style={styles.qtyCol}>{item?.quantity}</Text>
           <Text style={styles.subtotalCol}>
-            {item?.quantity * item?.price + item?.taxValue*item?.quantity}
+            {item?.quantity * item?.price + item?.taxValue * item?.quantity}
           </Text>{" "}
         </View>
       ))}
@@ -476,7 +487,9 @@ const Invoice = ({ data }: any) => (
           <View style={styles.amountRow}>
             <Text style={styles.subtotalText}>Previous Due :</Text>
             <Image source={rupee} style={styles.rupeeIcon} />
-            <Text style={styles.subtotalText}>{data?.coveredDueAmount || 0}</Text>
+            <Text style={styles.subtotalText}>
+              {data?.coveredDueAmount || 0}
+            </Text>
           </View>
           <View style={styles.amountRow}>
             <Text style={styles.subtotalText}>Subtotal :</Text>
@@ -495,7 +508,9 @@ const Invoice = ({ data }: any) => (
           <View style={styles.totalPaidBox}>
             <Text style={[styles.totalText, { color: "#00A63E" }]}>Paid :</Text>
             <Image source={rupeeGreen} style={styles.rupeeIcon} />
-            <Text style={[styles.totalText, { color: "#00A63E" }]}>{data?.paidAmount}</Text>
+            <Text style={[styles.totalText, { color: "#00A63E" }]}>
+              {data?.paidAmount}
+            </Text>
           </View>
         </View>
       </View>
@@ -518,12 +533,21 @@ const Invoice = ({ data }: any) => (
           <Text>sambhajinagar jurisdiction only</Text>
         </View>
       </View>
+      <View
+  style={{
+    width: "100%",
+    flexDirection: "column",
+    alignItems: "center",
+    marginTop: 20,
+  }}
+>
+  <Image src={logo} style={styles.goodkingLogoFooter} />
+  <Text style={styles.addressFooter}>
+    Address - LIG 390, Mhada, M’Wadi, Cidco, Chhatrapati Sambhajinagar,
+    {"\n"}Maharashtra, India - 431001
+  </Text>
+</View>
 
-      <Image src={logo} style={styles.goodkingLogoFooter} />
-      <Text style={styles.addressFooter}>
-        Address - LIG 390, Mhada, M’Wadi, Cidco, Chhatrapati Sambhajinagar,
-        {"\n"}Maharashtra, India - 431001
-      </Text>
     </Page>
   </Document>
 );
