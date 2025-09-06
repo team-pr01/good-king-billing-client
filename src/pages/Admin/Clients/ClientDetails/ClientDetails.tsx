@@ -79,7 +79,7 @@ const ClientDetails = () => {
 
     // Generate PDF
    const blob = await pdf(
-  invoiceData.paidAmount > 0 ? (
+  invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
     <Invoice data={invoiceData} />
   ) : (
     <TwoInvoice data={invoiceData} />
