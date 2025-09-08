@@ -38,14 +38,24 @@ const DashboardHeader = () => {
 
   const finalDate = `${weekday}, ${day}${getDaySuffix(day)} ${month}, ${year}`;
 
-  // State for digital clock
+  // State for digital clock with AM/PM
   const [time, setTime] = useState<string>(
-    new Date().toLocaleTimeString("en-GB", { hour12: false })
+    new Date().toLocaleTimeString("en-US", { 
+      hour12: true, 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    })
   );
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime(new Date().toLocaleTimeString("en-GB", { hour12: false }));
+      setTime(new Date().toLocaleTimeString("en-US", { 
+        hour12: true, 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      }));
     }, 1000);
 
     return () => clearInterval(timer);
@@ -66,7 +76,7 @@ const DashboardHeader = () => {
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="bg-green-50 p-2 rounded flex flex-col">
+        <div className="bg-green-50 px-3 py-2 rounded flex flex-col">
           <p className="text-sm text-gray-800">
           Total Sales
         </p>
@@ -74,7 +84,7 @@ const DashboardHeader = () => {
           ₹{totals.totalPaid || 0}
         </h1>
         </div>
-        <div className="bg-red-50 p-2 rounded flex flex-col">
+        <div className="bg-red-50 px-3 py-2 rounded flex flex-col">
           <p className="text-sm text-gray-800">
           Total Pending Amount
         </p>
