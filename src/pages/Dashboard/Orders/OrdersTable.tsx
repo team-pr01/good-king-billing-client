@@ -22,6 +22,7 @@ import { useGetAllAreaQuery } from "../../../redux/Features/Area/areaApi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { pdf } from "@react-pdf/renderer";
 import Invoice from "../../../components/Dashboard/Invoice/Invoice";
+import TwoInvoice from "../../../components/Dashboard/Invoice/TwoInvoices";
 
 const OrdersTable = () => {
   const navigate = useNavigate();
@@ -117,7 +118,13 @@ const OrdersTable = () => {
     };
 
     // Generate PDF
-    const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
+  const blob = await pdf(
+  invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
+    <Invoice data={invoiceData} />
+  ) : (
+    <TwoInvoice data={invoiceData} />
+  )
+).toBlob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `invoice_${invoiceData.invoiceNumber}.pdf`;

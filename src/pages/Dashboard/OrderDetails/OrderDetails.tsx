@@ -11,6 +11,7 @@ import { useGetAllProductsQuery } from "../../../redux/Features/Product/productA
 import Loader from "../../../components/Reusable/Loader/Loader";
 import { pdf } from "@react-pdf/renderer";
 import Invoice from "../../../components/Dashboard/Invoice/Invoice";
+import TwoInvoice from "../../../components/Dashboard/Invoice/TwoInvoices";
 
 type OrderItem = {
   productId: { _id: string };
@@ -126,7 +127,13 @@ const OrderDetails = () => {
 
   const handleDownload = async () => {
     // Create the PDF instance
-    const blob = await pdf(<Invoice data={invoiceData} />).toBlob();
+    const blob = await pdf(
+  invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
+    <Invoice data={invoiceData} />
+  ) : (
+    <TwoInvoice data={invoiceData} />
+  )
+).toBlob();
 
     // Create a temporary link to trigger download
     const link = document.createElement("a");

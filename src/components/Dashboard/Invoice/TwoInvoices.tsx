@@ -11,21 +11,20 @@ import logo from "../../../assets/logo.png";
 import qrCode from "../../../assets/qr-code.png";
 import rupee from "../../../assets/rupee.png";
 import rupeeWhite from "../../../assets/rupee-white.png";
-import rupeeGreen from "../../../assets/rupee-green.png";
 
 // Create styles
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row", // Changed to row for landscape with two invoices
     backgroundColor: "#FFFFFF",
-    padding: 20, // Slightly reduced padding for two invoices
+    padding: 10, // Slightly reduced padding for two invoices
     fontFamily: "Helvetica",
     fontSize: 8, // Slightly reduced font size for two invoices
   },
   invoiceContainer: {
     width: "50%", // Each invoice takes half the page width
     height: "100%",
-    padding: 10, // Padding within each invoice container
+    padding: 2, // Padding within each invoice container
     borderRightWidth: 1, // Separator between invoices
     borderRightColor: "#EEEEEE",
   },
@@ -33,22 +32,26 @@ const styles = StyleSheet.create({
     borderRightWidth: 0, // No right border for the last invoice
   },
   headerSection: {
+    backgroundColor: "#000000",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10, // Reduced margin
+    marginBottom: 10, 
     borderBottomWidth: 1,
     borderBottomColor: "#EEEEEE",
-    paddingBottom: 5, // Reduced padding
+    paddingBottom: 5,
+    paddingHorizontal: 5, // Reduced horizontal padding
   },
   logoContainer: {
+    backgroundColor: "#FFFFFF",
     flexDirection: "row",
     alignItems: "center",
+    padding: 6, // Reduced padding
+    borderRadius: 5,
   },
   logo: {
-    width: 20, // Reduced logo size
+    width: 80, // Reduced logo size
     height: 20,
-    marginRight: 3,
   },
   companyName: {
     fontSize: 14, // Reduced font size
@@ -58,12 +61,13 @@ const styles = StyleSheet.create({
   invoiceTitle: {
     fontSize: 24, // Reduced font size
     fontWeight: "bold",
-    color: "#333333",
+    color: "#FFF",
   },
   invoiceDetails: {
     textAlign: "right",
     fontSize: 8, // Reduced font size
-    color: "#555555",
+    color: "#fff",
+    fontWeight: "bold",
   },
   section: {
     marginBottom: 10, // Reduced margin
@@ -77,6 +81,7 @@ const styles = StyleSheet.create({
   text: {
     marginBottom: 2, // Reduced margin
     color: "#555555",
+    fontWeight :"bold",
   },
   bold: {
     fontWeight: "bold",
@@ -255,10 +260,12 @@ const styles = StyleSheet.create({
     marginTop: "auto", // Pushes the footer to the bottom
     borderTopWidth: 1,
     borderTopColor: "#EEEEEE",
-    paddingTop: 8, // Reduced padding
+    paddingVertical: 8, // Reduced padding
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
+    borderBottomWidth: 15,
+    borderBottomColor: "#000",
   },
   thankYou: {
     fontSize: 10, // Reduced font size
@@ -280,12 +287,20 @@ const styles = StyleSheet.create({
     height: 30,
     alignSelf: "center",
     marginTop: 10,
+    position: "absolute",
+    bottom: 35,
+    left: "38%",
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 3,
   },
   addressFooter: {
-    fontSize: 7, // Reduced font size
+    fontSize: 10, // Reduced font size
     textAlign: "center",
-    color: "#555555",
-    marginTop: 5,
+    color: "#fff",
+    backgroundColor: "#000",
+    paddingVertical:5,
+    fontWeight: "bold",
   },
 
   statusRow: {
@@ -324,7 +339,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "right",
     marginBottom: 5,
-    color: "#F58220",
+    marginTop:10,
+    color: "#FFF",
+  },
+  flexRow:{
+    flexDirection: "row",
+    gap: 5,
+    paddingHorizontal: 5
   }
 });
 
@@ -336,15 +357,19 @@ const InvoiceContent = ({ data, copyType }: any) => (
           src={logo}
           style={styles.logo}
         />
-        <Text style={styles.companyName}>GoodkinG</Text>
       </View>
-      <View>
-        <Text style={styles.invoiceTitle}>INVOICE</Text>
-        <Text style={styles.copyLabel}>{copyType.toUpperCase()}'S COPY</Text> {/* Added copy label */}
+      <View style={styles.flexRow}>
+        <View>
+          <Text style={styles.copyLabel}>{copyType.toUpperCase()}'S COPY</Text>
+        </View>
+        <View>
+          <Text style={styles.invoiceTitle}>INVOICE</Text>
         <View style={styles.invoiceDetails}>
           <Text>Invoice No: {data?.invoiceNumber}</Text>
           <Text>Invoice Date: {data?.date}</Text>
         </View>
+        </View>
+        
       </View>
     </View>
 
@@ -414,7 +439,7 @@ const InvoiceContent = ({ data, copyType }: any) => (
                     fontWeight: "bold",
                   }}
                 >
-                  {data?.dueAmount}
+                  {data?.dueAmount +data?.coveredDueAmount }
                 </Text>
               )}
             </View>
@@ -504,12 +529,6 @@ const InvoiceContent = ({ data, copyType }: any) => (
             {data?.subtotal + (data?.coveredDueAmount || 0)}
           </Text>
         </View>
-
-        <View style={styles.totalPaidBox}>
-          <Text style={[styles.totalText, { color: "#00A63E" }]}>Paid :</Text>
-          <Image source={rupeeGreen} style={styles.rupeeIcon} />
-          <Text style={[styles.totalText, { color: "#00A63E" }]}>{data?.paidAmount}</Text>
-        </View>
       </View>
     </View>
 
@@ -530,12 +549,13 @@ const InvoiceContent = ({ data, copyType }: any) => (
         <Text>sambhajinagar jurisdiction only</Text>
       </View>
     </View>
-
+<View style={{position:"relative"}}>
     <Image src={logo} style={styles.goodkingLogoFooter} />
     <Text style={styles.addressFooter}>
       Address - LIG 390, Mhada, M’Wadi, Cidco, Chhatrapati Sambhajinagar,
       {"\n"}Maharashtra, India - 431001
     </Text>
+    </View>
   </View>
 );
 
