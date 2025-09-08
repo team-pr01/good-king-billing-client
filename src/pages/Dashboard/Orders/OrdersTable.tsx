@@ -111,20 +111,20 @@ const OrdersTable = () => {
       previousOrderId: order.previousOrderId,
       subtotal: totalAmount,
       coveredDueAmount:
-        order?.coveredDueAmount === 0 || order?.coveredDueAmount=== undefined
+        order?.coveredDueAmount === 0 || order?.coveredDueAmount === undefined
           ? order?.previousDue
           : order?.coveredDueAmount,
       paidAmount: order?.paidAmount,
     };
 
     // Generate PDF
-  const blob = await pdf(
-  invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
-    <Invoice data={invoiceData} />
-  ) : (
-    <TwoInvoice data={invoiceData} />
-  )
-).toBlob();
+    const blob = await pdf(
+      invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
+        <Invoice data={invoiceData} />
+      ) : (
+        <TwoInvoice data={invoiceData} />
+      )
+    ).toBlob();
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `invoice_${invoiceData.invoiceNumber}.pdf`;
@@ -132,75 +132,87 @@ const OrdersTable = () => {
     URL.revokeObjectURL(link.href);
   };
 
-  const allOrders =
-    data?.data
-      ?.slice() // make a shallow copy so we don't mutate original
-      .sort(
-        (a: any, b: any) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ) // newest first
-      .map((order: any) => {
-        let statusColor = "bg-yellow-100 text-yellow-800";
-        if (order.status === "supplied")
-          statusColor = "bg-green-100 text-green-800";
-        if (order.status === "cancelled")
-          statusColor = "bg-red-100 text-red-800";
+  const [selectedDate, setSelectedDate] = useState<string>("");
 
-        return {
-          rowId: order._id,
-          _id: (
-            <Link
-              to={`/admin/dashboard/order/${order._id}`}
-              className="text-blue-600 hover:underline"
-            >
-              {order?.orderId}
-              {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
-            </Link>
-          ),
-          shopName: (
-            <Link
-              to={`/admin/dashboard/client/${order.shopId}`}
-              className="text-blue-600 hover:underline"
-            >
-              {order.shopName}
-            </Link>
-          ),
-          area: order.area,
-          totalAmount: `₹${order.totalAmount}`,
-          pendingAmount: `₹${order.pendingAmount}`,
-          transactionAmount: `₹${order.paidAmount}`,
-          paidAmount: (
-            <span className="bg-primary-10/20 text-xs px-2 py-1 rounded-full">
-              ₹{order.totalAmount - order.pendingAmount}
-            </span>
-          ),
-          paymentMethod: (
-            <span className="capitalize">{order.paymentMethod || "N/A"}</span>
-          ),
-          status: (
-            <span
-              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
-            >
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-            </span>
-          ),
-          updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-          }),
-          download: (
-            <button
-              onClick={() => setSelectedOrderId(order._id)}
-              className="text-blue-600 hover:underline flex items-center gap-1 text-2xl cursor-pointer text-center w-full justify-center"
-            >
-              <MdOutlineFileDownload />
-            </button>
-          ),
-        };
-      }) || [];
+  const allOrders =
+  data?.data
+    ?.slice()
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .filter((order: any) => {
+      if (selectedDate) {
+        const orderDate = new Date(order.createdAt)
+          .toISOString()
+          .split("T")[0]; // only keep YYYY-MM-DD
+        return orderDate === selectedDate;
+      }
+      return true;
+    })
+    .map((order: any) => {
+      let statusColor = "bg-yellow-100 text-yellow-800";
+      if (order.status === "supplied")
+        statusColor = "bg-green-100 text-green-800";
+      if (order.status === "cancelled")
+        statusColor = "bg-red-100 text-red-800";
+
+      return {
+        rowId: order._id,
+        _id: (
+          <Link
+            to={`/admin/dashboard/order/${order._id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {order?.orderId}
+            {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
+          </Link>
+        ),
+        shopName: (
+          <Link
+            to={`/admin/dashboard/client/${order.shopId}`}
+            className="text-blue-600 hover:underline"
+          >
+            {order.shopName}
+          </Link>
+        ),
+        area: order.area,
+        totalAmount: `₹${order.totalAmount}`,
+        pendingAmount: `₹${order.pendingAmount}`,
+        transactionAmount: `₹${order.paidAmount}`,
+        paidAmount: (
+          <span className="bg-primary-10/20 text-xs px-2 py-1 rounded-full">
+            ₹{order.totalAmount - order.pendingAmount}
+          </span>
+        ),
+        paymentMethod: (
+          <span className="capitalize">{order.paymentMethod || "N/A"}</span>
+        ),
+        status: (
+          <span
+            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${statusColor}`}
+          >
+            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+          </span>
+        ),
+        updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
+        download: (
+          <button
+            onClick={() => setSelectedOrderId(order._id)}
+            className="text-blue-600 hover:underline flex items-center gap-1 text-2xl cursor-pointer text-center w-full justify-center"
+          >
+            <MdOutlineFileDownload />
+          </button>
+        ),
+      };
+    }) || [];
+
 
   const [updateOrderStatus, { isLoading: isUpdating }] =
     useUpdateOrderStatusMutation();
@@ -325,6 +337,15 @@ const OrdersTable = () => {
 
           {/* Filters Container */}
           <div className="flex flex-col md:flex-row gap-3 items-center">
+          {/* Date Filter */}
+<div className="w-full md:w-fit">
+  <input
+    type="date"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
+  />
+</div>
             {/* Area */}
             <div className="w-full md:w-fit">
               <select
