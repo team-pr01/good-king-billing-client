@@ -72,7 +72,10 @@ const ClientDetails = () => {
       dueAmount: order.pendingAmount,
       previousOrderId: order.previousOrderId,
       subtotal: totalAmount,
-       coveredDueAmount: order?.coveredDueAmount  === 0 || order?.coveredDueAmount === undefined ? order?.previousDue : order?.coveredDueAmount,
+      coveredDueAmount:
+        order?.coveredDueAmount === 0 || order?.coveredDueAmount === undefined
+          ? order?.previousDue
+          : order?.coveredDueAmount,
       paidAmount: order?.paidAmount,
     };
 
@@ -93,14 +96,14 @@ const ClientDetails = () => {
     });
 
   // Total due and paid amount
-  const totals = orderData?.data?.reduce(
-    (acc: { paid: number; due: number }, order: any) => {
-      acc.paid += order.paidAmount || 0;
-      acc.due += order.pendingAmount || 0;
-      return acc;
-    },
-    { paid: 0, due: 0 }
-  );
+
+  const totalPaid = orderData?.data?.reduce((acc: number, order: any) => {
+    return acc + (order.paidAmount || 0);
+  }, 0);
+
+  const pending = orderData?.data?.reduce((acc: number, order: any) => {
+    return acc + order.totalPendingAmount;
+  }, 0);
 
   const totalPendingOrders = orderData?.data?.filter(
     (order: any) => order.status === "pending"
@@ -113,74 +116,72 @@ const ClientDetails = () => {
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
 
   const clientOrders =
-  orderData?.data
-    ?.slice() // copy to avoid mutating original
-    ?.sort(
-      (a: any, b: any) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    )
-    ?.map((order: any) => {
-      // Payment status color
-      const paymentColor =
-        order.pendingAmount > 0
-          ? "bg-yellow-100 text-yellow-800" // due
-          : "bg-green-100 text-green-800"; // paid
+    orderData?.data
+      ?.slice() // copy to avoid mutating original
+      ?.sort(
+        (a: any, b: any) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+      ?.map((order: any) => {
+        // Payment status color
+        const paymentColor =
+          order.pendingAmount > 0
+            ? "bg-yellow-100 text-yellow-800" // due
+            : "bg-green-100 text-green-800"; // paid
 
-      // Delivery status color
-      let deliveryColor = "bg-yellow-100 text-yellow-800"; // pending
-      if (order.status === "supplied")
-        deliveryColor = "bg-green-100 text-green-800";
-      if (order.status === "cancelled")
-        deliveryColor = "bg-red-100 text-red-800";
+        // Delivery status color
+        let deliveryColor = "bg-yellow-100 text-yellow-800"; // pending
+        if (order.status === "supplied")
+          deliveryColor = "bg-green-100 text-green-800";
+        if (order.status === "cancelled")
+          deliveryColor = "bg-red-100 text-red-800";
 
-      return {
-        rowId: order._id,
-        _id: (
-          <Link
-            to={`/admin/dashboard/order/${order._id}`}
-            className="text-blue-600 hover:underline"
-          >
-            {order.orderId}
-            {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
-          </Link>
-        ),
-        totalPayment: `₹${order.totalAmount}`,
-        duePayment: `₹${order.pendingAmount}`,
-        paymentStatus: (
-          <span
-            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${paymentColor}`}
-          >
-            {order.pendingAmount > 0 ? "Due" : "Paid"}
-          </span>
-        ),
-        deliveryStatus: (
-          <span
-            className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${deliveryColor}`}
-          >
-            {order.status.charAt(0).toUpperCase() + order.status.slice(1) ||
-              "Pending"}
-          </span>
-        ),
-        paymentMethod: order.paymentMethod,
-        updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-        }),
-        download: (
-          <button
-            onClick={() => setSelectedOrderId(order._id)}
-            className="text-blue-600 hover:underline flex items-center gap-1 text-2xl cursor-pointer text-center w-full justify-center"
-          >
-            <MdOutlineFileDownload />
-          </button>
-        ),
-      };
-    }) || [];
-
-
+        return {
+          rowId: order._id,
+          _id: (
+            <Link
+              to={`/admin/dashboard/order/${order._id}`}
+              className="text-blue-600 hover:underline"
+            >
+              {order.orderId}
+              {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
+            </Link>
+          ),
+          totalPayment: `₹${order.totalAmount}`,
+          duePayment: `₹${order.pendingAmount}`,
+          paymentStatus: (
+            <span
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${paymentColor}`}
+            >
+              {order.pendingAmount > 0 ? "Due" : "Paid"}
+            </span>
+          ),
+          deliveryStatus: (
+            <span
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${deliveryColor}`}
+            >
+              {order.status.charAt(0).toUpperCase() + order.status.slice(1) ||
+                "Pending"}
+            </span>
+          ),
+          paymentMethod: order.paymentMethod,
+          updatedAt: new Date(order.updatedAt).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          }),
+          download: (
+            <button
+              onClick={() => setSelectedOrderId(order._id)}
+              className="text-blue-600 hover:underline flex items-center gap-1 text-2xl cursor-pointer text-center w-full justify-center"
+            >
+              <MdOutlineFileDownload />
+            </button>
+          ),
+        };
+      }) || [];
 
   // Filtered Orders
   const filteredOrders = clientOrders.reverse().filter((order: any) => {
@@ -202,7 +203,7 @@ const ClientDetails = () => {
     { key: "deliveryStatus", label: "Delivery Status" },
     { key: "paymentMethod", label: "Payment Method" },
     { key: "updatedAt", label: "Date" },
-     { key: "download", label: "PDF Bill" },
+    { key: "download", label: "PDF Bill" },
   ];
 
   const [updateOrderStatus, { isLoading: isUpdating }] =
@@ -260,13 +261,13 @@ const ClientDetails = () => {
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <DashboardCard
           title="Paid Amount"
-          value={`₹${totals?.paid.toFixed(2)}`}
+          value={`₹${totalPaid.toFixed(2)}`}
           Icon={FaMoneyBillWave}
           bgColor="bg-green-500"
         />
         <DashboardCard
           title="Due Amount"
-          value={`₹${totals?.due.toFixed(2)}`}
+          value={`₹${pending.toFixed(2)}`}
           Icon={FaCreditCard}
           bgColor="bg-yellow-500"
         />
