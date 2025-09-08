@@ -32,12 +32,12 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 p-4 relative overflow-hidden font-Nunito">
-      <div className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden w-full max-w-md border border-green-200 dark:border-green-700">
-        <div className="bg-gradient-to-r from-green-400 to-green-600 dark:from-green-700 dark:to-green-800 py-8 px-8 text-center">
+      <div className="relative bg-white  rounded-3xl shadow-2xl overflow-hidden w-full max-w-md border border-green-200">
+        <div className="bg-gradient-to-r from-green-400 to-green-600 py-8 px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-1 md:mb-2">
             Reset Password
           </h2>
-          <p className="text-green-100 dark:text-green-200">
+          <p className="text-green-1000">
             Enter your new password
           </p>
         </div>
@@ -59,7 +59,7 @@ const ResetPassword = () => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="cursor-pointer absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
@@ -80,7 +80,7 @@ const ResetPassword = () => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="cursor-pointer absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowConfirm(!showConfirm)}
             >
               {showConfirm ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
@@ -90,14 +90,14 @@ const ResetPassword = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? "Resetting..." : "Reset Password"}
           </button>
         </form>
-        <div className="bg-green-50 dark:bg-gray-700 py-4 px-8 border-t border-green-100 dark:border-green-700 text-center">
+        <div className="bg-green-50 py-4 px-8 border-t border-green-100 text-center">
           <Link
-          to={"/"} className="text-green-700 dark:text-green-200 text-sm font-semibold">
+          to={"/"} className="text-green-7000 text-sm font-semibold">
             Back to Login
           </Link>
         </div>

@@ -142,7 +142,7 @@ const AddUserModal = ({ isOpen, onClose }: AddProductModalProps) => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="cursor-pointer absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}

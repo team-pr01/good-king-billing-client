@@ -426,6 +426,7 @@ const OrderDetails = () => {
         onClose={() => setIsPaymentModalOpen(false)}
         totalAmount={totalAmount}
         onPaymentSuccess={() => setIsPaymentModalOpen(false)}
+        // dueAmount={totalAmount + data?.data?.previousDue}
         dueAmount={data?.data?.totalPendingAmount}
         previousPendingAmount={data?.data?.previousDue}
         previousOrderId={data?.data?.previousOrderId || ""}

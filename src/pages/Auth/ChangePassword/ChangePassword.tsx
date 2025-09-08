@@ -52,7 +52,7 @@ const ChangePassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center font-Nunito">
-      <div className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden w-full max-w-md">
+      <div className="relative bg-white  rounded-3xl shadow-2xl overflow-hidden w-full max-w-md">
         <form
           className="space-y-4 py-5 lg:py-8 px-4 lg:px-8"
           onSubmit={handleSubmit(handleResetPassword)}
@@ -75,7 +75,7 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
             >
               {showCurrentPassword ? (
@@ -100,7 +100,7 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
@@ -122,7 +122,7 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowConfirm(!showConfirm)}
             >
               {showConfirm ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}

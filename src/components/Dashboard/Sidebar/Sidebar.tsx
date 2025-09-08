@@ -50,7 +50,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-72 max-w-[240px] 2xl:max-w-[280px] h-screen sticky top-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-shrink-0 py-6 px-4 hidden xl:flex flex-col justify-between gap-10 ">
+    <aside className="w-72 max-w-[240px] 2xl:max-w-[280px] h-screen sticky top-0 bg-white border-r border-gray-200 flex-shrink-0 py-6 px-4 hidden xl:flex flex-col justify-between gap-10 ">
       <img src={logo} alt="" className="w-48 mx-auto" />
       <div className="flex flex-col h-full">
         <nav className="flex-1">
@@ -61,8 +61,8 @@ const Sidebar = () => {
                 <div
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-2 cursor-pointer transition-colors ${
                     isActive
-                      ? "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 font-semibold"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "bg-green-100 text-green-700 font-semibold"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <span className="text-xl">{link.icon}</span>

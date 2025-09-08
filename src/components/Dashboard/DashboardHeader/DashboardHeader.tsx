@@ -1,7 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import DashboardHamburgerMenu from "../Sidebar/DashboardHamburgerMenu/DashboardHamburgerMenu";
+import { useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
 
 const DashboardHeader = () => {
+  const { data } = useGetAllOrdersQuery({});
+  const totals = data?.data?.reduce(
+  (acc: { totalPaid: number; totalPending: number }, order: any) => {
+    acc.totalPaid += order.paidAmount || 0;
+    acc.totalPending += order.totalPendingAmount || 
+                       (order.pendingAmount || 0) + (order.previousDue || 0) || 0;
+    return acc;
+  },
+  { totalPaid: 0, totalPending: 0 }
+) || { totalPaid: 0, totalPending: 0 };
   const today = new Date();
 
   const day = today.getDate();
@@ -50,6 +62,25 @@ const DashboardHeader = () => {
           <p className="text-gray-600">{finalDate}</p>
           |
         <p className="text-gray-800">{time}</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="bg-green-50 p-2 rounded flex flex-col">
+          <p className="text-sm text-gray-800">
+          Total Sales
+        </p>
+          <h1 className="text-xl font-semibold text-gray-800">
+          ₹{totals.totalPaid || 0}
+        </h1>
+        </div>
+        <div className="bg-red-50 p-2 rounded flex flex-col">
+          <p className="text-sm text-gray-800">
+          Total Pending Amount
+        </p>
+          <h1 className="text-xl font-semibold text-gray-800">
+          ₹{totals.totalPending || 0}
+        </h1>
         </div>
       </div>
     </div>

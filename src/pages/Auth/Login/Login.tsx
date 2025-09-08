@@ -59,12 +59,12 @@ const Login = () => {
       <div className="absolute top-20 right-0 w-56 h-56 bg-green-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-0 left-10 w-64 h-64 bg-green-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-4000"></div>
 
-      <div className="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden w-full max-w-md border border-green-200 dark:border-green-700">
-        <div className="bg-gradient-to-r from-green-400 to-green-600 dark:from-green-700 dark:to-green-800 py-8 px-8 text-center">
+      <div className="relative bg-white  rounded-3xl shadow-2xl overflow-hidden w-full max-w-md border border-green-200">
+        <div className="bg-gradient-to-r from-green-400 to-green-600 py-8 px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-1 md:mb-2">
             Welcome Back
           </h2>
-          <p className="text-green-100 dark:text-green-200">
+          <p className="text-green-1000">
             Sign in to your account
           </p>
         </div>
@@ -103,7 +103,7 @@ const Login = () => {
             />
             <button
               type="button"
-              className="cursor-pointer absolute right-3 top-[50px] text-green-600 dark:text-green-300 text-lg font-medium hover:text-green-800 dark:hover:text-green-100 transition-colors"
+              className="cursor-pointer absolute right-3 top-[50px] text-green-600 text-lg font-medium hover:text-green-800 transition-colors"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
@@ -113,7 +113,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -145,10 +145,10 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="bg-green-50 dark:bg-gray-700 py-4 px-8 border-t border-green-100 dark:border-green-700 text-center">
+        <div className="bg-green-50 py-4 px-8 border-t border-green-100 text-center">
           <Link
             to={"/forgot-password"}
-            className="text-green-700 dark:text-green-200 text-sm font-semibold"
+            className="text-green-7000 text-sm font-semibold"
           >
             Forgot password?
           </Link>
