@@ -21,7 +21,7 @@ const totalSale = suppliedOrders?.reduce(
   0
 );
 const pendingAmount = data?.data?.reduce(
-  (acc: number, order: any) => acc + order.pendingAmount,
+  (acc: number, order: any) => acc + order.totalPendingAmount,
   0
 );
 

@@ -51,7 +51,7 @@ const AdminDashboardHome = () => {
    const totals = data?.data?.reduce(
   (acc: { totalPaid: number; totalPending: number }, order: any) => {
     acc.totalPaid += order.paidAmount || 0;
-    acc.totalPending += order.pendingAmount;
+    acc.totalPending += order.totalPendingAmount;
     return acc;
   },
   { totalPaid: 0, totalPending: 0 }
