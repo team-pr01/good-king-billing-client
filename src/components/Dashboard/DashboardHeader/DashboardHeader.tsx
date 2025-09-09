@@ -15,6 +15,12 @@ const DashboardHeader = () => {
   { totalPaid: 0, totalPending: 0 }
 ) || { totalPaid: 0, totalPending: 0 };
 
+const suppliedOrders = data?.data?.filter((order: any) => order.status === "supplied");
+const totalSale = suppliedOrders?.reduce(
+  (acc: number, order: any) => acc + order.paidAmount,
+  0
+);
+
 
   const today = new Date();
 
@@ -83,7 +89,7 @@ const DashboardHeader = () => {
           Total Sales
         </p>
           <h1 className="text-xl font-semibold text-gray-800">
-          {data?.data?.length || 0}
+          ₹{totalSale || 0}
         </h1>
         </div>
         <div className="bg-red-50 px-3 py-2 rounded flex flex-col">
