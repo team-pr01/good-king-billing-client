@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     padding: 10, // Slightly reduced padding for two invoices
     fontFamily: "Helvetica",
     fontSize: 8, // Slightly reduced font size for two invoices
+    gap: 10, // Gap between the two invoices
   },
   invoiceContainer: {
     width: "50%", // Each invoice takes half the page width
