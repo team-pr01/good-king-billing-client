@@ -48,10 +48,15 @@ const AdminDashboardHome = () => {
       0
     );
 
-  const pendingPaymentAmount = data?.data?.reduce(
-    (sum: number, order: any) => sum + order.pendingAmount,
-    0
-  );
+   const totals = data?.data?.reduce(
+  (acc: { totalPaid: number; totalPending: number }, order: any) => {
+    acc.totalPaid += order.paidAmount || 0;
+    acc.totalPending += order.totalPendingAmount || 
+                       (order.pendingAmount || 0) + (order.previousDue || 0) || 0;
+    return acc;
+  },
+  { totalPaid: 0, totalPending: 0 }
+) || { totalPaid: 0, totalPending: 0 };
 
   const todaysOrdersCount = todaysOrders.length;
 
@@ -95,7 +100,7 @@ const AdminDashboardHome = () => {
         />
         <DashboardCard
           title="Pending Payment Amount"
-          value={`₹${pendingPaymentAmount}`}
+          value={`₹${totals.totalPending}`}
           Icon={FaHourglassHalf}
           bgColor="bg-yellow-400"
         />
