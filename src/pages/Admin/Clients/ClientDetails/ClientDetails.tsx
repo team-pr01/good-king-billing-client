@@ -109,7 +109,7 @@ const ClientDetails = () => {
   }, 0);
 
   const pending = orderData?.data?.reduce((acc: number, order: any) => {
-    return acc + order.totalPendingAmount;
+    return acc + order.pendingAmount;
   }, 0);
 
   const totalPendingOrders = orderData?.data?.filter(

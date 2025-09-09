@@ -5,21 +5,27 @@ import { useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
 
 const DashboardHeader = () => {
   const { data } = useGetAllOrdersQuery({});
-  const totals = data?.data?.reduce(
-  (acc: { totalPaid: number; totalPending: number }, order: any) => {
-    acc.totalPaid += order.paidAmount || 0;
-    acc.totalPending += order.totalPendingAmount || 
-                       (order.pendingAmount || 0) + (order.previousDue || 0) || 0;
-    return acc;
-  },
-  { totalPaid: 0, totalPending: 0 }
-) || { totalPaid: 0, totalPending: 0 };
+//   const totals = data?.data?.reduce(
+//   (acc: { totalPaid: number; totalPending: number }, order: any) => {
+//     acc.totalPaid += order.paidAmount || 0;
+//     acc.totalPending += order.totalPendingAmount || 
+//                        (order.pendingAmount || 0) + (order.previousDue || 0) || 0;
+//     return acc;
+//   },
+//   { totalPaid: 0, totalPending: 0 }
+// ) || { totalPaid: 0, totalPending: 0 };
 
 const suppliedOrders = data?.data?.filter((order: any) => order.status === "supplied");
 const totalSale = suppliedOrders?.reduce(
   (acc: number, order: any) => acc + order.totalAmount,
   0
 );
+const pendingAmount = data?.data?.reduce(
+  (acc: number, order: any) => acc + order.pendingAmount,
+  0
+);
+
+
 
 
   const today = new Date();
@@ -97,7 +103,7 @@ const totalSale = suppliedOrders?.reduce(
           Total Pending Amount
         </p>
           <h1 className="text-xl font-semibold text-gray-800">
-          ₹{totals.totalPending || 0}
+          ₹{pendingAmount || 0}
         </h1>
         </div>
       </div>
