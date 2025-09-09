@@ -17,7 +17,7 @@ const DashboardHeader = () => {
 
 const suppliedOrders = data?.data?.filter((order: any) => order.status === "supplied");
 const totalSale = suppliedOrders?.reduce(
-  (acc: number, order: any) => acc + order.paidAmount,
+  (acc: number, order: any) => acc + order.totalAmount,
   0
 );
 
