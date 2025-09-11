@@ -68,7 +68,7 @@ const OrdersTable = () => {
     { key: "paymentMethod", label: "Payment Method" },
     { key: "status", label: "Delivery Status" },
     { key: "updatedAt", label: "Date" },
-    
+     { key: "download", label: "PDF Bill" },
   ];
 
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -177,11 +177,11 @@ const OrdersTable = () => {
             </Link>
           ),
           area: order.area,
-          totalAmount: <span
-              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800`}
-            >₹{order.totalAmount}</span>,
+          totalAmount: `₹${order.totalAmount}`,
           pendingAmount: `₹${order.pendingAmount}`,
-          transactionAmount: `₹${order.paidAmount}`,
+          transactionAmount: <span
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800`}
+            >₹{order.paidAmount}</span>,
           paidAmount: (
             <span className="bg-primary-10/20 text-xs px-2 py-1 rounded-full">
               ₹{order.totalAmount - order.pendingAmount}

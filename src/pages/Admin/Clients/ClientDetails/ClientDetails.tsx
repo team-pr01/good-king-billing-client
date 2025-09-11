@@ -154,11 +154,11 @@ const ClientDetails = () => {
               {order?.paymentMethod ? `-${order.paymentMethod}` : ""}
             </Link>
           ),
-          totalPayment:  <span
-              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800`}
-            >₹{order.totalAmount}</span>,
+          totalPayment: `₹${order.totalAmount}`,
           duePayment: `₹${order.pendingAmount}`,
-          transactionAmount: `₹${order.paidAmount}`,
+          transactionAmount:<span
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800`}
+            >₹{order.paidAmount}</span>,
           paymentStatus: (
             <span
               className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${paymentColor}`}
