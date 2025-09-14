@@ -10,7 +10,8 @@ import type {
 import type { DefinitionType } from "@reduxjs/toolkit/query";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://good-king-billing-server.vercel.app/api/v1",
+  baseUrl: "https://apigoodking.vercel.app/api/v1",
+  // baseUrl: "https://good-king-billing-server.vercel.app/api/v1",
   // baseUrl: "http://localhost:5000/api/v1",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
@@ -32,7 +33,8 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
   if (result.error?.status === 401) {
     const res = await fetch(
-      "https://good-king-billing-server.vercel.app/api/v1/auth/refresh-token",
+      "https://apigoodking.vercel.app/api/v1/auth/refresh-token",
+      // "https://good-king-billing-server.vercel.app/api/v1/auth/refresh-token",
       // "http://localhost:5000/api/v1/auth/refresh-token",
       {
         credentials: "include",

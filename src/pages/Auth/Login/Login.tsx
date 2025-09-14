@@ -145,14 +145,14 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="bg-green-50 py-4 px-8 border-t border-green-100 text-center">
+        {/* <div className="bg-green-50 py-4 px-8 border-t border-green-100 text-center">
           <Link
             to={"/forgot-password"}
             className="text-green-7000 text-sm font-semibold"
           >
             Forgot password?
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
