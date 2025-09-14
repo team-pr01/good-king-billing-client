@@ -18,12 +18,12 @@ type ClientInfoProps = {
 
 const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
   const createdAt = new Date(client?.createdAt).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-        });
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
   return (
     <div>
       <h2 className="text-xl font-semibold text-gray-800 mb-6 pb-3 border-b border-gray-200">
@@ -51,15 +51,22 @@ const ClientInfo: React.FC<ClientInfoProps> = ({ client }) => {
               <span className="text-sm font-medium text-gray-500">
                 Phone Number
               </span>
-              <p className="text-gray-800 font-medium">{client?.phoneNumber}</p>
+              <p className="text-gray-800 font-medium">
+                <a
+                  href={`https://wa.me/${client?.phoneNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  {client?.phoneNumber}
+                </a>
+              </p>
             </div>
             <div>
               <span className="text-sm font-medium text-gray-500">
                 Registered Date
               </span>
-              <p className="text-gray-800 font-medium">
-                {createdAt}
-              </p>
+              <p className="text-gray-800 font-medium">{createdAt}</p>
             </div>
           </div>
         </div>

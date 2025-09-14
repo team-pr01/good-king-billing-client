@@ -156,6 +156,9 @@ const ClientDetails = () => {
           ),
           totalPayment: `₹${order.totalAmount}`,
           duePayment: `₹${order.pendingAmount}`,
+          transactionAmount:<span
+              className={`inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800`}
+            >₹{order.paidAmount}</span>,
           paymentStatus: (
             <span
               className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${paymentColor}`}
@@ -191,7 +194,7 @@ const ClientDetails = () => {
       }) || [];
 
   // Filtered Orders
-  const filteredOrders = clientOrders.reverse().filter((order: any) => {
+  const filteredOrders = clientOrders.filter((order: any) => {
     const matchesStatus = statusFilter
       ? order.deliveryStatus.toLowerCase() === statusFilter.toLowerCase()
       : true;
@@ -206,9 +209,10 @@ const ClientDetails = () => {
     { key: "_id", label: "Order ID" },
     { key: "totalPayment", label: "Total Payment" },
     { key: "duePayment", label: "Due Payment" },
-    { key: "paymentStatus", label: "Payment Status" },
-    { key: "deliveryStatus", label: "Delivery Status" },
+    // { key: "paymentStatus", label: "Payment Status" },
+    { key: "transactionAmount", label: "Transaction Amount" },
     { key: "paymentMethod", label: "Payment Method" },
+    { key: "deliveryStatus", label: "Delivery Status" },
     { key: "updatedAt", label: "Date" },
     { key: "download", label: "PDF Bill" },
   ];
@@ -302,7 +306,7 @@ const ClientDetails = () => {
       <div className="flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-start mt-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
-            Client Information
+           {data?.data?.shopName}
           </h1>
           <p className="text-gray-600">
             View and manage client information and orders.
