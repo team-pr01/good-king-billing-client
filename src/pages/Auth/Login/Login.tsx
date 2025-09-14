@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useLoginMutation } from "../../../redux/Features/Auth/authApi";
 import { useDispatch } from "react-redux";
