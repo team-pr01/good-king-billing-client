@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import logo from "../../../assets/logo.png";
+import logo from "../../../../public/logo.png";
 import qrCode from "../../../assets/qr-code.png";
 import rupee from "../../../assets/rupee.png";
 import rupeeWhite from "../../../assets/rupee-white.png";
