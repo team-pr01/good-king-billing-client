@@ -38,7 +38,6 @@ const Clients = () => {
 
   const { data: allOrders } = useGetAllOrdersQuery({}); 
 
-  // map client + calculate pending
   const clientsWithPending = data?.data?.map((client: any) => {
     const clientOrders =
       allOrders?.data?.filter((order: any) => order.shopId === client._id) || [];
@@ -64,7 +63,7 @@ const Clients = () => {
       state: client.state,
       city: client.city,
       area: client.area,
-      pendingAmount, // 👉 add pending field
+      pendingAmount,  
     };
   }) || [];
 

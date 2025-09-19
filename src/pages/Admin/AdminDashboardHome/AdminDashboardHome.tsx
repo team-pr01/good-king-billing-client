@@ -102,6 +102,7 @@ const AdminDashboardHome = () => {
           value={`₹${totals.totalPending}`}
           Icon={FaHourglassHalf}
           bgColor="bg-yellow-400"
+          link={"clients"}
         />
 
         <DashboardCard
