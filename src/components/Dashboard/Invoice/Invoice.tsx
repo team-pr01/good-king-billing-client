@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import logo from "../../../../public/logo.png";
 import qrCode from "../../../assets/qr-code.png";
 import rupee from "../../../assets/rupee.png";
 import rupeeWhite from "../../../assets/rupee-white.png";
@@ -325,10 +324,7 @@ const Invoice = ({ data }: any) => (
       {/* Header Section */}
       <View style={styles.headerSection}>
         <View style={styles.logoContainer}>
-          <Image
-            src={logo} // Replace with actual Goodking logo URL
-            style={styles.logo}
-          />
+          <img src="/mh-20/logo.png" alt="Logo" />
         </View>
         <View>
           <Text style={styles.invoiceTitle}>INVOICE</Text>
@@ -541,7 +537,7 @@ const Invoice = ({ data }: any) => (
     marginTop: 20,
   }}
 >
-  <Image src={logo} style={styles.goodkingLogoFooter} />
+  <Image src="/mh-20/logo.png"  style={styles.goodkingLogoFooter} />
   <Text style={styles.addressFooter}>
     Address - LIG 390, Mhada, M’Wadi, Cidco, Chhatrapati Sambhajinagar,
     {"\n"}Maharashtra, India - 431001

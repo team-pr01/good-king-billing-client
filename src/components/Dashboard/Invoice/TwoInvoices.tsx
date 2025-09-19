@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import logo from "../../../../public/logo.png";
 import qrCode from "../../../assets/qr-code.png";
 import rupee from "../../../assets/rupee.png";
 import rupeeWhite from "../../../assets/rupee-white.png";
@@ -355,7 +354,7 @@ const InvoiceContent = ({ data, copyType }: any) => (
     <View style={styles.headerSection}>
       <View style={styles.logoContainer}>
         <Image
-          src={logo}
+          src="/mh-20/logo.png"
           style={styles.logo}
         />
       </View>
@@ -551,7 +550,7 @@ const InvoiceContent = ({ data, copyType }: any) => (
       </View>
     </View>
 <View style={{position:"relative"}}>
-    <Image src={logo} style={styles.goodkingLogoFooter} />
+    <Image src="/mh-20/logo.png"  style={styles.goodkingLogoFooter} />
     <Text style={styles.addressFooter}>
       Address - LIG 390, Mhada, M’Wadi, Cidco, Chhatrapati Sambhajinagar,
       {"\n"}Maharashtra, India - 431001

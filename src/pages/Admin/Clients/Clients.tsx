@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useGetAllAreaQuery } from "../../../redux/Features/Area/areaApi";
+import { useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
 
 const Clients = () => {
   const { data: allArea } = useGetAllAreaQuery({});
@@ -35,29 +36,43 @@ const Clients = () => {
   const [modalType, setModalType] = useState<string | null>("add");
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
 
-  const allClients =
-  data?.data?.map((client: any) => ({
-    rowId : client._id,
-    shopName:  (
-      <Link
-        to={`/admin/dashboard/client/${client._id}`}
-        className="text-blue-600 hover:underline"
-      >
-        {client.shopName}
-      </Link>
-    ),
-    name: client.name,
-    phoneNumber: client.phoneNumber,
-    email: client.emailId,
-    state: client.state,
-    city: client.city,
-    area: client.area,
-  })) || [];
+  const { data: allOrders } = useGetAllOrdersQuery({}); 
+
+  // map client + calculate pending
+  const clientsWithPending = data?.data?.map((client: any) => {
+    const clientOrders =
+      allOrders?.data?.filter((order: any) => order.shopId === client._id) || [];
+
+    const pendingAmount = clientOrders?.reduce(
+      (acc: number, order: any) => acc + (order?.totalPendingAmount || 0),
+      0
+    );
+
+    return {
+      rowId: client._id,
+      shopName: (
+        <Link
+          to={`/admin/dashboard/client/${client._id}`}
+          className="text-blue-600 hover:underline"
+        >
+          {client.shopName}
+        </Link>
+      ),
+      name: client.name,
+      phoneNumber: client.phoneNumber,
+      email: client.emailId,
+      state: client.state,
+      city: client.city,
+      area: client.area,
+      pendingAmount, // 👉 add pending field
+    };
+  }) || [];
 
   const columns = [
     // { key: "_id", label: "ID" },
     { key: "shopName", label: "Shop Name" },
     { key: "name", label: "Name" },
+      { key: "pendingAmount", label: "Pending Amount" },
     { key: "phoneNumber", label: "Phone Number" },
     { key: "emailId", label: "Email" },
     { key: "state", label: "State" },
@@ -112,7 +127,7 @@ const Clients = () => {
       type: "array",
     });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "clients.xlsx");
+    saveAs(blob, "clients.xlsx"); 
   };
 
   return (
@@ -244,7 +259,7 @@ const Clients = () => {
       {/* Clients Table */}
       <Table
         columns={columns}
-        data={allClients}
+        data={clientsWithPending}
         actions={actions}
         rowKey="_id"
         isLoading={isLoading || isFetching}
