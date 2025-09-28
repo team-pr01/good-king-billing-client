@@ -9,18 +9,21 @@ import {
   useGetAllClientsQuery,
   useGetSingleClientByIdQuery,
 } from "../../../redux/Features/Client/clientApi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { useGetAllAreaQuery } from "../../../redux/Features/Area/areaApi";
 import { useGetAllOrdersQuery } from "../../../redux/Features/Order/orderApi";
 
 const Clients = () => {
+  const location = useLocation();
+const params = new URLSearchParams(location.search);
+const status = params.get("status");
   const { data: allArea } = useGetAllAreaQuery({});
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState(status|| "");
   const [areaFilter, setAreaFilter] = useState("");
   const { data, isLoading, isFetching } = useGetAllClientsQuery({
     keyword: searchValue,
@@ -36,42 +39,48 @@ const Clients = () => {
   const [modalType, setModalType] = useState<string | null>("add");
   const [isAddAreaModalOpen, setIsAddAreaModalOpen] = useState<boolean>(false);
 
-  const { data: allOrders } = useGetAllOrdersQuery({}); 
+  const { data: allOrders } = useGetAllOrdersQuery({});
 
-  const clientsWithPending = data?.data?.map((client: any) => {
-    const clientOrders =
-      allOrders?.data?.filter((order: any) => order.shopId === client._id) || [];
+  const clientsWithPending =
+    data?.data?.map((client: any) => {
+      const clientOrders =
+        allOrders?.data?.filter((order: any) => order.shopId === client._id) ||
+        [];
 
-    const pendingAmount = clientOrders?.reduce(
-      (acc: number, order: any) => acc + (order?.totalPendingAmount || 0),
-      0
-    );
+      const pendingAmount = clientOrders?.reduce(
+        (acc: number, order: any) => acc + (order?.totalPendingAmount || 0),
+        0
+      );
 
-    return {
-      rowId: client._id,
-      shopName: (
-        <Link
-          to={`/admin/dashboard/client/${client._id}`}
-          className="text-blue-600 hover:underline"
-        >
-          {client.shopName}
-        </Link>
-      ),
-      name: client.name,
-      phoneNumber: client.phoneNumber,
-      email: client.emailId,
-      state: client.state,
-      city: client.city,
-      area: client.area,
-      pendingAmount,  
-    };
-  }) || [];
+      return {
+        rowId: client._id,
+        shopName: (
+          <Link
+            to={`/admin/dashboard/client/${client._id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {client.shopName}
+          </Link>
+        ),
+        name: client.name,
+        phoneNumber: client.phoneNumber,
+        email: client.emailId,
+        state: client.state,
+        city: client.city,
+        area: client.area,
+        pendingAmount,
+      };
+    }) .filter((client: any) => {
+      if (statusFilter === "Pending") return client.pendingAmount > 0;
+      if (statusFilter === "Paid") return client.pendingAmount === 0;
+      return true; // default → show all
+    }) || [];
 
   const columns = [
     // { key: "_id", label: "ID" },
     { key: "shopName", label: "Shop Name" },
     { key: "name", label: "Name" },
-      { key: "pendingAmount", label: "Pending Amount" },
+    { key: "pendingAmount", label: "Pending Amount" },
     { key: "phoneNumber", label: "Phone Number" },
     { key: "emailId", label: "Email" },
     { key: "state", label: "State" },
@@ -126,7 +135,7 @@ const Clients = () => {
       type: "array",
     });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "clients.xlsx"); 
+    saveAs(blob, "clients.xlsx");
   };
 
   return (
@@ -199,36 +208,46 @@ const Clients = () => {
 
           {/* Filters Container */}
           <div className="flex gap-3 flex-wrap items-center">
-
             <div className="flex items-center gap-2 md:gap-3">
+              <div className="min-w-[150px]">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
+                >
+                  <option value="">Due Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Paid">Paid</option>
+                </select>
+              </div>
               {/* Areas Filter Dropdown */}
-            <div className="min-w-[150px]">
-              <select
-                value={areaFilter}
-                onChange={(e) => setAreaFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
-              >
-                <option value="">All Areas</option>
-                {allArea?.data?.map((area: any, index: number) => (
-                      <option key={index} value={area?.area}>
-                        {area?.area}
-                      </option>
-                    ))}
-              </select>
-            </div>
+              <div className="min-w-[150px]">
+                <select
+                  value={areaFilter}
+                  onChange={(e) => setAreaFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white cursor-pointer"
+                >
+                  <option value="">All Areas</option>
+                  {allArea?.data?.map((area: any, index: number) => (
+                    <option key={index} value={area?.area}>
+                      {area?.area}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Remove Filters Button */}
-            <button
-              onClick={() => {
-                setStatusFilter("");
-                setAreaFilter("");
-                setSearchValue("");
-              }}
-              disabled={!statusFilter && !areaFilter && !searchValue}
-              className="px-2 md:px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
-            >
-              Remove Filters
-            </button>
+              {/* Remove Filters Button */}
+              <button
+                onClick={() => {
+                  setStatusFilter("");
+                  setAreaFilter("");
+                  setSearchValue("");
+                }}
+                disabled={!statusFilter && !areaFilter && !searchValue}
+                className="px-2 md:px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Remove Filters
+              </button>
             </div>
 
             {/* Export Client List Button */}
