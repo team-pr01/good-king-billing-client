@@ -17,75 +17,80 @@ import OrderConfirmed from "../pages/Dashboard/OrderConfirmed/OrderConfirmed";
 import Users from "../pages/Admin/Users/Users";
 import Area from "../pages/Dashboard/Area/Area";
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <AuthLayout />,
+      errorElement: <NotFound />,
+      children: [
+        {
+          path: "",
+          element: <Login />,
+        },
+        {
+          path: "/forgot-password",
+          element: <ForgotPassword />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPassword />,
+        },
+      ],
+    },
+    {
+      path: "admin/dashboard",
+      element: <DashboardLayout />,
+      errorElement: <NotFound />,
+      children: [
+        {
+          path: "",
+          element: <AdminDashboardHome />,
+        },
+        {
+          path: "users",
+          element: <Users />,
+        },
+        {
+          path: "clients",
+          element: <Clients />,
+        },
+        {
+          path: "client/:id",
+          element: <ClientDetails />,
+        },
+        {
+          path: "create-order",
+          element: <CreateOrder />,
+        },
+        {
+          path: "products",
+          element: <Products />,
+        },
+        {
+          path: "orders",
+          element: <Orders />,
+        },
+        {
+          path: "order/:id",
+          element: <OrderDetails />,
+        },
+        {
+          path: "order-confirmed/:id",
+          element: <OrderConfirmed />,
+        },
+        {
+          path: "settings",
+          element: <ChangePassword />,
+        },
+        {
+          path: "area",
+          element: <Area />,
+        },
+      ],
+    },
+  ],
   {
-    path: "/",
-    element: <AuthLayout />,
-    errorElement: <NotFound />,
-    children: [
-      {
-        path: "",
-        element: <Login />,
-      },
-      {
-        path: "/forgot-password",
-        element: <ForgotPassword />,
-      },
-      {
-        path: "/reset-password",
-        element: <ResetPassword />,
-      },
-    ],
-  },
-  {
-    path: "admin/dashboard",
-    element: <DashboardLayout />,
-    errorElement: <NotFound />,
-    children: [
-      {
-        path: "",
-        element: <AdminDashboardHome />,
-      },
-      {
-        path: "users",
-        element: <Users />,
-      },
-      {
-        path: "clients",
-        element: <Clients />,
-      },
-      {
-        path: "client/:id",
-        element: <ClientDetails />,
-      },
-      {
-        path: "create-order",
-        element: <CreateOrder />,
-      },
-      {
-        path: "products",
-        element: <Products />,
-      },
-      {
-        path: "orders",
-        element: <Orders />,
-      },
-      {
-        path: "order/:id",
-        element: <OrderDetails />,
-      },
-      {
-        path: "order-confirmed/:id",
-        element: <OrderConfirmed />,
-      },
-      {
-        path: "settings",
-        element: <ChangePassword />,
-      },
-      {
-        path: "area",
-        element: <Area />,
-      },
-    ],
-  },
-]);
+    basename: "/mh-20",
+  }
+);

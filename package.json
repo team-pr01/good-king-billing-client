@@ -2,6 +2,7 @@
   "name": "good-king-billing-client",
   "private": true,
   "version": "0.0.0",
+  "homepage": "/mh-20",
   "type": "module",
   "scripts": {
     "dev": "vite",

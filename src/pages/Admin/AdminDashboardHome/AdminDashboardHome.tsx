@@ -48,14 +48,14 @@ const AdminDashboardHome = () => {
       0
     );
 
-   const totals = data?.data?.reduce(
-  (acc: { totalPaid: number; totalPending: number }, order: any) => {
-    acc.totalPaid += order.paidAmount || 0;
-    acc.totalPending += order.totalPendingAmount;
-    return acc;
-  },
-  { totalPaid: 0, totalPending: 0 }
-) || { totalPaid: 0, totalPending: 0 };
+  const totals = data?.data?.reduce(
+    (acc: { totalPaid: number; totalPending: number }, order: any) => {
+      acc.totalPaid += order.paidAmount || 0;
+      acc.totalPending += order.totalPendingAmount;
+      return acc;
+    },
+    { totalPaid: 0, totalPending: 0 }
+  ) || { totalPaid: 0, totalPending: 0 };
 
   const todaysOrdersCount = todaysOrders.length;
 
@@ -102,6 +102,7 @@ const AdminDashboardHome = () => {
           value={`₹${totals.totalPending}`}
           Icon={FaHourglassHalf}
           bgColor="bg-yellow-400"
+          link="/admin/dashboard/clients?status=Pending"
         />
 
         <DashboardCard

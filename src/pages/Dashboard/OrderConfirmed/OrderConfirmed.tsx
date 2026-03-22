@@ -32,7 +32,7 @@ const OrderConfirmed = () => {
     customerName: data?.data?.shopId?.name,
     businessEmail: data?.data?.shopId?.email,
     businessPhone: data?.data?.shopId?.phoneNumber,
-    businessAddress: `${data?.data?.shopId?.city}, ${data?.data?.shopId?.area}, ${data?.data?.shopId?.district}, ${data?.data?.shopId?.state}, ${data?.data?.shopId?.pinCode}`,
+    businessAddress: `${data?.data?.shopId?.city}, ${data?.data?.shopId?.area}, ${data?.data?.shopId?.district}, ${data?.data?.shopId?.state}`,
     businessName: data?.data?.shopId?.shopName,
     items: data?.data?.products,
     status: data?.data?.pendingAmount > 0 ? "Due" : "Paid",
@@ -279,7 +279,7 @@ Date: ${invoiceData.date}`;
                   {isUpdating ? "Please wait..." : "Mark As Supplied"}
                 </button>
               )}
-              
+
               <button
                 onClick={handleDownload}
                 className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"

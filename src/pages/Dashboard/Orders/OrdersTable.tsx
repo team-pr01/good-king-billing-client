@@ -103,7 +103,7 @@ const OrdersTable = () => {
       customerName: order.shopId?.name,
       businessEmail: order.shopId?.email,
       businessPhone: order.shopId?.phoneNumber,
-      businessAddress: `${order.shopId?.city}, ${order.shopId?.area}, ${order.shopId?.district}, ${order.shopId?.state}, ${order.shopId?.pinCode}`,
+      businessAddress: `${order.shopId?.city}, ${order.shopId?.area}, ${order.shopId?.district}, ${order.shopId?.state}`,
       businessName: order.shopId?.shopName,
       items: order.products,
       status: order.pendingAmount > 0 ? "Due" : "Paid",
