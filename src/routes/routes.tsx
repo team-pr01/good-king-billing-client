@@ -90,7 +90,7 @@ export const router = createBrowserRouter(
       ],
     },
   ],
-  {
-    basename: "/mh-20",
-  }
+  // {
+  //   basename: "/mh-20",
+  // }
 );
