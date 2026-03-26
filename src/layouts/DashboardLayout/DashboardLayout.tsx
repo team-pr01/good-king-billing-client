@@ -4,11 +4,11 @@ import DashboardHeader from "../../components/Dashboard/DashboardHeader/Dashboar
 
 const DashboardLayout = () => {
   return (
-    <div className="flex max-w-screen">
+    <div className="flex w-full h-screen overflow-x-hidden">
       <Sidebar />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full min-w-0">
         <DashboardHeader />
-        <div className="px-5 py-8 bg-gray-50 w-full">
+        <div className="px-5 py-8 bg-gray-50 flex-1 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </div>
       </div>
