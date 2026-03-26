@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { FiEdit2, FiTrash2, FiPlus, FiDownload } from "react-icons/fi";
 import ProceedToPaymentModal from "../../../components/Dashboard/OrderDetailsPage/ProceedToPaymentModal/ProceedToPaymentModal";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetSingleOrderByIdQuery,
   useUpdateOrderMutation,
@@ -12,6 +12,7 @@ import Loader from "../../../components/Reusable/Loader/Loader";
 import { pdf } from "@react-pdf/renderer";
 import Invoice from "../../../components/Dashboard/Invoice/Invoice";
 import TwoInvoice from "../../../components/Dashboard/Invoice/TwoInvoices";
+import { HiHome } from "react-icons/hi";
 
 type OrderItem = {
   productId: { _id: string };
@@ -23,7 +24,7 @@ type OrderItem = {
 
 const OrderDetails = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const { data, isLoading } = useGetSingleOrderByIdQuery(id);
   const { data: allProducts } = useGetAllProductsQuery({});
   const [updateOrder, { isLoading: isUpdating }] = useUpdateOrderMutation();
@@ -121,19 +122,23 @@ const OrderDetails = () => {
     dueAmount: data?.data?.pendingAmount,
     previousOrderId: data?.data?.previousOrderId,
     subtotal: totalAmount,
-    coveredDueAmount: data?.data?.coveredDueAmount  === 0 || data?.data?.coveredDueAmount === undefined ? data?.data?.previousDue : data?.data?.coveredDueAmount,
+    coveredDueAmount:
+      data?.data?.coveredDueAmount === 0 ||
+      data?.data?.coveredDueAmount === undefined
+        ? data?.data?.previousDue
+        : data?.data?.coveredDueAmount,
     paidAmount: data?.data?.paidAmount,
   };
 
   const handleDownload = async () => {
     // Create the PDF instance
     const blob = await pdf(
-  invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
-    <Invoice data={invoiceData} />
-  ) : (
-    <TwoInvoice data={invoiceData} />
-  )
-).toBlob();
+      invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
+        <Invoice data={invoiceData} />
+      ) : (
+        <TwoInvoice data={invoiceData} />
+      )
+    ).toBlob();
 
     // Create a temporary link to trigger download
     const link = document.createElement("a");
@@ -143,6 +148,27 @@ const OrderDetails = () => {
 
     // Clean up
     URL.revokeObjectURL(link.href);
+  };
+
+  const handlePrint = async () => {
+    const blob = await pdf(
+      invoiceData.paidAmount > 0 && invoiceData.paidAmount != 0 ? (
+        <Invoice data={invoiceData} />
+      ) : (
+        <TwoInvoice data={invoiceData} />
+      )
+    ).toBlob();
+
+    // Create a temporary URL
+    const pdfUrl = URL.createObjectURL(blob);
+
+    // Open a new tab with the PDF
+    const newWindow = window.open(pdfUrl);
+
+    // Wait for it to load, then trigger print
+    newWindow?.addEventListener("load", () => {
+      newWindow.print();
+    });
   };
 
   return isLoading ? (
@@ -405,15 +431,24 @@ const OrderDetails = () => {
                 </button>
               )}
 
-              {data?.data?.pendingAmount === 0 && (
+              <button
+                onClick={handleDownload}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
+              >
+                <FiDownload className="w-5 h-5" />
+                Download Invoice
+              </button>
+              <div className="flex gap-3">
                 <button
-                  onClick={handleDownload}
-                  className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-medium cursor-pointer"
+                  onClick={handlePrint}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium cursor-pointer"
                 >
-                  <FiDownload className="w-5 h-5" />
-                  Download Invoice
+                  🖨️ Print Invoice
                 </button>
-              )}
+                <div className="bg-green-600 size-11 rounded-lg flex items-center justify-center hover:bg-green-700 cursor-pointer">
+                  <HiHome className="mx-auto rounded-full text-lg text-white " onClick={()=>{navigate(`/admin/dashboard`)}} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
