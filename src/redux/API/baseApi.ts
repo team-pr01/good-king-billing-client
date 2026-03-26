@@ -9,6 +9,7 @@ import type {
 } from "@reduxjs/toolkit/query";
 import type { DefinitionType } from "@reduxjs/toolkit/query";
 
+// Apis
 const baseQuery = fetchBaseQuery({
   // baseUrl: "https://apigoodking.vercel.app/api/v1",
   baseUrl: "https://good-king-billing-server.vercel.app/api/v1",
